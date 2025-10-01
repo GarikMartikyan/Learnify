@@ -1,0 +1,42 @@
+{
+  "welcome-back": "Բարի վերադարձ",
+  "please-login-to-continue": "Խնդրում ենք մուտք գործել շարունակելու համար",
+  "email": "Էլ. փոստ",
+  "email-required": "Խնդրում ենք մուտքագրել ձեր էլ. փոստը",
+  "email-invalid": "Մուտքագրեք վավեր էլ. փոստի հասցե",
+  "enter-your-email": "Մուտքագրեք ձեր էլ. փոստը",
+  "password": "Գաղտնաբառ",
+  "password-required": "Խնդրում ենք մուտքագրել ձեր գաղտնաբառը",
+  "password-min-length": "Գաղտնաբառը պետք է լինի առնվազն 6 նիշ",
+  "enter-your-password": "Մուտքագրեք ձեր գաղտնաբառը",
+  "log-in": "Մուտք գործել",
+  "dont-have-an-account": "Չունե՞ք հաշիվ",
+  "sign-up": "Գրանցվել",
+  "email": "Էլ. հասցե",
+  "email-required": "Խնդրում ենք մուտքագրել ձեր էլ. հասցեն",
+  "email-invalid": "Մուտքագրեք վավեր էլ. հասցե",
+  "enter-your-email": "Մուտքագրեք ձեր էլ. հասցեն",
+
+  "password": "Գաղտնաբառ",
+  "password-required": "Խնդրում ենք մուտքագրել ձեր գաղտնաբառը",
+  "password-min-length": "Գաղտնաբառը պետք է լինի առնվազն 6 նիշ",
+  "enter-your-password": "Մուտքագրեք ձեր գաղտնաբառը",
+
+  "confirm-password": "Հաստատեք գաղտնաբառը",
+  "confirm-password-required": "Խնդրում ենք հաստատել ձեր գաղտնաբառը",
+  "passwords-dont-match": "Գաղտնաբառերը չեն համընկնում",
+  "re-enter-your-password": "Կրկին մուտքագրեք ձեր գաղտնաբառը",
+
+  "full-name": "Անուն Ազգանուն",
+  "name-required": "Խնդրում ենք մուտքագրել ձեր ամբողջական անունը",
+  "enter-your-name": "Մուտքագրեք ձեր ամբողջական անունը",
+
+  "role": "Դեր",
+  "role-required": "Խնդրում ենք ընտրել դեր",
+  "select-role": "Ընտրեք ձեր դերը",
+  "student": "Ուսանող",
+  "tutor": "Դասընթացավար",
+
+"teacher": "Դասատու",
+  "already-have-an-account": "Արդեն ունե՞ք հաշիվ:"
+}
