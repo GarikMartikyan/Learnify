@@ -6,6 +6,10 @@ import { Dashboard } from "../pages/Dashboard.tsx";
 import { Help } from "../pages/Help.tsx";
 import { PublicRoutes } from "./PublicRoutes.tsx";
 import { PrivateRoutes } from "./PrivateRoutes.tsx";
+import { Courses } from "../pages/Courses.tsx";
+import { NotFoundPage } from "../components/result-pages/NotFound.tsx";
+import { CourseDetailsPage } from "../pages/CourseDetailsPage.tsx";
+import { UserProfilePage } from "../pages/Profile.tsx";
 
 export function Routing() {
   return (
@@ -17,7 +21,11 @@ export function Routing() {
       </Route>
       <Route element={<PrivateRoutes />}>
         <Route path={routes.dashboard} element={<Dashboard />} />
+        <Route path={routes.courses} element={<Courses />} />
+        <Route path={routes.courseById()} element={<CourseDetailsPage />} />
+        <Route path={routes.profile} element={<UserProfilePage />} />
       </Route>
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }
