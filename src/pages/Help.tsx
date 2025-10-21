@@ -2,7 +2,7 @@ import { Collapse, Typography } from "antd";
 import { useIntl } from "react-intl";
 import { PageTitle } from "../components/shared/PageTitle.tsx";
 
-const { Title, Paragraph } = Typography;
+const { Paragraph } = Typography;
 
 export const helpMessages = {
   "help-page-title": {

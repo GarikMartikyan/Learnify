@@ -12,7 +12,7 @@ export interface ICourse {
   image?: string;
 }
 
-export interface IChapter {
+export interface IChapterInfo {
   id: number;
   title: string;
   description?: string;
@@ -37,6 +37,6 @@ export interface ICourseDetails {
   price: number;
   category: string;
   image?: string;
-  chapters?: IChapter[];
+  chapters?: IChapterInfo[];
   exams?: IExam[];
 }

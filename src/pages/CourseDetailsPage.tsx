@@ -17,11 +17,17 @@ import {
 } from "@ant-design/icons";
 import { PageTitle } from "../components/shared/PageTitle.tsx";
 import { courseDetails } from "../placeholder/courses.ts";
+import { useNavigate } from "react-router";
+import { routes } from "../constants/routes.ts";
 
 const { Title, Text, Paragraph } = Typography;
 
 export function CourseDetailsPage() {
   const { token } = theme.useToken();
+  const navigate = useNavigate();
+  const handleChapterClick = (chapterId) => {
+    navigate(routes.chapterById(chapterId));
+  };
   return (
     <div>
       <PageTitle showBackButton>{courseDetails.title}</PageTitle>
@@ -108,7 +114,10 @@ export function CourseDetailsPage() {
                 <List
                   dataSource={courseDetails.chapters}
                   renderItem={(chapter) => (
-                    <List.Item>
+                    <List.Item
+                      style={{ cursor: "pointer" }}
+                      onClick={() => handleChapterClick(chapter.id)}
+                    >
                       <BookOutlined style={{ marginRight: 8 }} />
                       {chapter.title}
                     </List.Item>

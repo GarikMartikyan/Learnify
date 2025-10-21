@@ -4,15 +4,23 @@ import { CourseCard } from "../components/shared/CourseCard.tsx";
 import { PageTitle } from "../components/shared/PageTitle.tsx";
 import { users } from "../placeholder/user.ts";
 import { useIntl } from "react-intl";
+import { useLocation } from "react-router";
+import { routes } from "../constants/routes.ts";
+import type { ICourse } from "../constants/interfaces/course.interfaces.ts";
 
 export function Courses() {
   const { formatMessage } = useIntl();
+  const { pathname } = useLocation();
+  let coursesList: ICourse[] = [...courses];
+  if (pathname === routes.myCourses) {
+    coursesList = coursesList.slice(1, 4);
+  }
   return (
     <>
       <PageTitle>{formatMessage({ id: "courses" })}</PageTitle>
 
       <Row align={"stretch"} gutter={[16, 16]}>
-        {courses.map((course) => (
+        {coursesList.map((course) => (
           <Col xs={24} sm={12} md={8} key={course.id}>
             <CourseCard
               {...course}
