@@ -16,6 +16,7 @@ import { ExamPage } from "../pages/ExamPage.tsx";
 import { mockExam } from "../placeholder/exam.ts";
 import { MyCourses } from "../pages/MyCourses.tsx";
 import { Dashboard } from "../pages/Dashboard.tsx";
+import { ApplyToTeacher } from "../pages/ApplyTeacher.tsx";
 
 export function Routing() {
   return (
@@ -40,6 +41,7 @@ export function Routing() {
           path={routes.examById()}
           element={<ExamPage exam={mockExam} />}
         />
+        <Route path={routes.applyToTeacher} element={<ApplyToTeacher />} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />
     </Routes>

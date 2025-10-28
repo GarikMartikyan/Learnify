@@ -1,5 +1,7 @@
 import { Card, List, Typography } from "antd";
 import type { ICourse } from "../../constants/interfaces/course.interfaces.ts";
+import { useNavigate } from "react-router";
+import { routes } from "../../constants/routes.ts";
 
 const { Title } = Typography;
 
@@ -8,13 +10,20 @@ interface CoursesTabProps {
 }
 
 export function CoursesTab({ courses }: CoursesTabProps) {
+  const navigate = useNavigate();
+  const HandleClick = (courseId: string) => {
+    navigate(routes.courseById(courseId));
+  };
   console.log({ courses });
   return (
     <List
       grid={{ gutter: 16, column: 3 }}
       dataSource={courses}
       renderItem={(course) => (
-        <List.Item>
+        <List.Item
+          onClick={() => HandleClick(course.id)}
+          style={{ cursor: "pointer" }}
+        >
           <Card
             // variant="borderless"
             hoverable

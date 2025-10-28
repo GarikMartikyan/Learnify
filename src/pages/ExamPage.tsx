@@ -10,6 +10,7 @@ import {
   Typography,
 } from "antd";
 import type { IExam } from "../constants/interfaces/exam.interfaces.ts";
+import { PageTitle } from "../components/shared/PageTitle.tsx";
 
 const { Title, Paragraph } = Typography;
 
@@ -26,8 +27,8 @@ export function ExamPage({ exam }: ExamPageProps) {
   };
 
   return (
-    <div style={{ padding: 40, maxWidth: 900, margin: "0 auto" }}>
-      <Title level={2}>{exam.title}</Title>
+    <div>
+      <PageTitle showBackButton>{exam.title}</PageTitle>
       <Paragraph>Duration: {exam.durationMinutes} minutes</Paragraph>
       <Divider />
 

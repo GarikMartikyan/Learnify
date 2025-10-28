@@ -11,4 +11,5 @@ export const routes = {
   settings: "/settings",
   userById: (userId = ":userId") => `/users/${userId}`,
   help: "/help",
+  applyToTeacher: "/apply-to-teacher",
 } as const;

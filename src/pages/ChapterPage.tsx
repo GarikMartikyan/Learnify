@@ -1,6 +1,7 @@
 import { Divider, Image, Typography } from "antd";
 import { mockChapter } from "../placeholder/chapter.ts";
 import type { IChapter } from "../constants/interfaces/chapter.interfaces.ts";
+import { PageTitle } from "../components/shared/PageTitle.tsx";
 
 const { Title, Paragraph } = Typography;
 
@@ -11,7 +12,7 @@ interface ChapterPageProps {
 export function ChapterPage({ chapter = mockChapter }: ChapterPageProps) {
   return (
     <div style={{ margin: "0 auto" }}>
-      <Title level={2}>{chapter.title}</Title>
+      <PageTitle showBackButton>{chapter.title}</PageTitle>
       <Divider />
 
       {chapter.content.map((block, index) => {

@@ -8,8 +8,10 @@ import { routes } from "../../constants/routes.ts";
 import { useNavigate } from "react-router";
 import { user } from "../../utils/index.utils.ts";
 import { UserAvatar } from "../shared/UserAvatar.tsx";
+import { useIntl } from "react-intl";
 
 export function HeaderDropdown() {
+  const { formatMessage } = useIntl();
   const navigate = useNavigate();
   const items: MenuProps["items"] = [
     {
@@ -21,6 +23,11 @@ export function HeaderDropdown() {
       key: routes.settings,
       label: "Settings",
       icon: <SettingOutlined />,
+    },
+    {
+      key: routes.applyToTeacher,
+      label: formatMessage({ id: "apply-to-teacher" }),
+      icon: <UserOutlined />,
     },
     {
       type: "divider",

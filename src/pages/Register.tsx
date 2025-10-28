@@ -1,10 +1,10 @@
-import { Button, Card, Form, Input, theme, Typography } from "antd";
+import { Button, Card, Form, Input, Select, theme, Typography } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useIntl } from "react-intl";
 import { Link } from "react-router";
 import { routes } from "../constants/routes.ts";
 import { Logo } from "../components/shared/Logo.tsx";
-import { SelectRole } from "../components/shared/SelectRole.tsx";
+import { getNames } from "country-list";
 
 const { Text } = Typography;
 
@@ -21,6 +21,7 @@ export function Register({ onRegister }: RegisterPageProps) {
   const { token } = theme.useToken();
   const [form] = Form.useForm();
   const { formatMessage } = useIntl();
+  const countries = getNames(); // Returns array of country names
 
   const handleRegister = (values: Record<string, string>) => {
     if (onRegister) {
@@ -39,7 +40,6 @@ export function Register({ onRegister }: RegisterPageProps) {
       }
       style={{
         borderRadius: 12,
-        boxShadow: token.boxShadowTertiary,
       }}
     >
       <div style={{ textAlign: "center", marginBottom: "1rem" }}>
@@ -192,24 +192,21 @@ export function Register({ onRegister }: RegisterPageProps) {
 
         {/* Role Select */}
         <Form.Item
-          name="role"
-          label={formatMessage({ id: "role", defaultMessage: "Role" })}
-          rules={[
-            {
-              required: true,
-              message: formatMessage({
-                id: "role-required",
-                defaultMessage: "Please select a role",
-              }),
-            },
-          ]}
+          name="country"
+          label="Country"
+          rules={[{ required: true, message: "Please select a country" }]}
         >
-          <SelectRole
-            placeholder={formatMessage({
-              id: "select-role",
-              defaultMessage: "Select Role",
-            })}
-          />
+          <Select
+            placeholder="Select Country"
+            showSearch
+            optionFilterProp="children"
+          >
+            {countries.map((country) => (
+              <Option key={country} value={country}>
+                {country}
+              </Option>
+            ))}
+          </Select>
         </Form.Item>
 
         {/* Submit */}

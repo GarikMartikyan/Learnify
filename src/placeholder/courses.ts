@@ -16,7 +16,8 @@ export const courses: ICourse[] = [
     language: "English",
     price: 49.99,
     createdAt: "2025-03-01T10:00:00Z",
-    image: "https://images.pexels.com/photos/4778401/pexels-photo-4778401.jpeg",
+    image:
+      "https://investin.org/cdn/shop/articles/How_to_Motivate_Yourself_to_Study.jpg?v=1640183354",
   },
   {
     id: 2,
@@ -30,7 +31,8 @@ export const courses: ICourse[] = [
     language: "English",
     price: 59.99,
     createdAt: "2025-03-10T14:30:00Z",
-    image: "https://images.pexels.com/photos/5088180/pexels-photo-5088180.jpeg",
+    image:
+      "https://iglu.com.au/wp-content/uploads/2024/09/productive-studying.jpg",
   },
   {
     id: 3,
@@ -44,7 +46,8 @@ export const courses: ICourse[] = [
     language: "Armenian",
     price: 39.99,
     createdAt: "2025-04-05T09:15:00Z",
-    image: "https://images.pexels.com/photos/5428013/pexels-photo-5428013.jpeg",
+    image:
+      "https://ugc.futurelearn.com/uploads/images/4d/c9/4dc9321b-f608-4196-9fb7-02f6c0029a5f.jpg",
   },
   {
     id: 4,
@@ -58,7 +61,8 @@ export const courses: ICourse[] = [
     language: "English",
     price: 69.99,
     createdAt: "2025-05-15T08:30:00Z",
-    image: "https://images.pexels.com/photos/5427651/pexels-photo-5427651.jpeg",
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtUkmluMeLOj-dZ7gxZXpl209aWVsw7AZiVg&s",
   },
   {
     id: 5,
@@ -72,7 +76,8 @@ export const courses: ICourse[] = [
     language: "English",
     price: 44.99,
     createdAt: "2025-06-10T09:00:00Z",
-    image: "https://images.pexels.com/photos/5212329/pexels-photo-5212329.jpeg",
+    image:
+      "https://www.aeccglobal.my/images/2022/11/08/study-information--technology-abroad.webp",
   },
 ];
 

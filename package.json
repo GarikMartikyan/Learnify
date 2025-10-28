@@ -17,6 +17,7 @@
     "@reduxjs/toolkit": "^2.9.0",
     "@types/lodash": "^4.17.20",
     "antd": "^5.27.4",
+    "country-list": "^2.4.1",
     "dayjs": "^1.11.18",
     "lodash": "^4.17.21",
     "react": "^19.1.1",
