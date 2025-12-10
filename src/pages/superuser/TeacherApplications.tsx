@@ -9,7 +9,8 @@ import {
   Table,
   Typography,
 } from "antd";
-import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import { CheckOutlined, CloseOutlined, EyeOutlined } from "@ant-design/icons";
+import { PageTitle } from "../../components/shared/PageTitle.tsx";
 
 const { Title, Text } = Typography;
 
@@ -80,7 +81,13 @@ export function TeacherApplicationsPage() {
       dataIndex: "certificateImage",
       key: "certificateImage",
       render: (url: string) => (
-        <Image width={80} height={60} src={url} alt="certificate" />
+        <Image
+          onClick={(e) => e.preventDefault()}
+          width={80}
+          height={60}
+          src={url}
+          alt="certificate"
+        />
       ),
     },
     {
@@ -90,11 +97,19 @@ export function TeacherApplicationsPage() {
         <Space>
           <Button
             type="primary"
+            icon={<EyeOutlined />}
+            onClick={() => openModal(record)}
+          >
+            View
+          </Button>
+          <Button
+            type="primary"
             icon={<CheckOutlined />}
             onClick={() => handleApprove(record.id)}
           >
             Approve
           </Button>
+
           <Button
             danger
             icon={<CloseOutlined />}
@@ -109,7 +124,7 @@ export function TeacherApplicationsPage() {
 
   return (
     <div style={{ maxWidth: 1000, margin: "auto" }}>
-      <Title level={2}>Teacher Applications</Title>
+      <PageTitle>Teacher Applications</PageTitle>
 
       <Card
         style={{
@@ -122,10 +137,6 @@ export function TeacherApplicationsPage() {
           dataSource={applications}
           rowKey="id"
           pagination={{ pageSize: 5 }}
-          onRow={(record) => ({
-            onClick: () => openModal(record),
-            style: { cursor: "pointer" },
-          })}
         />
       </Card>
 

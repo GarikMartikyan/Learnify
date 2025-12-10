@@ -1,4 +1,4 @@
-import { Button, Col, Flex, Row } from "antd";
+import { Button, Col, Flex, Row, Space, Table } from "antd";
 import { courses } from "../placeholder/courses.ts";
 import { CourseCard } from "../components/shared/CourseCard.tsx";
 import { PageTitle } from "../components/shared/PageTitle.tsx";
@@ -8,8 +8,8 @@ import { Link, useNavigate } from "react-router";
 import { routes } from "../constants/routes.ts";
 import type { ICourse } from "../constants/interfaces/course.interfaces.ts";
 import { CourseSearchFilters } from "../components/CourseSearchFilters.tsx";
-import { PlusOutlined } from "@ant-design/icons";
-import { isTeacher } from "../utils/index.utils.ts";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { isSuperuser, isTeacher } from "../utils/index.utils.ts";
 
 export function Courses({ isMyCourses = false }) {
   const { formatMessage } = useIntl();
@@ -27,10 +27,83 @@ export function Courses({ isMyCourses = false }) {
       navigate(routes.courseById(id));
     }
   };
+
+  if (isSuperuser) {
+    interface Course {
+      id: number;
+      title: string;
+      author: string;
+      rating: number;
+    }
+    const courses: Course[] = [
+      {
+        id: 1,
+        title: "Intro to JavaScript",
+        author: "Bob Johnson",
+        rating: 4.5,
+      },
+      { id: 2, title: "React Basics", author: "Bob Johnson", rating: 4.7 },
+      {
+        id: 3,
+        title: "Node.js Fundamentals",
+        author: "Alice Smith",
+        rating: 4.3,
+      },
+      {
+        id: 4,
+        title: "HTML & CSS Basics",
+        author: "Charlie Brown",
+        rating: 4.8,
+      },
+      {
+        id: 5,
+        title: "Advanced TypeScript",
+        author: "David Hakobyan",
+        rating: 4.6,
+      },
+    ];
+
+    const courseColumns = [
+      { title: "Course Title", dataIndex: "title", key: "title" },
+      { title: "Author", dataIndex: "author", key: "author" },
+      {
+        title: "Rating",
+        dataIndex: "rating",
+        key: "rating",
+        render: (r: number) => r?.toFixed(1),
+      },
+      {
+        title: "Actions",
+        key: "actions",
+        render: () => (
+          <Space>
+            <Button danger icon={<DeleteOutlined />}>
+              Delete
+            </Button>
+          </Space>
+        ),
+      },
+    ];
+
+    return (
+      <Flex vertical gap="middle">
+        <PageTitle>Course Management</PageTitle>
+        <Table
+          columns={courseColumns}
+          dataSource={courses}
+          rowKey="id"
+          pagination={{ pageSize: 5 }}
+        />
+      </Flex>
+    );
+  }
+
   return (
     <>
       <Flex justify={"space-between"}>
-        <PageTitle>{formatMessage({ id: "courses" })}</PageTitle>
+        <PageTitle>
+          {formatMessage({ id: isMyCourses ? "my-courses" : "courses" })}
+        </PageTitle>
         {isTeacher && (
           <Link to={routes.myCourseById("123")}>
             <Button type="primary" icon={<PlusOutlined />}>
