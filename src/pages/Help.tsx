@@ -2,111 +2,83 @@ import { Collapse, Typography } from "antd";
 import { useIntl } from "react-intl";
 import { PageTitle } from "../components/shared/PageTitle.tsx";
 
-const { Paragraph } = Typography;
-
-export const helpMessages = {
-  "help-page-title": {
-    id: "help-page-title",
-    defaultMessage: "Learnify Help Center",
-  },
-  "getting-started": {
-    id: "getting-started",
-    defaultMessage: "Getting Started",
-  },
-  "create-account": {
-    id: "create-account",
-    defaultMessage:
-      'To start learning, create an account by clicking "Sign Up" at the top-right corner. Choose your role as Student or Teacher.',
-  },
-  "login-account": {
-    id: "login-account",
-    defaultMessage:
-      'If you already have an account, click "Login" and enter your email and password.',
-  },
-  "user-settings": {
-    id: "user-settings",
-    defaultMessage: "User Settings",
-  },
-  "full-name": {
-    id: "full-name",
-    defaultMessage: "Full Name",
-  },
-  "change-password": {
-    id: "change-password",
-    defaultMessage:
-      'You can change your password in User Settings by clicking "Edit Profile" and updating your password.',
-  },
-  "courses-overview": {
-    id: "courses-overview",
-    defaultMessage: "Courses Overview",
-  },
-  "enroll-course": {
-    id: "enroll-course",
-    defaultMessage:
-      'To enroll in a course, navigate to the Courses page, select a course, and click "Join Course".',
-  },
-  "teacher-dashboard": {
-    id: "teacher-dashboard",
-    defaultMessage:
-      "Teachers can manage their courses from the Teacher Dashboard. Create chapters, add exams, and track student progress.",
-  },
-  "student-dashboard": {
-    id: "student-dashboard",
-    defaultMessage:
-      "Students can see their enrolled courses in the My Courses section, access chapters, and take exams.",
-  },
-  "exams-and-quizzes": {
-    id: "exams-and-quizzes",
-    defaultMessage:
-      "Exams and quizzes are part of the course chapters. Complete them to track your progress and get scores.",
-  },
-  "contact-support": {
-    id: "contact-support",
-    defaultMessage:
-      'If you need further assistance, contact our support team via the "Contact Us" page.',
-  },
-};
-
+const { Paragraph, Text } = Typography;
 const { Panel } = Collapse;
+
+const helpPanelData = [
+  {
+    key: "1",
+    headerId: "getting-started",
+    contentIds: ["create-account", "login-account"],
+  },
+  {
+    key: "2",
+    headerId: "user-settings-title",
+    contentIds: ["update-full-name", "change-password"],
+  },
+  {
+    key: "3",
+    headerId: "courses-overview",
+    contentIds: [
+      "enroll-course",
+      "teacher-dashboard",
+      "student-dashboard",
+      "exams-and-quizzes",
+    ],
+  },
+  {
+    key: "4",
+    headerId: "contact-support",
+    contentIds: ["support-details"],
+  },
+];
 
 export function Help() {
   const { formatMessage } = useIntl();
 
+  const renderPanelContent = (contentIds) => {
+    if (contentIds.length === 1 && contentIds[0] === "support-details") {
+      return (
+        <Paragraph style={{ fontSize: "16px" }}>
+          {formatMessage({ id: contentIds[0] })}
+        </Paragraph>
+      );
+    }
+
+    return (
+      <ul style={{ paddingLeft: "20px", fontSize: "16px" }}>
+        {contentIds.map((id, index) => (
+          <li key={index} style={{ marginBottom: "10px" }}>
+            <Text style={{ fontSize: "16px" }}>{formatMessage({ id })}</Text>
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
   return (
     <>
-      <PageTitle>{formatMessage(helpMessages["help-page-title"])}</PageTitle>
+      <PageTitle style={{ fontSize: "28px" }}>
+        {formatMessage({ id: "help-page-title" })}
+      </PageTitle>
 
-      <Collapse accordion>
-        <Panel header={formatMessage(helpMessages["getting-started"])} key="1">
-          <Paragraph>{formatMessage(helpMessages["create-account"])}</Paragraph>
-          <Paragraph>{formatMessage(helpMessages["login-account"])}</Paragraph>
-        </Panel>
+      <Paragraph style={{ marginBottom: "28px", fontSize: "18px" }}>
+        {formatMessage({ id: "help-intro" })}
+      </Paragraph>
 
-        <Panel header={formatMessage(helpMessages["user-settings"])} key="2">
-          <Paragraph>{formatMessage(helpMessages["full-name"])}</Paragraph>
-          <Paragraph>
-            {formatMessage(helpMessages["change-password"])}
-          </Paragraph>
-        </Panel>
-
-        <Panel header={formatMessage(helpMessages["courses-overview"])} key="3">
-          <Paragraph>{formatMessage(helpMessages["enroll-course"])}</Paragraph>
-          <Paragraph>
-            {formatMessage(helpMessages["teacher-dashboard"])}
-          </Paragraph>
-          <Paragraph>
-            {formatMessage(helpMessages["student-dashboard"])}
-          </Paragraph>
-          <Paragraph>
-            {formatMessage(helpMessages["exams-and-quizzes"])}
-          </Paragraph>
-        </Panel>
-
-        <Panel header={formatMessage(helpMessages["contact-support"])} key="4">
-          <Paragraph>
-            {formatMessage(helpMessages["contact-support"])}
-          </Paragraph>
-        </Panel>
+      <Collapse accordion expandIconPosition="end">
+        {helpPanelData.map((panel) => (
+          <Panel
+            key={panel.key}
+            header={
+              <Text style={{ fontSize: "18px", fontWeight: "bold" }}>
+                {formatMessage({ id: panel.headerId })}
+              </Text>
+            }
+          >
+            {renderPanelContent(panel.contentIds)}
+          </Panel>
+        ))}
       </Collapse>
     </>
   );

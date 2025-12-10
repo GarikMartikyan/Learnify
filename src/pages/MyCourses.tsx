@@ -1,3 +1,3 @@
 import { Courses } from "./Courses.tsx";
 
-export const MyCourses = Courses;
+export const MyCourses = () => <Courses isMyCourses={true} />;

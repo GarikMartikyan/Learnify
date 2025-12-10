@@ -2,8 +2,6 @@ import React from "react";
 import { Avatar, Card, Flex, Rate, Space, Tag, theme, Typography } from "antd";
 import { GlobalOutlined, UserOutlined } from "@ant-design/icons";
 import { useIntl } from "react-intl";
-import { useNavigate } from "react-router";
-import { routes } from "../../constants/routes.ts";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -17,29 +15,24 @@ interface CourseCardProps {
   language: string;
   teacherName: string;
   teacherImage?: string;
+  onCLick?: () => void;
 }
 
 export const CourseCard: React.FC<CourseCardProps> = ({
   title,
   description,
-  thumbnailUrl,
   level,
-  startDate,
   language,
   teacherName,
   teacherImage,
-  id,
+  onCLick,
 }) => {
   const { formatMessage } = useIntl();
   const { token } = theme.useToken();
-  const navigate = useNavigate();
-  const handleCardClick = () => {
-    navigate(routes.courseById(String(id)));
-  };
   return (
     <Card
       variant="borderless"
-      onClick={handleCardClick}
+      onClick={onCLick}
       style={{
         background: token.colorBgElevated,
         boxShadow: token.boxShadowSecondary,
@@ -88,13 +81,9 @@ export const CourseCard: React.FC<CourseCardProps> = ({
             {language}
           </Tag>
         </Space>
-
-        {/*<Space size="small">*/}
-        {/*  <CalendarOutlined />{" "}*/}
-        {/*  <Text>{new Date(startDate).toLocaleDateString()}</Text>*/}
-        {/*</Space>*/}
       </Flex>
       <Rate
+        disabled
         style={{ marginBlock: 10 }}
         value={Math.floor(Math.random() * 5) + 3}
       />

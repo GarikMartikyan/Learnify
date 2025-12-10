@@ -12,7 +12,7 @@ export const mockChapter: IChapter = {
     },
     {
       type: "youtube",
-      value: "https://www.youtube.com/embed/W6NZfCO5SIk",
+      value: "https://www.youtube.com/embed/DHjqpvDnNGE?si=YP1hzuDnoAdwOUbQ",
     },
     {
       type: "title",
@@ -25,7 +25,8 @@ export const mockChapter: IChapter = {
     },
     {
       type: "image",
-      value: "https://images.pexels.com/photos/301926/pexels-photo-301926.jpeg",
+      value:
+        "https://code.visualstudio.com/assets/docs/languages/javascript/auto-import-after.png",
     },
     {
       type: "text",

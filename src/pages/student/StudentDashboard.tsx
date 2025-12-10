@@ -2,6 +2,7 @@ import { Card, Col, Divider, List, Progress, Row, Typography } from "antd";
 
 import { useNavigate } from "react-router";
 import { routes } from "../../constants/routes.ts";
+import { useIntl } from "react-intl";
 import {
   mockRecentCourses,
   mockUpcomingChapters,
@@ -12,21 +13,24 @@ const { Title, Text } = Typography;
 
 export function StudentDashboardPage() {
   const navigate = useNavigate();
+  const { formatMessage } = useIntl();
+
   const handleChapterClick = (chapterId) => {
     navigate(routes.chapterById(chapterId));
   };
   const handleCourseClick = (courseId) => {
-    navigate(routes.courseById(courseId));
+    navigate(routes.myCourseById(courseId));
   };
   const handleExamClick = (examId) => {
     navigate(routes.examById(examId));
   };
+
   return (
     <div>
-      <Title level={2}>Dashboard</Title>
+      <Title level={2}>{formatMessage({ id: "dashboard-title" })}</Title>
 
       <Card
-        title="Recently Enrolled Courses"
+        title={formatMessage({ id: "recently-enrolled-courses" })}
         style={{ borderRadius: 16, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
       >
         <List
@@ -53,7 +57,7 @@ export function StudentDashboardPage() {
         {/* Upcoming Exams */}
         <Col xs={24} md={24}>
           <Card
-            title="Upcoming Exams"
+            title={formatMessage({ id: "upcoming-exams" })}
             style={{
               borderRadius: 16,
               boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
@@ -69,9 +73,6 @@ export function StudentDashboardPage() {
                   <div>
                     <Text strong>{exam.examTitle}</Text> <br />
                     <Text type="secondary">{exam.courseTitle}</Text> <br />
-                    <Text type="secondary">
-                      {new Date(exam.date).toLocaleString()}
-                    </Text>
                   </div>
                 </List.Item>
               )}
@@ -82,7 +83,7 @@ export function StudentDashboardPage() {
         {/* Upcoming Chapters */}
         <Col xs={24} md={24}>
           <Card
-            title="Upcoming Chapters"
+            title={formatMessage({ id: "upcoming-chapters" })}
             style={{
               borderRadius: 16,
               boxShadow: "0 2px 8px rgba(0,0,0,0.05)",

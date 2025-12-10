@@ -3,6 +3,14 @@ import type {
   ICourseDetails,
 } from "../constants/interfaces/course.interfaces.ts";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+export enum CourseLevel {
+  beginner = "beginner",
+  intermediate = "intermediate",
+  advanced = "advanced",
+}
+
 export const courses: ICourse[] = [
   {
     id: 1,
@@ -11,9 +19,9 @@ export const courses: ICourse[] = [
       "Learn the fundamentals of React.js including components, state, and props to build interactive UIs.",
     teacherId: 1, // Alice Johnson
     category: "Frontend Development",
-    level: "beginner",
     startDate: "2025-11-01T09:00:00Z",
     language: "English",
+    level: CourseLevel.beginner,
     createdAt: "2025-03-01T10:00:00Z",
     image:
       "https://investin.org/cdn/shop/articles/How_to_Motivate_Yourself_to_Study.jpg?v=1640183354",
@@ -25,9 +33,9 @@ export const courses: ICourse[] = [
       "A practical guide to building scalable backend APIs using NestJS and TypeORM.",
     teacherId: 2, // Mark Petrosyan
     category: "Backend Development",
-    level: "intermediate",
     startDate: "2025-11-15T10:00:00Z",
     language: "English",
+    level: CourseLevel.intermediate,
     createdAt: "2025-03-10T14:30:00Z",
     image:
       "https://iglu.com.au/wp-content/uploads/2024/09/productive-studying.jpg",
@@ -39,9 +47,9 @@ export const courses: ICourse[] = [
       "Understand relational databases, SQL queries, joins, and best practices for PostgreSQL.",
     teacherId: 6, // David Hakobyan
     category: "Databases",
-    level: "beginner",
     startDate: "2025-12-01T12:00:00Z",
-    language: "Armenian",
+    language: "Հայերեն",
+    level: CourseLevel.beginner,
     createdAt: "2025-04-05T09:15:00Z",
     image:
       "https://ugc.futurelearn.com/uploads/images/4d/c9/4dc9321b-f608-4196-9fb7-02f6c0029a5f.jpg",
@@ -53,9 +61,9 @@ export const courses: ICourse[] = [
       "Master advanced TypeScript concepts including generics, decorators, and advanced typing strategies.",
     teacherId: 2,
     category: "Programming Languages",
-    level: "advanced",
     startDate: "2026-01-10T10:00:00Z",
     language: "English",
+    level: CourseLevel.advanced,
     createdAt: "2025-05-15T08:30:00Z",
     image:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtUkmluMeLOj-dZ7gxZXpl209aWVsw7AZiVg&s",
@@ -67,9 +75,9 @@ export const courses: ICourse[] = [
       "Learn to create elegant, responsive UIs using Ant Design components and React.",
     teacherId: 1,
     category: "UI/UX",
-    level: "intermediate",
     startDate: "2025-11-20T09:30:00Z",
-    language: "English",
+    language: "Հայերեն",
+    level: CourseLevel.intermediate,
     createdAt: "2025-06-10T09:00:00Z",
     image:
       "https://www.aeccglobal.my/images/2022/11/08/study-information--technology-abroad.webp",

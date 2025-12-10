@@ -74,5 +74,51 @@
   "apply-to-teacher": "Apply to Teacher",
   "beginner": "Beginner",
   "intermediate": "Intermediate",
-  "advanced": "Advanced"
+  "advanced": "Advanced",
+  "course-statistics": "Course Statistics",
+  "teacher-applications": "Teacher Applications",
+  "users": "Users",
+  "dashboard-title": "Dashboard",
+  "recently-enrolled-courses": "Recently Enrolled Courses",
+  "upcoming-exams": "Upcoming Exams",
+  "upcoming-chapters": "Upcoming Chapters",
+  "all": "All",
+
+  "complexity": "Complexity",
+
+  "all-levels": "All levels",
+
+  "search-keywords": "Search keywords...",
+
+  "sort": "Sort",
+  "sort-by-date": "By date",
+  "sort-by-popularity": "By popularity",
+
+  "apply": "Apply",
+  "reset": "Reset",
+  "help-page-title": "Learnify Help Center",
+  "help-intro": "Welcome to the Learnify Help Center. Find answers to common questions about accounts, courses, and more below.",
+
+  "getting-started": "Getting Started",
+  "create-account": "To start learning, create an account by clicking \"Sign Up\" at the top-right corner. Choose your role as Student or Teacher.",
+  "login-account": "If you already have an account, click \"Login\" and enter your registered email and password.",
+  "user-settings-title": "Account and Profile Settings",
+  "update-full-name": "You can update your Full Name and other profile details in the User Settings area by clicking on your profile icon.",
+  "change-password": "To change your password, navigate to User Settings, select \"Edit Profile\", and follow the prompts to update your password securely.",
+
+  "courses-overview": "Courses, Enrollment, and Dashboards",
+  "enroll-course": "To enroll in a course, navigate to the Courses page, select the course you are interested in, and click the \"Join Course\" button.",
+  "teacher-dashboard": "Teachers can manage their content from the Teacher Dashboard. This includes creating chapters, adding exams, and tracking student progress.",
+  "student-dashboard": "Students can access their active courses in the My Courses section, view course chapters, and monitor their learning progress.",
+  "exams-and-quizzes": "Exams and quizzes are typically found at the end of course chapters. Completing them is essential for tracking progress and receiving final scores.",
+
+  "contact-support": "Contacting Support",
+  "support-details": "If you require further assistance or encounter technical issues, please contact our support team via the \"Contact Us\" page linked in the footer.",
+  "starts": "Starts",
+  "join-course": "Join Course",
+
+  "overview": "Overview",
+  "exams": "Exams",
+
+  "course-overview-text": "In this course, you will learn the core concepts of JavaScript, how to structure code efficiently, and how to build dynamic front-end experiences. Each chapter includes exercises, quizzes, and real-world examples."
 }

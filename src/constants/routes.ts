@@ -8,10 +8,12 @@ export const routes = {
   chapterById: (chapterId = ":chapterId") => `/chapters/${chapterId}`,
   examById: (examId = ":examId") => `/exams/${examId}`,
   myCourses: "/my-courses",
+  myCourseById: (courseId = ":courseId") => `/my-courses/${courseId}`,
   profile: "/profile",
   settings: "/settings",
   userById: (userId = ":userId") => `/users/${userId}`,
   help: "/help",
   forgotPassword: "/forgot-password",
   teacherApplication: "/teacher-application",
+  users: "/users",
 } as const;

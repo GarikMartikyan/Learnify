@@ -17,7 +17,7 @@ export function Register() {
   const { formatMessage } = useIntl();
   const countries = getNames(); // Returns array of country names
 
-  const handleRegister = (values: Record<string, string>) => {
+  const handleRegister = () => {
     navigate(routes.dashboard);
     dispatch(setAccessToken("accessToken"));
   };

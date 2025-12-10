@@ -1,4 +1,4 @@
-import { Button, Card, Form, Grid, Input, theme, Typography } from "antd";
+import { Button, Card, Form, Input, theme, Typography } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { useIntl } from "react-intl";
 import { Link } from "react-router";
@@ -15,7 +15,6 @@ export function ForgotPassword({ onSubmit }: ForgotPasswordPageProps) {
   const { token } = theme.useToken();
   const [form] = Form.useForm();
   const { formatMessage } = useIntl();
-  const { sm, md } = Grid.useBreakpoint();
 
   const handleSubmit = (values: { email: string }) => {
     if (onSubmit) {

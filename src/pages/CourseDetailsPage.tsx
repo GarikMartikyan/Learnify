@@ -16,8 +16,9 @@ import {
 } from "@ant-design/icons";
 import { PageTitle } from "../components/shared/PageTitle.tsx";
 import { courseDetails } from "../placeholder/courses.ts";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import { routes } from "../constants/routes.ts";
+import { useIntl } from "react-intl";
 
 import learn_js from "../assets/learn_js.jpg";
 
@@ -25,14 +26,17 @@ const { Title, Text, Paragraph } = Typography;
 
 export function CourseDetailsPage() {
   const { token } = theme.useToken();
-  const { courseId } = useParams();
+  const { formatMessage } = useIntl();
   const navigate = useNavigate();
+
   const handleChapterClick = (chapterId) => {
     navigate(routes.chapterById(chapterId));
   };
+
   return (
     <div>
       <PageTitle showBackButton>{courseDetails.title}</PageTitle>
+
       <Card
         variant="borderless"
         style={{
@@ -53,13 +57,16 @@ export function CourseDetailsPage() {
         }
       >
         <Tag color="blue">{courseDetails.category}</Tag>
+
         <Title level={2} style={{ marginTop: 8 }}>
           {courseDetails.title}
         </Title>
+
         <Text type="secondary">
           <UserOutlined /> {courseDetails.teacher} &nbsp; | &nbsp;
           <GlobalOutlined /> {courseDetails.language} &nbsp; | &nbsp;
-          <CalendarOutlined /> Starts {courseDetails.startingDate}
+          <CalendarOutlined /> {formatMessage({ id: "starts" })}{" "}
+          {courseDetails.startingDate}
         </Text>
 
         <Divider />
@@ -77,8 +84,9 @@ export function CourseDetailsPage() {
           }}
         >
           <div style={{ fontSize: 18, fontWeight: 600 }}></div>
+
           <Button type="primary" size="large">
-            Join Course
+            {formatMessage({ id: "join-course" })}
           </Button>
         </div>
       </Card>
@@ -97,19 +105,16 @@ export function CourseDetailsPage() {
           items={[
             {
               key: "overview",
-              label: "Overview",
+              label: formatMessage({ id: "overview" }),
               children: (
                 <Paragraph style={{ fontSize: 16, lineHeight: 1.7 }}>
-                  In this course, you will learn the core concepts of
-                  JavaScript, how to structure code efficiently, and how to
-                  build dynamic front-end experiences. Each chapter includes
-                  exercises, quizzes, and real-world examples.
+                  {formatMessage({ id: "course-overview-text" })}
                 </Paragraph>
               ),
             },
             {
               key: "chapters",
-              label: "Chapters",
+              label: formatMessage({ id: "chapters" }),
               children: (
                 <List
                   dataSource={courseDetails.chapters}
@@ -127,7 +132,7 @@ export function CourseDetailsPage() {
             },
             {
               key: "exams",
-              label: "Exams",
+              label: formatMessage({ id: "exams" }),
               children: (
                 <List
                   dataSource={courseDetails.exams}

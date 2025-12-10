@@ -1,4 +1,4 @@
-import { Button, Card, Form, Grid, Input, theme, Typography } from "antd";
+import { Button, Card, Form, Input, theme, Typography } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useIntl } from "react-intl";
 import { Link, useNavigate } from "react-router";
@@ -15,9 +15,8 @@ export function Login() {
   const { token } = theme.useToken();
   const [form] = Form.useForm();
   const { formatMessage } = useIntl();
-  const { sm, md } = Grid.useBreakpoint();
 
-  const handleLogin = (values: { email: string; password: string }) => {
+  const handleLogin = () => {
     navigate(routes.dashboard);
     dispatch(setAccessToken("accessToken"));
   };

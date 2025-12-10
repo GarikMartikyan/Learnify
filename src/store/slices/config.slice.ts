@@ -1,5 +1,4 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { RootState } from "../store.ts";
 import type { Locale, ThemeMode } from "../../constants/types/index.types.ts";
 import {
   getAccessTokenLS,
@@ -47,9 +46,9 @@ const configSlice = createSlice({
     },
   },
   selectors: {
-    selectLocale: (state: RootState) => state.locale,
-    selectThemeMode: (state: RootState) => state.themeMode,
-    selectAccessToken: (state: RootState) => state.accessToken,
+    selectLocale: (state) => state.locale,
+    selectThemeMode: (state) => state.themeMode,
+    selectAccessToken: (state) => state.accessToken,
   },
 });
 

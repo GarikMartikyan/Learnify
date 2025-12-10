@@ -31,13 +31,20 @@ export function ChapterPage({ chapter = mockChapter }: ChapterPageProps) {
             );
           case "youtube":
             return (
-              <div key={index} style={{ marginTop: 24, marginBottom: 24 }}>
+              <div
+                key={index}
+                style={{
+                  marginTop: 24,
+                  marginBottom: 24,
+                  marginInline: "auto",
+                  maxWidth: 900,
+                }}
+              >
                 <iframe
                   width="100%"
-                  height="400"
+                  style={{ aspectRatio: "16/9" }}
                   src={block.value}
                   title="YouTube Video"
-                  frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 ></iframe>

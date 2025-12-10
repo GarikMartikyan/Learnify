@@ -4,23 +4,32 @@ import { CourseCard } from "../components/shared/CourseCard.tsx";
 import { PageTitle } from "../components/shared/PageTitle.tsx";
 import { users } from "../placeholder/user.ts";
 import { useIntl } from "react-intl";
-import { useLocation } from "react-router";
+import { useNavigate } from "react-router";
 import { routes } from "../constants/routes.ts";
 import type { ICourse } from "../constants/interfaces/course.interfaces.ts";
-import { CourseSearchFiltesr } from "../components/CourseSearchFiltesr.tsx";
+import { CourseSearchFilters } from "../components/CourseSearchFilters.tsx";
 
-export function Courses() {
+export function Courses({ isMyCourses = false }) {
   const { formatMessage } = useIntl();
-  const { pathname } = useLocation();
+  const navigate = useNavigate();
+
   let coursesList: ICourse[] = [...courses];
-  if (pathname === routes.myCourses) {
+  if (isMyCourses) {
     coursesList = coursesList.slice(1, 4);
   }
+
+  const handleCardClick = (id) => {
+    if (isMyCourses) {
+      navigate(routes.myCourseById(id));
+    } else {
+      navigate(routes.courseById(id));
+    }
+  };
   return (
     <>
       <PageTitle>{formatMessage({ id: "courses" })}</PageTitle>
       <div style={{ marginBlock: 10 }}>
-        <CourseSearchFiltesr />
+        <CourseSearchFilters />
       </div>
 
       <Row align={"stretch"} gutter={[16, 16]}>
@@ -28,6 +37,7 @@ export function Courses() {
           <Col xs={24} sm={12} md={8} key={course.id}>
             <CourseCard
               {...course}
+              onCLick={() => handleCardClick(course.id)}
               teacherName={
                 users.find((user) => user.id === course.teacherId)?.name || ""
               }

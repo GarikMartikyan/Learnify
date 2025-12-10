@@ -1,9 +1,5 @@
-import { Button, Flex, Input, Layout, Space, theme } from "antd";
-import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { Button, Flex, Layout, Space, theme } from "antd";
+import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { ThemeModeSwitch } from "../shared/ThemeModeSwitch.tsx";
 import { useDispatch } from "react-redux";
 import {
@@ -14,12 +10,10 @@ import { useAppSelector } from "../../hooks/useAppSelector.ts";
 import { LocaleSelect } from "../shared/LocaleSelect.tsx";
 import { HeaderDropdown } from "./HeaderDropdown.tsx";
 import { HEADER_HEIGHT } from "./Layout.tsx";
-import { useIntl } from "react-intl";
 
 const { Header: AntdHeader } = Layout;
 
 export function Header() {
-  const { formatMessage } = useIntl();
   const { token } = theme.useToken();
   const { colorBgContainer } = token;
 
@@ -48,13 +42,7 @@ export function Header() {
             height: 32,
           }}
         />
-        <div style={{ maxWidth: 500, width: "100%" }}>
-          <Input
-            suffix={<SearchOutlined />}
-            placeholder={formatMessage({ id: "search-course" })}
-          />
-        </div>
-        <Space align={"center"} size={"middle"}>
+        <Space align={"center"} size={"large"}>
           <LocaleSelect />
           <ThemeModeSwitch />
           <HeaderDropdown />

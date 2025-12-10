@@ -19,6 +19,7 @@ import { TeacherApplicationsPage } from "../pages/student/ApplyTeacher.tsx";
 import { ForgotPassword } from "../pages/public/ForgotPassword.tsx";
 import { Layout } from "../components/common/Layout.tsx";
 import { Help } from "../pages/Help.tsx";
+import ParticipatedCoursePage from "../pages/ParticipatedCoursePage.tsx";
 
 export function Routing() {
   return (
@@ -36,6 +37,10 @@ export function Routing() {
       <Route element={<PrivateRoutes />}>
         <Route path={routes.dashboard} element={<Dashboard />} />
         <Route path={routes.myCourses} element={<MyCourses />} />
+        <Route
+          path={routes.myCourseById()}
+          element={<ParticipatedCoursePage />}
+        />
         <Route path={routes.courseById()} element={<CourseDetailsPage />} />
         <Route path={routes.profile} element={<UserProfilePage />} />
         <Route path={routes.settings} element={<Settings />} />
