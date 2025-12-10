@@ -11,19 +11,21 @@ import {
 import {
   BookOutlined,
   CalendarOutlined,
-  DollarOutlined,
   GlobalOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { PageTitle } from "../components/shared/PageTitle.tsx";
 import { courseDetails } from "../placeholder/courses.ts";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { routes } from "../constants/routes.ts";
+
+import learn_js from "../assets/learn_js.jpg";
 
 const { Title, Text, Paragraph } = Typography;
 
 export function CourseDetailsPage() {
   const { token } = theme.useToken();
+  const { courseId } = useParams();
   const navigate = useNavigate();
   const handleChapterClick = (chapterId) => {
     navigate(routes.chapterById(chapterId));
@@ -40,7 +42,7 @@ export function CourseDetailsPage() {
         cover={
           <img
             alt={courseDetails.title}
-            src={courseDetails.image}
+            src={learn_js}
             style={{
               width: "100%",
               aspectRatio: "5/2",
@@ -74,9 +76,7 @@ export function CourseDetailsPage() {
             marginTop: 16,
           }}
         >
-          <div style={{ fontSize: 18, fontWeight: 600 }}>
-            <DollarOutlined /> ${courseDetails.price.toFixed(2)}
-          </div>
+          <div style={{ fontSize: 18, fontWeight: 600 }}></div>
           <Button type="primary" size="large">
             Join Course
           </Button>

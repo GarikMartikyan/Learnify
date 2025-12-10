@@ -1,34 +1,25 @@
-import { Button, Card, Form, Input, Select, theme, Typography } from "antd";
+import { Button, Card, Form, Input, Select, Typography } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useIntl } from "react-intl";
-import { Link } from "react-router";
-import { routes } from "../constants/routes.ts";
-import { Logo } from "../components/shared/Logo.tsx";
+import { Link, useNavigate } from "react-router";
+import { routes } from "../../constants/routes.ts";
+import { Logo } from "../../components/shared/Logo.tsx";
 import { getNames } from "country-list";
+import { useDispatch } from "react-redux";
+import { setAccessToken } from "../../store/slices/config.slice.ts";
 
 const { Text } = Typography;
 
-interface RegisterPageProps {
-  onRegister?: (values: {
-    name: string;
-    email: string;
-    password: string;
-    role: "student" | "tutor";
-  }) => void;
-}
-
-export function Register({ onRegister }: RegisterPageProps) {
-  const { token } = theme.useToken();
+export function Register() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [form] = Form.useForm();
   const { formatMessage } = useIntl();
   const countries = getNames(); // Returns array of country names
 
   const handleRegister = (values: Record<string, string>) => {
-    if (onRegister) {
-      onRegister(values);
-    } else {
-      console.log("Register data:", values);
-    }
+    navigate(routes.dashboard);
+    dispatch(setAccessToken("accessToken"));
   };
 
   return (
@@ -127,10 +118,12 @@ export function Register({ onRegister }: RegisterPageProps) {
               }),
             },
             {
-              min: 6,
+              pattern:
+                /^(?=.{8,})(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9])(?!.*(.)\1\1).*$/,
               message: formatMessage({
-                id: "password-min-length",
-                defaultMessage: "Password must be at least 6 characters",
+                id: "password-rules",
+                defaultMessage:
+                  "Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, a special character, and no sequence of three identical characters.",
               }),
             },
           ]}
@@ -145,7 +138,6 @@ export function Register({ onRegister }: RegisterPageProps) {
             aria-label="Password"
           />
         </Form.Item>
-
         {/* Confirm Password */}
         <Form.Item
           name="confirmPassword"
@@ -200,13 +192,8 @@ export function Register({ onRegister }: RegisterPageProps) {
             placeholder="Select Country"
             showSearch
             optionFilterProp="children"
-          >
-            {countries.map((country) => (
-              <Option key={country} value={country}>
-                {country}
-              </Option>
-            ))}
-          </Select>
+            options={countries.map((country) => ({ value: country }))}
+          />
         </Form.Item>
 
         {/* Submit */}

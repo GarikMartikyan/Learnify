@@ -3,14 +3,13 @@ import {
   Card,
   Divider,
   Form,
-  Input,
   message,
   Radio,
   Space,
   Typography,
 } from "antd";
-import type { IExam } from "../constants/interfaces/exam.interfaces.ts";
-import { PageTitle } from "../components/shared/PageTitle.tsx";
+import type { IExam } from "../../constants/interfaces/exam.interfaces.ts";
+import { PageTitle } from "../../components/shared/PageTitle.tsx";
 
 const { Title, Paragraph } = Typography;
 
@@ -22,7 +21,6 @@ export function ExamPage({ exam }: ExamPageProps) {
   const [form] = Form.useForm();
 
   const handleSubmit = () => {
-    // console.log("Exam answers:", values);
     message.success("Your answers have been submitted!");
   };
 
@@ -71,20 +69,6 @@ export function ExamPage({ exam }: ExamPageProps) {
                   <Radio value="true">True</Radio>
                   <Radio value="false">False</Radio>
                 </Radio.Group>
-              </Form.Item>
-            )}
-
-            {q.type === "text" && (
-              <Form.Item
-                name={`q-${index}`}
-                rules={[
-                  { required: true, message: "Please provide your answer" },
-                ]}
-              >
-                <Input.TextArea
-                  rows={3}
-                  placeholder="Type your answer here..."
-                />
               </Form.Item>
             )}
           </Card>

@@ -2,7 +2,7 @@ export interface IUser {
   id: number;
   name: string;
   email: string;
-  role: "student" | "teacher";
+  role: "student" | "teacher" | "superuser";
   passwordHash?: string;
   bio?: string;
   avatarUrl?: string;

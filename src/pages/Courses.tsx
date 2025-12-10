@@ -7,6 +7,7 @@ import { useIntl } from "react-intl";
 import { useLocation } from "react-router";
 import { routes } from "../constants/routes.ts";
 import type { ICourse } from "../constants/interfaces/course.interfaces.ts";
+import { CourseSearchFiltesr } from "../components/CourseSearchFiltesr.tsx";
 
 export function Courses() {
   const { formatMessage } = useIntl();
@@ -18,6 +19,9 @@ export function Courses() {
   return (
     <>
       <PageTitle>{formatMessage({ id: "courses" })}</PageTitle>
+      <div style={{ marginBlock: 10 }}>
+        <CourseSearchFiltesr />
+      </div>
 
       <Row align={"stretch"} gutter={[16, 16]}>
         {coursesList.map((course) => (

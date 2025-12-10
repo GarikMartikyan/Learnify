@@ -14,7 +14,6 @@ export function CoursesTab({ courses }: CoursesTabProps) {
   const HandleClick = (courseId: string) => {
     navigate(routes.courseById(courseId));
   };
-  console.log({ courses });
   return (
     <List
       grid={{ gutter: 16, column: 3 }}

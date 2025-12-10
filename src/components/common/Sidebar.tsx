@@ -8,11 +8,13 @@ import { routes } from "../../constants/routes.ts";
 import { useIntl } from "react-intl";
 import { userRole } from "../../utils/index.utils.ts";
 import {
-  PicRightOutlined,
+  BarChartOutlined,
+  BookOutlined,
+  HomeOutlined,
   QuestionCircleOutlined,
-  ScheduleOutlined,
   SnippetsOutlined,
 } from "@ant-design/icons";
+import type { IUser } from "../../constants/interfaces/user.interfaces.ts";
 
 const { Sider } = Layout;
 
@@ -26,33 +28,51 @@ export function Sidebar() {
     navigate(item?.key);
   };
 
-  const menuItems: {
-    student: MenuProps["items"];
-    teacher: MenuProps["items"];
-  } = {
+  const menuItems: Record<IUser["role"], MenuProps["items"]> = {
     student: [
-      {
-        key: routes.dashboard,
-        label: formatMessage({ id: "dashboard" }),
-        icon: <PicRightOutlined />,
-      },
+      // {
+      //   key: routes.dashboard,
+      //   label: formatMessage({ id: "dashboard" }),
+      //   icon: <PicRightOutlined />,
+      // },
       {
         key: routes.courses,
         label: formatMessage({ id: "courses" }),
         icon: <SnippetsOutlined />,
       },
-      {
-        key: routes.myCourses,
-        label: formatMessage({ id: "my-courses" }),
-        icon: <ScheduleOutlined />,
-      },
+      // {
+      //   key: routes.myCourses,
+      //   label: formatMessage({ id: "my-courses" }),
+      //   icon: <ScheduleOutlined />,
+      // },
       {
         key: routes.help,
         label: formatMessage({ id: "help" }),
         icon: <QuestionCircleOutlined />,
       },
     ],
-    teacher: [],
+    teacher: [
+      {
+        key: "dashboard",
+        label: "Dashboard",
+        icon: <HomeOutlined />,
+      },
+      {
+        key: "my-courses",
+        label: "My Courses",
+        icon: <BookOutlined />,
+      },
+      {
+        key: "course-statistics",
+        label: "Course Statistics",
+        icon: <BarChartOutlined />,
+      },
+      {
+        key: "help",
+        label: "Help",
+        icon: <QuestionCircleOutlined />,
+      },
+    ],
   };
 
   return (

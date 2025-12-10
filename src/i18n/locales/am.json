@@ -1,25 +1,21 @@
 {
   "welcome-back": "Բարի վերադարձ",
   "please-login-to-continue": "Խնդրում ենք մուտք գործել շարունակելու համար",
-  "email": "Էլ. փոստ",
-  "email-required": "Խնդրում ենք մուտքագրել ձեր էլ. փոստը",
-  "email-invalid": "Մուտքագրեք վավեր էլ. փոստի հասցե",
-  "enter-your-email": "Մուտքագրեք ձեր էլ. փոստը",
-  "password": "Գաղտնաբառ",
-  "password-required": "Խնդրում ենք մուտքագրել ձեր գաղտնաբառը",
-  "password-min-length": "Գաղտնաբառը պետք է լինի առնվազն 6 նիշ",
-  "enter-your-password": "Մուտքագրեք ձեր գաղտնաբառը",
+
   "log-in": "Մուտք գործել",
-  "dont-have-an-account": "Չունե՞ք հաշիվ",
+  "dont-have-an-account": "Չունե՞ք հաշիվ: ",
   "sign-up": "Գրանցվել",
+
   "email": "Էլ. հասցե",
   "email-required": "Խնդրում ենք մուտքագրել ձեր էլ. հասցեն",
   "email-invalid": "Մուտքագրեք վավեր էլ. հասցե",
   "enter-your-email": "Մուտքագրեք ձեր էլ. հասցեն",
+  "select-country": "Ընտրեք երկիրը",
 
   "password": "Գաղտնաբառ",
+  "forgot-password": "Մոռացե՞լ եք գաղտնաբառը",
   "password-required": "Խնդրում ենք մուտքագրել ձեր գաղտնաբառը",
-  "password-min-length": "Գաղտնաբառը պետք է լինի առնվազն 6 նիշ",
+  "password-min-length": "Գաղտնաբառը պետք է լինի առնվազն 8 նիշ",
   "enter-your-password": "Մուտքագրեք ձեր գաղտնաբառը",
 
   "confirm-password": "Հաստատեք գաղտնաբառը",
@@ -36,7 +32,57 @@
   "select-role": "Ընտրեք ձեր դերը",
   "student": "Ուսանող",
   "tutor": "Դասընթացավար",
+  "teacher": "Դասատու",
 
-"teacher": "Դասատու",
-  "already-have-an-account": "Արդեն ունե՞ք հաշիվ:"
+  "already-have-an-account": "Արդեն ունե՞ք հաշիվ։ ",
+
+  "not-found-title": "404",
+  "not-found-subtitle": "Էջը գոյություն չունի։",
+  "not-found-back-home": "Վերադառնալ գլխավոր էջ",
+
+  "participated": "Մասնակցված",
+  "course-by": "Դասընթացի հեղինակ՝ {name}",
+  "search-course": "Փնտրել դասընթացներ",
+  "passed-courses": "Անցած դասընթացներ",
+
+  "profile-info": "Պրոֆիլի տեղեկություններ",
+  "bio": "Կենսագրություն",
+  "country": "Երկիր",
+  "language": "Լեզու",
+  "starting-date": "Սկսելու ամսաթիվ",
+  "price": "Գին",
+  "category": "Կատեգորիա",
+  "level": "Մակարդակ",
+  "chapters": "Բաժիններ",
+
+  "courses": "Դասընթացներ",
+  "course": "Դասընթաց",
+  "my-courses": "Իմ դասընթացները",
+  "dashboard": "Կառավարման վահանակ",
+  "settings": "Կարգավորումներ",
+  "help": "Օգնություն",
+  "logout": "Ելք",
+  "profile": "Պրոֆիլ",
+
+  "courses-tab": "Դասընթացներ",
+  "my-courses-tab": "Իմ դասընթացները",
+  "help-tab": "Օգնություն",
+  "settings-tab": "Կարգավորումներ",
+
+  "user-settings": "Օգտատիրոջ կարգավորումներ",
+  "profile-updated": "Պրոֆիլը հաջողությամբ թարմացվեց!",
+  "avatar-updated": "Ավատարը թարմացվեց!",
+  "edit-profile": "Խմբագրել պրոֆիլը",
+
+  "full-name-placeholder": "Ձեր անուն ազգանունը",
+  "email-placeholder": "example@mail.com",
+  "country-placeholder": "Մուտքագրեք ձեր երկիրը",
+  "bio-placeholder": "Պատմեք ձեզ մասին...",
+  "profile-picture": "Պրոֆիլի նկար",
+  "change-avatar": "Փոխել ավատարը",
+  "cancel": "Չեղարկել",
+  "save-changes": "Պահպանել փոփոխությունները",
+
+  "apply-to-teacher": "Դիմել ուսուցչի պաշտոնի",
+  "reset-password": "Վերականգնել գաղտնաբառը"
 }

@@ -7,7 +7,6 @@ export interface ICourse {
   level: "beginner" | "intermediate" | "advanced";
   startDate: string;
   language: string;
-  price: number;
   createdAt: string;
   image?: string;
 }
@@ -34,7 +33,6 @@ export interface ICourseDetails {
   teacher: string;
   language: string;
   startingDate: string; // ISO string or 'YYYY-MM-DD'
-  price: number;
   category: string;
   image?: string;
   chapters?: IChapterInfo[];

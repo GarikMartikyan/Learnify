@@ -68,7 +68,6 @@
 //   );
 //
 //   const handleSelect = (_, course) => {
-//     console.log(course);
 //     navigate(routes.courseById(course.course.id));
 //     inputRef?.current?.blur();
 //   };

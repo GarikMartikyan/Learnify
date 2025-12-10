@@ -24,13 +24,11 @@ export const mockUpcomingChapters: IUpcomingChapter[] = [
     id: 1,
     courseTitle: "JavaScript Basics",
     chapterTitle: "Loops and Iteration",
-    releaseDate: "2025-10-19T08:00:00Z",
   },
   {
     id: 2,
     courseTitle: "Advanced React",
     chapterTitle: "Context API Deep Dive",
-    releaseDate: "2025-10-21T09:00:00Z",
   },
 ];
 

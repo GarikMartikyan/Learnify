@@ -1,11 +1,6 @@
 import React from "react";
-import { Avatar, Card, Flex, Space, Tag, theme, Typography } from "antd";
-import {
-  CalendarOutlined,
-  DollarOutlined,
-  GlobalOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { Avatar, Card, Flex, Rate, Space, Tag, theme, Typography } from "antd";
+import { GlobalOutlined, UserOutlined } from "@ant-design/icons";
 import { useIntl } from "react-intl";
 import { useNavigate } from "react-router";
 import { routes } from "../../constants/routes.ts";
@@ -20,7 +15,6 @@ interface CourseCardProps {
   level: "beginner" | "intermediate" | "advanced";
   startDate: string; // ISO date string
   language: string;
-  price: number;
   teacherName: string;
   teacherImage?: string;
 }
@@ -32,7 +26,6 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   level,
   startDate,
   language,
-  price,
   teacherName,
   teacherImage,
   id,
@@ -40,20 +33,9 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   const { formatMessage } = useIntl();
   const { token } = theme.useToken();
   const navigate = useNavigate();
-  console.log({
-    title,
-    description,
-    thumbnailUrl,
-    level,
-    startDate,
-    language,
-    price,
-    teacherName,
-  });
   const handleCardClick = () => {
     navigate(routes.courseById(String(id)));
   };
-  console.log({ teacherImage });
   return (
     <Card
       variant="borderless"
@@ -107,15 +89,15 @@ export const CourseCard: React.FC<CourseCardProps> = ({
           </Tag>
         </Space>
 
-        <Space size="small">
-          <CalendarOutlined />{" "}
-          <Text>{new Date(startDate).toLocaleDateString()}</Text>
-        </Space>
-
-        <Space size="small">
-          <DollarOutlined /> <Text strong>${price.toFixed(2)}</Text>
-        </Space>
+        {/*<Space size="small">*/}
+        {/*  <CalendarOutlined />{" "}*/}
+        {/*  <Text>{new Date(startDate).toLocaleDateString()}</Text>*/}
+        {/*</Space>*/}
       </Flex>
+      <Rate
+        style={{ marginBlock: 10 }}
+        value={Math.floor(Math.random() * 5) + 3}
+      />
     </Card>
   );
 };

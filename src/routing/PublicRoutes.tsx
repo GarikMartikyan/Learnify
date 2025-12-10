@@ -1,10 +1,19 @@
-import { Outlet } from "react-router";
+import { Navigate, Outlet } from "react-router";
 import { Col, Flex, Row } from "antd";
 import { ThemeModeSwitch } from "../components/shared/ThemeModeSwitch.tsx";
 import { LocaleSelect } from "../components/shared/LocaleSelect.tsx";
 import bgImage from "../assets/pexels-lilartsy-1925536.jpg";
+import { useAppSelector } from "../hooks/useAppSelector.ts";
+import { selectAccessToken } from "../store/slices/config.slice.ts";
+import { routes } from "../constants/routes.ts";
 
 export function PublicRoutes() {
+  const accessToken = useAppSelector(selectAccessToken);
+
+  if (accessToken) {
+    return <Navigate to={routes.dashboard} replace />;
+  }
+
   return (
     <Row style={{ minHeight: "100vh", backgroundImage: bgImage }}>
       <Col xs={24} sm={24} md={11} lg={9}>

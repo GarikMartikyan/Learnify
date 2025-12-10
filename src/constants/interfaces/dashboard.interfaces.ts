@@ -9,7 +9,6 @@ export interface IUpcomingChapter {
   id: number;
   courseTitle: string;
   chapterTitle: string;
-  releaseDate: string;
 }
 
 export interface IRecentCourse {

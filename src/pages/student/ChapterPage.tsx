@@ -1,7 +1,7 @@
 import { Divider, Image, Typography } from "antd";
-import { mockChapter } from "../placeholder/chapter.ts";
-import type { IChapter } from "../constants/interfaces/chapter.interfaces.ts";
-import { PageTitle } from "../components/shared/PageTitle.tsx";
+import { mockChapter } from "../../placeholder/chapter.ts";
+import type { IChapter } from "../../constants/interfaces/chapter.interfaces.ts";
+import { PageTitle } from "../../components/shared/PageTitle.tsx";
 
 const { Title, Paragraph } = Typography;
 

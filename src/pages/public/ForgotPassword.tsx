@@ -1,39 +1,35 @@
 import { Button, Card, Form, Grid, Input, theme, Typography } from "antd";
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
 import { useIntl } from "react-intl";
 import { Link } from "react-router";
-import { routes } from "../constants/routes.ts";
-import { Logo } from "../components/shared/Logo.tsx";
+import { routes } from "../../constants/routes.ts";
+import { Logo } from "../../components/shared/Logo.tsx";
 
 const { Text } = Typography;
 
-interface LoginPageProps {
-  onLogin?: (values: { email: string; password: string }) => void;
+interface ForgotPasswordPageProps {
+  onSubmit?: (values: { email: string }) => void;
 }
 
-export function Login({ onLogin }: LoginPageProps) {
+export function ForgotPassword({ onSubmit }: ForgotPasswordPageProps) {
   const { token } = theme.useToken();
   const [form] = Form.useForm();
   const { formatMessage } = useIntl();
   const { sm, md } = Grid.useBreakpoint();
-  console.log({ sm, md });
 
-  const handleLogin = (values: { email: string; password: string }) => {
-    if (onLogin) {
-      onLogin(values);
+  const handleSubmit = (values: { email: string }) => {
+    if (onSubmit) {
+      onSubmit(values);
     } else {
-      console.log("Login data:", values);
     }
   };
 
   return (
     <Card
-      styles={{
-        body: { paddingBlock: 40 },
-      }}
       style={{
         borderRadius: 12,
         boxShadow: token.boxShadowTertiary,
+        paddingBlock: 40,
       }}
     >
       <div style={{ textAlign: "center", marginBottom: "1rem" }}>
@@ -42,9 +38,9 @@ export function Login({ onLogin }: LoginPageProps) {
 
       <Form
         form={form}
-        name="login-form"
+        name="forgot-password-form"
         layout="vertical"
-        onFinish={handleLogin}
+        onFinish={handleSubmit}
         requiredMark={false}
       >
         <Form.Item
@@ -77,39 +73,6 @@ export function Login({ onLogin }: LoginPageProps) {
           />
         </Form.Item>
 
-        <Form.Item
-          name="password"
-          label={formatMessage({
-            id: "password",
-            defaultMessage: "Password",
-          })}
-          rules={[
-            {
-              required: true,
-              message: formatMessage({
-                id: "password-required",
-                defaultMessage: "Please enter your password",
-              }),
-            },
-            {
-              min: 6,
-              message: formatMessage({
-                id: "password-min-length",
-                defaultMessage: "Password must be at least 6 characters",
-              }),
-            },
-          ]}
-        >
-          <Input.Password
-            prefix={<LockOutlined />}
-            placeholder={formatMessage({
-              id: "enter-your-password",
-              defaultMessage: "Enter your password",
-            })}
-            aria-label="Password"
-          />
-        </Form.Item>
-
         <Form.Item>
           <Button
             type="primary"
@@ -117,18 +80,21 @@ export function Login({ onLogin }: LoginPageProps) {
             block
             style={{ borderRadius: 8 }}
           >
-            {formatMessage({ id: "log-in", defaultMessage: "Log In" })}
+            {formatMessage({
+              id: "reset-password",
+              defaultMessage: "Reset Password",
+            })}
           </Button>
         </Form.Item>
 
         <div style={{ textAlign: "center", marginTop: "1rem" }}>
           <Text type="secondary">
             {formatMessage({
-              id: "dont-have-an-account",
-              defaultMessage: "Don’t have an account?",
+              id: "remember-your-password",
+              defaultMessage: "Remember your password?",
             })}{" "}
-            <Link to={routes.register}>
-              {formatMessage({ id: "sign-up", defaultMessage: "Sign Up" })}
+            <Link to={routes.login}>
+              {formatMessage({ id: "log-in", defaultMessage: "Log In" })}
             </Link>
           </Text>
         </div>

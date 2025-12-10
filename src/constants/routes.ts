@@ -1,8 +1,9 @@
 export const routes = {
   login: "/login",
   register: "/register",
-  dashboard: "/",
-  courses: "/courses",
+  dashboard: "/dashboard",
+  courses: "/",
+  applyToTeacher: "/apply-to-teacher",
   courseById: (courseId = ":courseId") => `/courses/${courseId}`,
   chapterById: (chapterId = ":chapterId") => `/chapters/${chapterId}`,
   examById: (examId = ":examId") => `/exams/${examId}`,
@@ -11,5 +12,6 @@ export const routes = {
   settings: "/settings",
   userById: (userId = ":userId") => `/users/${userId}`,
   help: "/help",
-  applyToTeacher: "/apply-to-teacher",
+  forgotPassword: "/forgot-password",
+  teacherApplication: "/teacher-application",
 } as const;

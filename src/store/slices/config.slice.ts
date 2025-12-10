@@ -2,8 +2,11 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../store.ts";
 import type { Locale, ThemeMode } from "../../constants/types/index.types.ts";
 import {
+  getAccessTokenLS,
   getLocaleLS,
   getThemeModeLS,
+  removeAccessTokenLS,
+  setAccessTokenLS,
   setLocaleLS,
   setThemeModeLS,
 } from "../../services/localStorage.service.ts";
@@ -11,11 +14,13 @@ import {
 interface ConfigState {
   themeMode: ThemeMode;
   locale: Locale;
+  accessToken?: string | null;
 }
 
 const initialState: ConfigState = {
   themeMode: getThemeModeLS() || "light",
   locale: getLocaleLS() || "am",
+  accessToken: getAccessTokenLS(),
 };
 
 const configSlice = createSlice({
@@ -30,11 +35,27 @@ const configSlice = createSlice({
       setLocaleLS(action.payload);
       state.locale = action.payload;
     },
+    setAccessToken: (state, action: PayloadAction<string | null>) => {
+      if (action.payload) {
+        setAccessTokenLS(action.payload);
+      }
+      state.accessToken = action.payload;
+    },
+    removeAccessToken: (state) => {
+      removeAccessTokenLS();
+      state.accessToken = null;
+    },
+  },
+  selectors: {
+    selectLocale: (state: RootState) => state.locale,
+    selectThemeMode: (state: RootState) => state.themeMode,
+    selectAccessToken: (state: RootState) => state.accessToken,
   },
 });
 
-export const { setThemeMode, setLocale } = configSlice.actions;
-export const configReducer = configSlice.reducer;
+export const { setThemeMode, setLocale, setAccessToken, removeAccessToken } =
+  configSlice.actions;
+export const { selectLocale, selectAccessToken, selectThemeMode } =
+  configSlice.selectors;
 
-export const selectThemeMode = (state: RootState) => state.config.themeMode;
-export const selectLocale = (state: RootState) => state.config.locale;
+export const configReducer = configSlice.reducer;

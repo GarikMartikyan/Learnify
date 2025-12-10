@@ -1,4 +1,4 @@
-import { Dropdown, type MenuProps, Space, Typography } from "antd";
+import { Button, Dropdown, type MenuProps, Space, Typography } from "antd";
 import {
   LogoutOutlined,
   SettingOutlined,
@@ -6,22 +6,32 @@ import {
 } from "@ant-design/icons";
 import { routes } from "../../constants/routes.ts";
 import { useNavigate } from "react-router";
-import { user } from "../../utils/index.utils.ts";
-import { UserAvatar } from "../shared/UserAvatar.tsx";
 import { useIntl } from "react-intl";
+import { UserAvatar } from "../shared/UserAvatar.tsx";
+import { useDispatch } from "react-redux";
+import {
+  removeAccessToken,
+  selectAccessToken,
+} from "../../store/slices/config.slice.ts";
+import { useAppSelector } from "../../hooks/useAppSelector.ts";
+import { userRole } from "../../utils/index.utils.ts";
 
 export function HeaderDropdown() {
+  const accessToken = useAppSelector(selectAccessToken);
+
+  const dispatch = useDispatch();
   const { formatMessage } = useIntl();
   const navigate = useNavigate();
+
   const items: MenuProps["items"] = [
     {
       key: routes.profile,
-      label: "Profile",
+      label: formatMessage({ id: "profile" }),
       icon: <UserOutlined />,
     },
     {
       key: routes.settings,
-      label: "Settings",
+      label: formatMessage({ id: "settings" }),
       icon: <SettingOutlined />,
     },
     {
@@ -33,35 +43,43 @@ export function HeaderDropdown() {
       type: "divider",
     },
     {
-      key: "logout",
-      label: "Logout",
+      key: routes.login,
+      label: formatMessage({ id: "logout" }),
       icon: <LogoutOutlined />,
     },
   ];
 
+  const filteredMenuItems =
+    userRole === "student"
+      ? items
+      : items?.filter((items) => items?.key !== routes.applyToTeacher);
+
   const handleMenuClick: MenuProps["onClick"] = ({ key }) => {
+    if (key === routes.login) {
+      dispatch(removeAccessToken());
+    }
     navigate(key);
   };
 
-  return (
+  return accessToken ? (
     <Dropdown
-      menu={{ items, onClick: handleMenuClick }}
+      menu={{ items: filteredMenuItems, onClick: handleMenuClick }}
       placement="bottomRight"
       trigger={["click"]}
     >
-      <a
-        onClick={(e) => e.preventDefault()}
-        style={{ display: "inline-block", cursor: "pointer" }}
-      >
-        <Space split={undefined} size="small" align="center">
-          <UserAvatar />
-          {user.name ? (
-            <Typography.Text strong style={{ marginLeft: 4 }}>
-              {user.name}
-            </Typography.Text>
-          ) : null}
-        </Space>
-      </a>
+      <Space split={undefined} size="small" align="center">
+        <UserAvatar />
+      </Space>
     </Dropdown>
+  ) : (
+    <Button type="text">
+      <Typography.Text
+        onClick={() => navigate(routes.login)}
+        strong
+        style={{ marginLeft: 4, whiteSpace: "nowrap" }}
+      >
+        {formatMessage({ id: "sign-in" })}
+      </Typography.Text>
+    </Button>
   );
 }

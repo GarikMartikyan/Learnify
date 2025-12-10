@@ -14,7 +14,6 @@ export const courses: ICourse[] = [
     level: "beginner",
     startDate: "2025-11-01T09:00:00Z",
     language: "English",
-    price: 49.99,
     createdAt: "2025-03-01T10:00:00Z",
     image:
       "https://investin.org/cdn/shop/articles/How_to_Motivate_Yourself_to_Study.jpg?v=1640183354",
@@ -29,7 +28,6 @@ export const courses: ICourse[] = [
     level: "intermediate",
     startDate: "2025-11-15T10:00:00Z",
     language: "English",
-    price: 59.99,
     createdAt: "2025-03-10T14:30:00Z",
     image:
       "https://iglu.com.au/wp-content/uploads/2024/09/productive-studying.jpg",
@@ -44,7 +42,6 @@ export const courses: ICourse[] = [
     level: "beginner",
     startDate: "2025-12-01T12:00:00Z",
     language: "Armenian",
-    price: 39.99,
     createdAt: "2025-04-05T09:15:00Z",
     image:
       "https://ugc.futurelearn.com/uploads/images/4d/c9/4dc9321b-f608-4196-9fb7-02f6c0029a5f.jpg",
@@ -59,7 +56,6 @@ export const courses: ICourse[] = [
     level: "advanced",
     startDate: "2026-01-10T10:00:00Z",
     language: "English",
-    price: 69.99,
     createdAt: "2025-05-15T08:30:00Z",
     image:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtUkmluMeLOj-dZ7gxZXpl209aWVsw7AZiVg&s",
@@ -74,7 +70,6 @@ export const courses: ICourse[] = [
     level: "intermediate",
     startDate: "2025-11-20T09:30:00Z",
     language: "English",
-    price: 44.99,
     createdAt: "2025-06-10T09:00:00Z",
     image:
       "https://www.aeccglobal.my/images/2022/11/08/study-information--technology-abroad.webp",
@@ -89,7 +84,6 @@ export const courseDetails: ICourseDetails = {
   teacher: "Alice Johnson",
   language: "English",
   startingDate: "2025-10-20",
-  price: 49.99,
   category: "Programming",
   image: "https://images.pexels.com/photos/5088193/pexels-photo-5088193.jpeg",
   chapters: [

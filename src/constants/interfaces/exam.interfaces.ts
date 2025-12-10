@@ -1,5 +1,5 @@
 export interface IQuestion {
-  type: "multiple-choice" | "true-false" | "text";
+  type: "multiple-choice" | "true-false";
   question: string;
   options?: string[];
   answer?: string;

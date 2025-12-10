@@ -13,7 +13,6 @@ export function AppInitProvider({ children }: { children: ReactNode }) {
 
   const finalTheme = themes["dark"];
   const { defaultAlgorithm, darkAlgorithm } = antTheme;
-  console.log();
   return (
     <ConfigProvider
       theme={{
