@@ -32,7 +32,7 @@ export function Courses({ isMyCourses = false }) {
       <Flex justify={"space-between"}>
         <PageTitle>{formatMessage({ id: "courses" })}</PageTitle>
         {isTeacher && (
-          <Link to={routes.myCourseById(123)}>
+          <Link to={routes.myCourseById("123")}>
             <Button type="primary" icon={<PlusOutlined />}>
               {formatMessage({ id: "create-course" })}
             </Button>

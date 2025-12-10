@@ -5,9 +5,9 @@ import {
   LockOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router";
-import { routes } from "../constants/routes.ts";
-import { PageTitle } from "../components/shared/PageTitle.tsx";
 import { useIntl } from "react-intl";
+import { PageTitle } from "../../components/shared/PageTitle.tsx";
+import { routes } from "../../constants/routes.ts";
 
 const { Title, Text } = Typography;
 
