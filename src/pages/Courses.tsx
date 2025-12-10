@@ -9,6 +9,7 @@ import { routes } from "../constants/routes.ts";
 import type { ICourse } from "../constants/interfaces/course.interfaces.ts";
 import { CourseSearchFilters } from "../components/CourseSearchFilters.tsx";
 import { PlusOutlined } from "@ant-design/icons";
+import { isTeacher } from "../utils/index.utils.ts";
 
 export function Courses({ isMyCourses = false }) {
   const { formatMessage } = useIntl();
