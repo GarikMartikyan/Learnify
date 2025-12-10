@@ -1,26 +1,13 @@
-import {
-  Button,
-  Card,
-  Flex,
-  List,
-  Popconfirm,
-  Space,
-  Tag,
-  Typography,
-} from "antd";
+import { Button, Card, List, Tag, Typography } from "antd";
 import {
   BookOutlined,
-  DeleteOutlined,
-  EditOutlined,
   FileDoneOutlined,
   LockOutlined,
-  PlusOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router";
 import { routes } from "../constants/routes.ts";
 import { PageTitle } from "../components/shared/PageTitle.tsx";
 import { useIntl } from "react-intl";
-import { isTeacher } from "../utils/index.utils.ts";
 
 const { Title, Text } = Typography;
 
@@ -62,18 +49,9 @@ export default function ParticipatedCoursePage() {
   return (
     <div style={{ margin: "auto" }}>
       <div style={{ borderRadius: 16 }}>
-        <Flex justify="space-between">
-          <PageTitle showBackButton level={2}>
-            Complete JavaScript Course
-          </PageTitle>
-          <Popconfirm
-            title={formatMessage({ id: "delete-confirmation" })}
-            okText={formatMessage({ id: "yes" })}
-            cancelText={formatMessage({ id: "no" })}
-          >
-            <Button danger type="primary" icon={<DeleteOutlined />} />
-          </Popconfirm>
-        </Flex>
+        <PageTitle showBackButton level={2}>
+          Complete JavaScript Course
+        </PageTitle>
 
         <Card
           style={{
@@ -143,62 +121,24 @@ export default function ParticipatedCoursePage() {
                   }
                 />
 
-                {isTeacher ? (
-                  <Link
-                    to={
-                      item?.type === "chapter"
-                        ? routes.editChapter("1")
-                        : routes.editExam("1")
-                    }
-                  >
-                    <Button type={"primary"} icon={<EditOutlined />} />
+                {item.type === "chapter" && (
+                  <Link to={routes.chapterById("1")}>
+                    <Button type="primary">
+                      {formatMessage({ id: "open-chapter" })}
+                    </Button>
                   </Link>
-                ) : (
-                  <>
-                    {item.type === "chapter" && (
-                      <Link to={routes.chapterById("1")}>
-                        <Button type="primary">
-                          {formatMessage({ id: "open-chapter" })}
-                        </Button>
-                      </Link>
-                    )}
+                )}
 
-                    {item.type === "exam" && !locked && !item.passed && (
-                      <Button type="primary">
-                        {formatMessage({ id: "take-exam" })}
-                      </Button>
-                    )}
-                  </>
+                {item.type === "exam" && !locked && !item.passed && (
+                  <Button type="primary">
+                    {formatMessage({ id: "take-exam" })}
+                  </Button>
                 )}
               </List.Item>
             );
           }}
         />
       </div>
-      {isTeacher && (
-        <Flex justify="end">
-          <Space style={{ marginTop: 40 }}>
-            <Link to={routes.createChapter}>
-              <Button
-                icon={<PlusOutlined />}
-                type="primary"
-                style={{ width: "100%" }}
-              >
-                {formatMessage({ id: "add-chapter" })}
-              </Button>
-            </Link>
-            <Link to={routes.createExam}>
-              <Button
-                icon={<PlusOutlined />}
-                type="primary"
-                style={{ width: "100%" }}
-              >
-                {formatMessage({ id: "add-exam" })}
-              </Button>
-            </Link>
-          </Space>
-        </Flex>
-      )}
     </div>
   );
 }

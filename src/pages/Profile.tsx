@@ -14,7 +14,7 @@ import { ParagraphInfo } from "../components/shared/ParagraphInfo.tsx";
 import { ProfileInfoTab } from "../components/profile/ProfileInfoTab.tsx";
 import { CoursesTab } from "../components/profile/CoursesTab.tsx";
 import { UserAvatar } from "../components/shared/UserAvatar.tsx";
-import { user } from "../utils/index.utils.ts";
+import { user, userRole } from "../utils/index.utils.ts";
 import { courses } from "../placeholder/courses.ts";
 import { useIntl } from "react-intl";
 import { useNavigate } from "react-router";
@@ -86,11 +86,15 @@ export function UserProfilePage() {
               label: formatMessage({ id: "profile-info" }),
               children: <ProfileInfoTab user={user} />,
             },
-            {
-              key: "courses",
-              label: formatMessage({ id: "passed-courses" }),
-              children: <CoursesTab courses={courses} />,
-            },
+            ...(userRole === "student"
+              ? [
+                  {
+                    key: "courses",
+                    label: formatMessage({ id: "passed-courses" }),
+                    children: <CoursesTab courses={courses} />,
+                  },
+                ]
+              : []),
           ]}
         />
       </Card>

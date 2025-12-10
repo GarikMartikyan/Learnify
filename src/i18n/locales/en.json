@@ -120,5 +120,20 @@
   "overview": "Overview",
   "exams": "Exams",
 
-  "course-overview-text": "In this course, you will learn the core concepts of JavaScript, how to structure code efficiently, and how to build dynamic front-end experiences. Each chapter includes exercises, quizzes, and real-world examples."
+  "course-overview-text": "In this course, you will learn the core concepts of JavaScript, how to structure code efficiently, and how to build dynamic front-end experiences. Each chapter includes exercises, quizzes, and real-world examples.",
+  "chapter": "Chapter",
+  "exam": "Exam",
+  "locked": "Locked",
+
+  "open-chapter": "Open Chapter",
+  "take-exam": "Take Exam",
+  "courses-created": "Courses Created",
+  "exams-created": "Exams Created",
+  "students-enrolled": "Students Enrolled",
+  "course-passing-percentage": "Course Passing Percentage",
+  "delete-confirmation": "Are you sure delete this?",
+  "yes": "Yes",
+  "no": "No",
+  "add-chapter": "Add Chapter",
+  "add-exam": "Add Exam"
 }

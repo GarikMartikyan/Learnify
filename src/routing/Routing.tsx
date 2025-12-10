@@ -20,6 +20,8 @@ import { ForgotPassword } from "../pages/public/ForgotPassword.tsx";
 import { Layout } from "../components/common/Layout.tsx";
 import { Help } from "../pages/Help.tsx";
 import ParticipatedCoursePage from "../pages/ParticipatedCoursePage.tsx";
+import { CreateExamPage } from "../pages/teacher/CreateExam.tsx";
+import { CreateChapter } from "../pages/teacher/CreateChapter.tsx";
 
 export function Routing() {
   return (
@@ -37,6 +39,10 @@ export function Routing() {
       <Route element={<PrivateRoutes />}>
         <Route path={routes.dashboard} element={<Dashboard />} />
         <Route path={routes.myCourses} element={<MyCourses />} />
+        <Route path={routes.editExam()} element={<CreateExamPage />} />
+        <Route path={routes.createExam} element={<CreateExamPage />} />
+        <Route path={routes.editChapter()} element={<CreateChapter />} />
+        <Route path={routes.createChapter} element={<CreateChapter />} />
         <Route
           path={routes.myCourseById()}
           element={<ParticipatedCoursePage />}
