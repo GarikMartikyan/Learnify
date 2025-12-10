@@ -43,22 +43,6 @@ export function Login() {
         <Form.Item
           name="email"
           label={formatMessage({ id: "email", defaultMessage: "Email" })}
-          rules={[
-            {
-              required: true,
-              message: formatMessage({
-                id: "email-required",
-                defaultMessage: "Please enter your email",
-              }),
-            },
-            {
-              type: "email",
-              message: formatMessage({
-                id: "email-invalid",
-                defaultMessage: "Enter a valid email address",
-              }),
-            },
-          ]}
         >
           <Input
             prefix={<UserOutlined />}
@@ -76,22 +60,6 @@ export function Login() {
             id: "password",
             defaultMessage: "Password",
           })}
-          rules={[
-            {
-              required: true,
-              message: formatMessage({
-                id: "password-required",
-                defaultMessage: "Please enter your password",
-              }),
-            },
-            {
-              min: 8,
-              message: formatMessage({
-                id: "password-min-length",
-                defaultMessage: "Password must be at least 8 characters",
-              }),
-            },
-          ]}
         >
           <Input.Password
             prefix={<LockOutlined />}

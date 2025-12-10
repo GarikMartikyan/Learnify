@@ -36,5 +36,11 @@ export function CourseComplexitySelect({ showAllOption = false, ...rest }) {
       ]
     : options;
 
-  return <Select {...rest} options={finalOptions} />;
+  return (
+    <Select
+      placeholder={formatMessage({ id: "complexity" })}
+      {...rest}
+      options={finalOptions}
+    />
+  );
 }

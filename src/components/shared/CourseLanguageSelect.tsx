@@ -27,5 +27,11 @@ export function CourseLanguageSelect({ showAllOptions = false, ...rest }) {
       ]
     : options;
 
-  return <Select options={finalOptions} {...rest} />;
+  return (
+    <Select
+      options={finalOptions}
+      placeholder={formatMessage({ id: "language" })}
+      {...rest}
+    />
+  );
 }

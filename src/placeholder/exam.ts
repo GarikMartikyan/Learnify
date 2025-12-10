@@ -14,10 +14,7 @@ export const mockExam: IExam = {
       type: "true-false",
       question: "JavaScript is a statically typed language.",
     },
-    {
-      type: "text",
-      question: "Explain the difference between `let` and `var` in JavaScript.",
-    },
+
     {
       type: "multiple-choice",
       question:

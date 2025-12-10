@@ -2,6 +2,7 @@ import {
   Button,
   Card,
   Flex,
+  Input,
   List,
   Popconfirm,
   Space,
@@ -21,6 +22,9 @@ import { routes } from "../constants/routes.ts";
 import { PageTitle } from "../components/shared/PageTitle.tsx";
 import { useIntl } from "react-intl";
 import { isTeacher } from "../utils/index.utils.ts";
+import { CourseLanguageSelect } from "../components/shared/CourseLanguageSelect.tsx";
+import { CourseComplexitySelect } from "../components/shared/CourseComplexitySelect.tsx";
+import { CourseLevel } from "../placeholder/courses.ts";
 
 const { Title, Text } = Typography;
 
@@ -64,33 +68,53 @@ export default function ParticipatedCoursePage() {
       <div style={{ borderRadius: 16 }}>
         <Flex justify="space-between">
           <PageTitle showBackButton level={2}>
-            Complete JavaScript Course
+            {isTeacher ? "Course" : "Complete JavaScript Course"}
           </PageTitle>
-          <Popconfirm
-            title={formatMessage({ id: "delete-confirmation" })}
-            okText={formatMessage({ id: "yes" })}
-            cancelText={formatMessage({ id: "no" })}
-          >
-            <Button danger type="primary" icon={<DeleteOutlined />} />
-          </Popconfirm>
-        </Flex>
 
+          {isTeacher && (
+            <Popconfirm
+              title={formatMessage({ id: "delete-confirmation" })}
+              okText={formatMessage({ id: "yes" })}
+              cancelText={formatMessage({ id: "no" })}
+            >
+              <Button danger type="primary" icon={<DeleteOutlined />} />
+            </Popconfirm>
+          )}
+        </Flex>
         <Card
           style={{
             borderRadius: 12,
             marginBottom: 24,
-            background: "#f9f9f9",
           }}
         >
-          <Title level={3} style={{ marginBottom: 0 }}>
-            This course covers the fundamentals of JavaScript, from basic syntax
-            and data types to DOM manipulation and ES6 features. Perfect for
-            beginners!
-          </Title>
-
-          <Text type="secondary">Track your learning progress</Text>
+          {isTeacher ? (
+            <Flex vertical gap={"middle"}>
+              <Input
+                placeholder="Course Name"
+                defaultValue={"Complete JavaScript Course"}
+              />
+              <Input.TextArea
+                rows={4}
+                defaultValue={
+                  "This course covers the fundamentals of JavaScript, from basic syntax and data types to DOM manipulation and ES6 features. Perfect for beginners!"
+                }
+              />
+            </Flex>
+          ) : (
+            <Title level={3} style={{ marginBottom: 0 }}>
+              This course covers the fundamentals of JavaScript, from basic
+              syntax and data types to DOM manipulation and ES6 features.
+              Perfect for beginners!
+            </Title>
+          )}
         </Card>
 
+        {isTeacher && (
+          <Space style={{ marginBottom: 24 }}>
+            <CourseLanguageSelect defaultValue={"en"} />
+            <CourseComplexitySelect defaultValue={CourseLevel.intermediate} />
+          </Space>
+        )}
         <List
           itemLayout="horizontal"
           dataSource={courseSteps}

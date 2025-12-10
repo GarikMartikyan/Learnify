@@ -1,13 +1,14 @@
-import { Col, Row } from "antd";
+import { Button, Col, Flex, Row } from "antd";
 import { courses } from "../placeholder/courses.ts";
 import { CourseCard } from "../components/shared/CourseCard.tsx";
 import { PageTitle } from "../components/shared/PageTitle.tsx";
 import { users } from "../placeholder/user.ts";
 import { useIntl } from "react-intl";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { routes } from "../constants/routes.ts";
 import type { ICourse } from "../constants/interfaces/course.interfaces.ts";
 import { CourseSearchFilters } from "../components/CourseSearchFilters.tsx";
+import { PlusOutlined } from "@ant-design/icons";
 
 export function Courses({ isMyCourses = false }) {
   const { formatMessage } = useIntl();
@@ -27,7 +28,14 @@ export function Courses({ isMyCourses = false }) {
   };
   return (
     <>
-      <PageTitle>{formatMessage({ id: "courses" })}</PageTitle>
+      <Flex justify={"space-between"}>
+        <PageTitle>{formatMessage({ id: "courses" })}</PageTitle>
+        <Link to={routes.myCourseById(123)}>
+          <Button type="primary" icon={<PlusOutlined />}>
+            {formatMessage({ id: "create-course" })}
+          </Button>
+        </Link>
+      </Flex>
       <div style={{ marginBlock: 10 }}>
         <CourseSearchFilters />
       </div>
