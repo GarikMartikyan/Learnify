@@ -136,5 +136,7 @@
   "no": "No",
   "add-chapter": "Add Chapter",
   "add-exam": "Add Exam",
-  "create-course": "Create Course"
+  "create-course": "Create Course",
+  "review": "Review",
+  "passed": "Passed"
 }

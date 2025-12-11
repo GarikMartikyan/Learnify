@@ -33,6 +33,7 @@ interface CourseStep {
   type: "chapter" | "exam";
   title: string;
   passed?: boolean;
+  viewed?: boolean;
 }
 
 export default function ParticipatedCoursePage() {
@@ -47,12 +48,11 @@ export default function ParticipatedCoursePage() {
   const courseSteps: CourseStep[] = isNewCourse
     ? []
     : [
-        { id: 1, type: "chapter", title: "Introduction to JS" },
-        { id: 2, type: "chapter", title: "Variables & Types" },
+        { id: 1, type: "chapter", title: "Introduction to JS", viewed: true },
+        { id: 2, type: "chapter", title: "Variables & Types", viewed: true },
         { id: 3, type: "exam", title: "Basics Exam", passed: true },
-        { id: 4, type: "chapter", title: "Functions" },
+        { id: 4, type: "chapter", title: "Functions", viewed: false },
         { id: 5, type: "exam", title: "Functions Exam", passed: false },
-        { id: 6, type: "chapter", title: "DOM Manipulation" },
       ];
 
   const courseName = isNewCourse ? "" : "Complete JavaScript Course";
@@ -86,6 +86,11 @@ export default function ParticipatedCoursePage() {
             {!isStudent ? "Course" : courseName || "New Course"}
           </PageTitle>
 
+          {isStudent && (
+            <Link to={routes.courses}>
+              <Button>Leave Course</Button>
+            </Link>
+          )}
           {!isStudent && !isNewCourse && (
             <Popconfirm
               title={formatMessage({ id: "delete-confirmation" })}
@@ -192,16 +197,22 @@ export default function ParticipatedCoursePage() {
                   <>
                     {item.type === "chapter" && (
                       <Link to={routes.chapterById("1")}>
-                        <Button type="primary">
-                          {formatMessage({ id: "open-chapter" })}
+                        <Button type={item.viewed ? "default" : "primary"}>
+                          {formatMessage({
+                            id: item.viewed ? "review" : "open-chapter",
+                          })}
                         </Button>
                       </Link>
                     )}
 
-                    {item.type === "exam" && !locked && !item.passed && (
-                      <Button type="primary">
-                        {formatMessage({ id: "take-exam" })}
-                      </Button>
+                    {item.type === "exam" && !locked && (
+                      <Link to={routes.examById("123")}>
+                        <Button disabled={item?.passed} type={"primary"}>
+                          {formatMessage({
+                            id: item.passed ? "passed" : "take-exam",
+                          })}
+                        </Button>
+                      </Link>
                     )}
                   </>
                 )}
