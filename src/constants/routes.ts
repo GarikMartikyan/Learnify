@@ -23,4 +23,5 @@ export const routes = {
   createExam: "/create-exam",
   courseStatistics: "/course-statistics",
   createCourse: "/create-course",
+  profileView: (userId: string = ":userId") => `/profile/${userId}`,
 } as const;

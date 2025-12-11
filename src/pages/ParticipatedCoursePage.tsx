@@ -21,7 +21,7 @@ import { Link, useLocation } from "react-router";
 import { routes } from "../constants/routes.ts";
 import { PageTitle } from "../components/shared/PageTitle.tsx";
 import { useIntl } from "react-intl";
-import { isTeacher } from "../utils/index.utils.ts";
+import { isStudent } from "../utils/index.utils.ts";
 import { CourseLanguageSelect } from "../components/shared/CourseLanguageSelect.tsx";
 import { CourseComplexitySelect } from "../components/shared/CourseComplexitySelect.tsx";
 import { CourseLevel } from "../placeholder/courses.ts";
@@ -83,10 +83,10 @@ export default function ParticipatedCoursePage() {
       <div style={{ borderRadius: 16 }}>
         <Flex justify="space-between">
           <PageTitle showBackButton level={2}>
-            {isTeacher ? "Course" : courseName || "New Course"}
+            {!isStudent ? "Course" : courseName || "New Course"}
           </PageTitle>
 
-          {isTeacher && !isNewCourse && (
+          {!isStudent && !isNewCourse && (
             <Popconfirm
               title={formatMessage({ id: "delete-confirmation" })}
               okText={formatMessage({ id: "yes" })}
@@ -103,7 +103,7 @@ export default function ParticipatedCoursePage() {
             marginBottom: 24,
           }}
         >
-          {isTeacher ? (
+          {!isStudent ? (
             <Flex vertical gap={"middle"}>
               <Input placeholder="Course Name" defaultValue={courseName} />
 
@@ -118,7 +118,7 @@ export default function ParticipatedCoursePage() {
           )}
         </Card>
 
-        {isTeacher && (
+        {!isStudent && (
           <Space style={{ marginBottom: 24 }}>
             <CourseLanguageSelect defaultValue={"en"} />
             <CourseComplexitySelect defaultValue={CourseLevel.intermediate} />
@@ -178,7 +178,7 @@ export default function ParticipatedCoursePage() {
                   }
                 />
 
-                {isTeacher ? (
+                {!isStudent ? (
                   <Link
                     to={
                       item?.type === "chapter"
@@ -211,7 +211,7 @@ export default function ParticipatedCoursePage() {
         />
       </div>
 
-      {isTeacher && (
+      {!isStudent && (
         <Flex justify="end">
           <Space style={{ marginTop: 40 }}>
             <Link to={routes.createChapter}>

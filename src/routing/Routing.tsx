@@ -54,6 +54,7 @@ export function Routing() {
           path={routes.createCourse}
           element={<ParticipatedCoursePage />}
         />
+        <Route path={routes.profileView()} element={<UserProfilePage />} />
         <Route path={routes.courseById()} element={<CourseDetailsPage />} />
         <Route path={routes.profile} element={<UserProfilePage />} />
         <Route path={routes.users} element={<Users />} />

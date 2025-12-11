@@ -1,5 +1,5 @@
 import { Button, Col, Flex, Row, Space, Table } from "antd";
-import { courses } from "../placeholder/courses.ts";
+import { CourseLevel, courses } from "../placeholder/courses.ts";
 import { CourseCard } from "../components/shared/CourseCard.tsx";
 import { PageTitle } from "../components/shared/PageTitle.tsx";
 import { users } from "../placeholder/user.ts";
@@ -8,7 +8,7 @@ import { Link, useNavigate } from "react-router";
 import { routes } from "../constants/routes.ts";
 import type { ICourse } from "../constants/interfaces/course.interfaces.ts";
 import { CourseSearchFilters } from "../components/CourseSearchFilters.tsx";
-import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EyeOutlined, PlusOutlined } from "@ant-design/icons";
 import { isSuperuser, isTeacher } from "../utils/index.utils.ts";
 
 export function Courses({ isMyCourses = false }) {
@@ -29,37 +29,46 @@ export function Courses({ isMyCourses = false }) {
   };
 
   if (isSuperuser) {
-    interface Course {
-      id: number;
-      title: string;
-      author: string;
-      rating: number;
-    }
-    const courses: Course[] = [
+    const courses = [
       {
         id: 1,
         title: "Intro to JavaScript",
         author: "Bob Johnson",
         rating: 4.5,
+        level: "intermediate",
+        language: "English",
       },
-      { id: 2, title: "React Basics", author: "Bob Johnson", rating: 4.7 },
+      {
+        id: 2,
+        title: "React Basics",
+        author: "Bob Johnson",
+        rating: 4.7,
+        level: "advanced",
+        language: "English",
+      },
       {
         id: 3,
         title: "Node.js Fundamentals",
         author: "Alice Smith",
         rating: 4.3,
+        level: "beginner",
+        language: "English",
       },
       {
         id: 4,
         title: "HTML & CSS Basics",
         author: "Charlie Brown",
         rating: 4.8,
+        level: CourseLevel.intermediate,
+        language: "English",
       },
       {
         id: 5,
         title: "Advanced TypeScript",
         author: "David Hakobyan",
         rating: 4.6,
+        level: CourseLevel.intermediate,
+        language: "English",
       },
     ];
 
@@ -73,10 +82,25 @@ export function Courses({ isMyCourses = false }) {
         render: (r: number) => r?.toFixed(1),
       },
       {
+        title: "Level",
+        dataIndex: "level",
+        key: "level",
+      },
+      {
+        title: "Language",
+        dataIndex: "language",
+        key: "language",
+      },
+      {
         title: "Actions",
         key: "actions",
         render: () => (
           <Space>
+            <Link to={routes.myCourseById("132")}>
+              <Button type="primary" icon={<EyeOutlined />}>
+                View
+              </Button>
+            </Link>
             <Button danger icon={<DeleteOutlined />}>
               Delete
             </Button>
@@ -88,6 +112,7 @@ export function Courses({ isMyCourses = false }) {
     return (
       <Flex vertical gap="middle">
         <PageTitle>Course Management</PageTitle>
+        <CourseSearchFilters />
         <Table
           columns={courseColumns}
           dataSource={courses}

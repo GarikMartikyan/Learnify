@@ -11,6 +11,8 @@ import {
   Tag,
 } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { Link } from "react-router";
+import { routes } from "../../constants/routes.ts";
 
 export function Users() {
   const [users, setUsers] = useState([
@@ -123,27 +125,15 @@ export function Users() {
       ),
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (status: string) => (
-        <Tag color={status === "active" ? "green" : "red"}>
-          {status.toUpperCase()}
-        </Tag>
-      ),
-    },
-    {
       title: "Actions",
       key: "actions",
       render: (_: any, row: any) => (
         <Space>
-          <Button
-            type="default"
-            icon={<EditOutlined />}
-            onClick={() => handleEdit(row.id)}
-          >
-            Edit
-          </Button>
+          <Link to={routes.profileView("123")}>
+            <Button type="default" icon={<EditOutlined />}>
+              Edit
+            </Button>
+          </Link>
 
           <Popconfirm
             title="Are you sure delete this user?"
