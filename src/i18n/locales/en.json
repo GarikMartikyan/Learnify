@@ -19,9 +19,9 @@
   "passwords-dont-match": "Passwords do not match",
   "re-enter-your-password": "Re-enter your password",
 
-  "full-name": "Full Name",
-  "name-required": "Please enter your full name",
-  "enter-your-name": "Enter your full name",
+  "full-name": "Username",
+  "name-required": "Please enter your Username",
+  "enter-your-name": "Enter your Username",
 
   "role": "Role",
   "role-required": "Please select a role",
