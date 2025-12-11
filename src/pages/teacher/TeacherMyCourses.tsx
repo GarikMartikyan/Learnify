@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Button, message, Popconfirm, Space, Table, Typography } from "antd";
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { Button, message, Space, Table, Typography } from "antd";
+import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { Link } from "react-router";
 import { routes } from "../../constants/routes.ts";
 
@@ -53,17 +53,6 @@ export function TeacherMyCoursesPage() {
               Edit
             </Button>
           </Link>
-
-          <Popconfirm
-            title="Delete this course?"
-            onConfirm={() => handleDelete(record.id)}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button danger icon={<DeleteOutlined />}>
-              Delete
-            </Button>
-          </Popconfirm>
         </Space>
       ),
     },

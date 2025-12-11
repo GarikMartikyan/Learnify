@@ -1,17 +1,6 @@
-import {
-  Button,
-  Card,
-  Flex,
-  Input,
-  List,
-  Popconfirm,
-  Space,
-  Tag,
-  Typography,
-} from "antd";
+import { Button, Card, Flex, Input, List, Space, Tag, Typography } from "antd";
 import {
   BookOutlined,
-  DeleteOutlined,
   EditOutlined,
   FileDoneOutlined,
   LockOutlined,
@@ -91,15 +80,15 @@ export default function ParticipatedCoursePage() {
               <Button>Leave Course</Button>
             </Link>
           )}
-          {!isStudent && !isNewCourse && (
-            <Popconfirm
-              title={formatMessage({ id: "delete-confirmation" })}
-              okText={formatMessage({ id: "yes" })}
-              cancelText={formatMessage({ id: "no" })}
-            >
-              <Button danger type="primary" icon={<DeleteOutlined />} />
-            </Popconfirm>
-          )}
+          {/*{!isStudent && !isNewCourse && (*/}
+          {/*  <Popconfirm*/}
+          {/*    title={formatMessage({ id: "delete-confirmation" })}*/}
+          {/*    okText={formatMessage({ id: "yes" })}*/}
+          {/*    cancelText={formatMessage({ id: "no" })}*/}
+          {/*  >*/}
+          {/*    <Button danger type="primary" icon={<DeleteOutlined />} />*/}
+          {/*  </Popconfirm>*/}
+          {/*)}*/}
         </Flex>
 
         <Card
