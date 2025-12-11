@@ -47,9 +47,9 @@ export function UserProfilePage() {
                 </Title>
                 <Tag
                   style={{ paddingInline: 10, paddingBlock: 2 }}
-                  color={user.role === "teacher" ? "blue" : "green"}
+                  color={user.role === "student" ? "green" : "blue"}
                 >
-                  {user.role}
+                  {userRole}
                 </Tag>
               </Space>
               <ParagraphInfo icon={<MailOutlined />} text={user.email} />

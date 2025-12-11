@@ -18,7 +18,7 @@ import {
   UploadOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { user as defaultUser } from "../utils/index.utils.ts";
+import { user as defaultUser, userRole } from "../utils/index.utils.ts";
 import { useIntl } from "react-intl";
 
 const { Title, Text } = Typography;
@@ -65,7 +65,7 @@ export function Settings() {
           <Title level={3} style={{ margin: 0 }}>
             {user.name}
           </Title>
-          <Text type="secondary">{user.role}</Text>
+          <Text type="secondary">{userRole}</Text>
           <Divider type="vertical" />
           <Text type="secondary">{user.country}</Text>
         </div>
