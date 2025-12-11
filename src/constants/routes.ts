@@ -22,4 +22,5 @@ export const routes = {
   editExam: (examId: string = ":examId") => `/edit-exam/${examId}`,
   createExam: "/create-exam",
   courseStatistics: "/course-statistics",
+  createCourse: "/create-course",
 } as const;

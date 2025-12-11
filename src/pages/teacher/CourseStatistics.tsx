@@ -1,12 +1,33 @@
 import { useState } from "react";
-import { Button, Card, Progress, Space, Table, Typography } from "antd";
+import {
+  Button,
+  Card,
+  Descriptions,
+  Modal,
+  Progress,
+  Space,
+  Table,
+  Typography,
+} from "antd";
 import { EyeOutlined } from "@ant-design/icons";
 import { Link } from "react-router";
 import { routes } from "../../constants/routes.ts";
 
+import {
+  Cell,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+} from "recharts";
+
 const { Title } = Typography;
 
 export function CourseStatistics() {
+  const [viewCourse, setViewCourse] = useState<any | null>(null);
+
   const [courses] = useState([
     {
       id: 1,
@@ -15,6 +36,11 @@ export function CourseStatistics() {
       passed: 87,
       rating: 4.6,
       status: "Active",
+      monthlyProgress: [
+        { month: "Jan", passed: 30 },
+        { month: "Feb", passed: 50 },
+        { month: "Mar", passed: 87 },
+      ],
     },
     {
       id: 2,
@@ -23,6 +49,11 @@ export function CourseStatistics() {
       passed: 64,
       rating: 4.4,
       status: "Active",
+      monthlyProgress: [
+        { month: "Jan", passed: 20 },
+        { month: "Feb", passed: 40 },
+        { month: "Mar", passed: 64 },
+      ],
     },
     {
       id: 3,
@@ -31,6 +62,11 @@ export function CourseStatistics() {
       passed: 33,
       rating: 4.1,
       status: "Draft",
+      monthlyProgress: [
+        { month: "Jan", passed: 10 },
+        { month: "Feb", passed: 20 },
+        { month: "Mar", passed: 33 },
+      ],
     },
   ]);
 
@@ -81,15 +117,25 @@ export function CourseStatistics() {
       title: "Actions",
       key: "actions",
       align: "center",
-      render: () => (
+      render: (_: any, record: any) => (
         <Space>
-          <Link to={routes.myCourseById("12")}>
-            <Button icon={<EyeOutlined />}>View</Button>
+          <Button icon={<EyeOutlined />} onClick={() => setViewCourse(record)}>
+            View
+          </Button>
+          <Link to={routes.myCourseById(String(record.id))}>
+            <Button type="default">Open Page</Button>
           </Link>
         </Space>
       ),
     },
   ];
+
+  const pieData = (course: any) => [
+    { name: "Passed", value: course.passed },
+    { name: "Not Passed", value: course.participants - course.passed },
+  ];
+
+  const COLORS = ["#4caf50", "#d9d9d9"];
 
   return (
     <div style={{ padding: 24 }}>
@@ -105,6 +151,90 @@ export function CourseStatistics() {
           pagination={{ pageSize: 5 }}
         />
       </Card>
+
+      {/* ===================== MODAL ===================== */}
+      <Modal
+        open={!!viewCourse}
+        title={viewCourse?.name}
+        width={800}
+        onCancel={() => setViewCourse(null)}
+        footer={[
+          <Button key="close" onClick={() => setViewCourse(null)}>
+            Close
+          </Button>,
+        ]}
+      >
+        {viewCourse && (
+          <div style={{ marginTop: 16 }}>
+            {/* --- Summary Block --- */}
+            <Card
+              style={{
+                marginBottom: 24,
+                borderRadius: 10,
+                background: "#fafafa",
+              }}
+            >
+              <Descriptions column={2} title="General Info">
+                <Descriptions.Item label="Failed">33</Descriptions.Item>
+                <Descriptions.Item label="Participants">
+                  {viewCourse.participants}
+                </Descriptions.Item>
+                <Descriptions.Item label="Passed">
+                  {viewCourse.passed}
+                </Descriptions.Item>
+                <Descriptions.Item label="Rating">
+                  ⭐ {viewCourse.rating}
+                </Descriptions.Item>
+              </Descriptions>
+            </Card>
+
+            {/* --- Charts Layout --- */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: 24,
+              }}
+            >
+              {/* LINE CHART */}
+              <Card style={{ borderRadius: 10 }} title="Monthly Passed">
+                <ResponsiveContainer width="100%" height={250}>
+                  <LineChart data={viewCourse.monthlyProgress}>
+                    <Tooltip />
+                    <Line
+                      type="monotone"
+                      dataKey="passed"
+                      stroke="#1677ff"
+                      strokeWidth={2}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </Card>
+
+              {/* PIE CHART */}
+              <Card style={{ borderRadius: 10 }} title="Completion Breakdown">
+                <ResponsiveContainer width="100%" height={250}>
+                  <PieChart>
+                    <Pie
+                      data={pieData(viewCourse)}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={80}
+                      dataKey="value"
+                      label
+                    >
+                      {pieData(viewCourse).map((_, i) => (
+                        <Cell key={i} fill={COLORS[i]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </Card>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

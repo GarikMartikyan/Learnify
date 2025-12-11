@@ -17,7 +17,7 @@ import {
   LockOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { routes } from "../constants/routes.ts";
 import { PageTitle } from "../components/shared/PageTitle.tsx";
 import { useIntl } from "react-intl";
@@ -26,7 +26,7 @@ import { CourseLanguageSelect } from "../components/shared/CourseLanguageSelect.
 import { CourseComplexitySelect } from "../components/shared/CourseComplexitySelect.tsx";
 import { CourseLevel } from "../placeholder/courses.ts";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 interface CourseStep {
   id: number;
@@ -35,25 +35,40 @@ interface CourseStep {
   passed?: boolean;
 }
 
-// Example ordered content of a course
-const courseSteps: CourseStep[] = [
-  { id: 1, type: "chapter", title: "Introduction to JS" },
-  { id: 2, type: "chapter", title: "Variables & Types" },
-  { id: 3, type: "exam", title: "Basics Exam", passed: true },
-  { id: 4, type: "chapter", title: "Functions" },
-  { id: 5, type: "exam", title: "Functions Exam", passed: false },
-  { id: 6, type: "chapter", title: "DOM Manipulation" },
-];
-
 export default function ParticipatedCoursePage() {
+  const location = useLocation();
+  const isNewCourse = location.pathname.startsWith(routes.createCourse);
   const { formatMessage } = useIntl();
 
+  // -------------------------
+  // NEW LOGIC FOR NEW COURSE
+  // -------------------------
+
+  const courseSteps: CourseStep[] = isNewCourse
+    ? []
+    : [
+        { id: 1, type: "chapter", title: "Introduction to JS" },
+        { id: 2, type: "chapter", title: "Variables & Types" },
+        { id: 3, type: "exam", title: "Basics Exam", passed: true },
+        { id: 4, type: "chapter", title: "Functions" },
+        { id: 5, type: "exam", title: "Functions Exam", passed: false },
+        { id: 6, type: "chapter", title: "DOM Manipulation" },
+      ];
+
+  const courseName = isNewCourse ? "" : "Complete JavaScript Course";
+
+  const courseDescription = isNewCourse
+    ? ""
+    : "This course covers the fundamentals of JavaScript, from basic syntax and data types to DOM manipulation and ES6 features. Perfect for beginners!";
+
+  // -------------------------
+  // EXAM LOCK LOGIC
+  // -------------------------
   const isExamLocked = (index: number): boolean => {
     const step = courseSteps[index];
 
-    if (step.type !== "exam") return false;
+    if (step?.type !== "exam") return false;
 
-    // Look back for the nearest previous exam
     for (let i = index - 1; i >= 0; i--) {
       if (courseSteps[i].type === "exam") {
         return !courseSteps[i].passed;
@@ -68,10 +83,10 @@ export default function ParticipatedCoursePage() {
       <div style={{ borderRadius: 16 }}>
         <Flex justify="space-between">
           <PageTitle showBackButton level={2}>
-            {isTeacher ? "Course" : "Complete JavaScript Course"}
+            {isTeacher ? "Course" : courseName || "New Course"}
           </PageTitle>
 
-          {isTeacher && (
+          {isTeacher && !isNewCourse && (
             <Popconfirm
               title={formatMessage({ id: "delete-confirmation" })}
               okText={formatMessage({ id: "yes" })}
@@ -81,6 +96,7 @@ export default function ParticipatedCoursePage() {
             </Popconfirm>
           )}
         </Flex>
+
         <Card
           style={{
             borderRadius: 12,
@@ -89,23 +105,16 @@ export default function ParticipatedCoursePage() {
         >
           {isTeacher ? (
             <Flex vertical gap={"middle"}>
-              <Input
-                placeholder="Course Name"
-                defaultValue={"Complete JavaScript Course"}
-              />
-              <Input.TextArea
-                rows={4}
-                defaultValue={
-                  "This course covers the fundamentals of JavaScript, from basic syntax and data types to DOM manipulation and ES6 features. Perfect for beginners!"
-                }
-              />
+              <Input placeholder="Course Name" defaultValue={courseName} />
+
+              <Input.TextArea rows={4} defaultValue={courseDescription} />
             </Flex>
           ) : (
-            <Title level={3} style={{ marginBottom: 0 }}>
-              This course covers the fundamentals of JavaScript, from basic
-              syntax and data types to DOM manipulation and ES6 features.
-              Perfect for beginners!
-            </Title>
+            !isNewCourse && (
+              <Title level={3} style={{ marginBottom: 0 }}>
+                {courseDescription}
+              </Title>
+            )
           )}
         </Card>
 
@@ -115,6 +124,8 @@ export default function ParticipatedCoursePage() {
             <CourseComplexitySelect defaultValue={CourseLevel.intermediate} />
           </Space>
         )}
+
+        {/* LIST OF STEPS */}
         <List
           itemLayout="horizontal"
           dataSource={courseSteps}
@@ -199,6 +210,7 @@ export default function ParticipatedCoursePage() {
           }}
         />
       </div>
+
       {isTeacher && (
         <Flex justify="end">
           <Space style={{ marginTop: 40 }}>

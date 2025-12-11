@@ -59,22 +59,22 @@ export function Sidebar() {
     ],
     teacher: [
       {
-        key: "dashboard",
+        key: routes.dashboard,
         label: formatMessage({ id: "dashboard" }),
         icon: <HomeOutlined />,
       },
       {
-        key: "my-courses",
+        key: routes.myCourses,
         label: formatMessage({ id: "my-courses" }),
         icon: <BookOutlined />,
       },
       {
-        key: "course-statistics",
+        key: routes.courseStatistics,
         label: formatMessage({ id: "course-statistics" }),
         icon: <BarChartOutlined />,
       },
       {
-        key: "help",
+        key: routes.help,
         label: formatMessage({ id: "help" }),
         icon: <QuestionCircleOutlined />,
       },
