@@ -25,6 +25,7 @@ import { CreateChapter } from "../pages/teacher/CreateChapter.tsx";
 import { ApplyToTeacher } from "../pages/student/ApplyToTeacher.tsx";
 import { CourseStatistics } from "../pages/teacher/CourseStatistics.tsx";
 import { Users } from "../pages/superuser/Users.tsx";
+import { AuditLog } from "../pages/superuser/AuditLog.tsx";
 
 export function Routing() {
   return (
@@ -58,6 +59,7 @@ export function Routing() {
         <Route path={routes.courseById()} element={<CourseDetailsPage />} />
         <Route path={routes.profile} element={<UserProfilePage />} />
         <Route path={routes.users} element={<Users />} />
+        <Route path={routes.auditLog} element={<AuditLog />} />
         <Route path={routes.settings} element={<Settings />} />
         <Route path={routes.courseStatistics} element={<CourseStatistics />} />
         <Route

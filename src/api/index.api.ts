@@ -15,6 +15,7 @@ import type { IApiError } from "../constants/interfaces/user.interfaces.ts";
 /** Base URLs of the backend services. */
 export const apiUrls = {
   auth: import.meta.env.VITE_AUTH_API_URL || "http://localhost:8081",
+  audit: import.meta.env.VITE_AUDIT_API_URL || "http://localhost:8084",
 } as const;
 
 /**

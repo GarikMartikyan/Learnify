@@ -8,6 +8,7 @@ import { routes } from "../../constants/routes.ts";
 import { useIntl } from "react-intl";
 import { useCurrentUser } from "../../hooks/useCurrentUser.ts";
 import {
+  AuditOutlined,
   BarChartOutlined,
   BookOutlined,
   HomeOutlined,
@@ -93,6 +94,11 @@ export function Sidebar() {
         key: routes.courses,
         label: formatMessage({ id: "courses" }),
         icon: <SnippetsOutlined />,
+      },
+      {
+        key: routes.auditLog,
+        label: formatMessage({ id: "audit-log" }),
+        icon: <AuditOutlined />,
       },
     ],
   };

@@ -16,6 +16,7 @@ export const routes = {
   forgotPassword: "/forgot-password",
   teacherApplication: "/teacher-application",
   users: "/users",
+  auditLog: "/audit-log",
   editChapter: (chapterId: string = ":chapterId") =>
     `/edit-chapter/${chapterId}`,
   createChapter: "/create-chapter",

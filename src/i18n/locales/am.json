@@ -235,5 +235,27 @@
   "no-users": "Օգտատերեր չեն գտնվել",
 
   "or": "կամ",
-  "continue-with-google": "Շարունակել Google-ով"
+  "continue-with-google": "Շարունակել Google-ով",
+
+  "audit-log": "Աուդիտի Մատյան",
+  "date-time": "Ամսաթիվ և ժամ",
+  "action": "Գործողություն",
+  "entity": "Օբյեկտ",
+  "action-by": "Կատարող",
+  "change": "Փոփոխություն",
+  "system": "Համակարգ",
+  "unknown-user": "Անհայտ օգտատեր",
+  "refresh": "Թարմացնել",
+  "filter-by-action": "Զտել ըստ գործողության",
+  "filter-by-entity": "Զտել ըստ օբյեկտի",
+  "filter-by-actor": "Զտել ըստ կատարողի",
+  "date-from": "Սկսած",
+  "date-to": "Մինչև",
+  "no-audit-entries": "Աուդիտի գրառումներ չկան",
+  "audit-action.user.role_changed": "Դերը փոխվել է",
+  "audit-action.user.status_changed": "Կարգավիճակը փոխվել է",
+  "audit-action.teacher_application.approved": "Դիմումը հաստատվել է",
+  "audit-action.teacher_application.rejected": "Դիմումը մերժվել է",
+  "audit-entity.user": "Օգտատեր",
+  "audit-entity.teacher_application": "Ուսուցչի դիմում"
 }

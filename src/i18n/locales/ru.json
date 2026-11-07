@@ -235,5 +235,27 @@
   "no-users": "Пользователи не найдены",
 
   "or": "или",
-  "continue-with-google": "Продолжить с Google"
+  "continue-with-google": "Продолжить с Google",
+
+  "audit-log": "Журнал аудита",
+  "date-time": "Дата и время",
+  "action": "Действие",
+  "entity": "Объект",
+  "action-by": "Кто выполнил",
+  "change": "Изменение",
+  "system": "Система",
+  "unknown-user": "Неизвестный пользователь",
+  "refresh": "Обновить",
+  "filter-by-action": "Фильтр по действию",
+  "filter-by-entity": "Фильтр по объекту",
+  "filter-by-actor": "Фильтр по исполнителю",
+  "date-from": "С",
+  "date-to": "По",
+  "no-audit-entries": "Записей аудита нет",
+  "audit-action.user.role_changed": "Роль изменена",
+  "audit-action.user.status_changed": "Статус изменён",
+  "audit-action.teacher_application.approved": "Заявка одобрена",
+  "audit-action.teacher_application.rejected": "Заявка отклонена",
+  "audit-entity.user": "Пользователь",
+  "audit-entity.teacher_application": "Заявка преподавателя"
 }

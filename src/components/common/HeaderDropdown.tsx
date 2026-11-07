@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux";
 import { removeAccessToken } from "../../store/slices/config.slice.ts";
 import { useCurrentUser } from "../../hooks/useCurrentUser.ts";
 import { authApi } from "../../api/auth.api.ts";
+import { auditApi } from "../../api/audit.api.ts";
 
 export function HeaderDropdown() {
   const { user, isLoggedIn } = useCurrentUser();
@@ -55,6 +56,7 @@ export function HeaderDropdown() {
       dispatch(removeAccessToken());
       // Forget all data of the user who logged out
       dispatch(authApi.util.resetApiState());
+      dispatch(auditApi.util.resetApiState());
     }
     navigate(key);
   };
