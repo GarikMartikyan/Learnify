@@ -232,5 +232,8 @@
   "change-role-confirm": "Փոխե՞լ {name}-ի դերը՝ դարձնելով {role}։",
   "teacher-demotion-warning": "Այս օգտատերը ուսուցիչ է․ նրա բոլոր հրապարակված դասընթացները կարխիվացվեն։",
   "role-changed": "{name}-ն այժմ {role} է",
-  "no-users": "Օգտատերեր չեն գտնվել"
+  "no-users": "Օգտատերեր չեն գտնվել",
+
+  "or": "կամ",
+  "continue-with-google": "Շարունակել Google-ով"
 }

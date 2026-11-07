@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router";
 import { useAppDispatch } from "../../hooks/useAppDispatch.ts";
 import { routes } from "../../constants/routes.ts";
 import { Logo } from "../../components/shared/Logo.tsx";
+import { GoogleSignInButton } from "../../components/shared/GoogleSignInButton.tsx";
 import {
   selectLocale,
   selectThemeMode,
@@ -290,6 +291,8 @@ export function Register() {
             {formatMessage({ id: "sign-up", defaultMessage: "Sign Up" })}
           </Button>
         </Form.Item>
+
+        <GoogleSignInButton />
 
         <div style={{ textAlign: "center", marginTop: "1rem" }}>
           <Text type="secondary">

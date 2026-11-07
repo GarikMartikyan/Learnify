@@ -232,5 +232,8 @@
   "change-role-confirm": "Change {name}'s role to {role}?",
   "teacher-demotion-warning": "This user is a teacher: all of their published courses will be archived.",
   "role-changed": "{name} is now {role}",
-  "no-users": "No users found"
+  "no-users": "No users found",
+
+  "or": "or",
+  "continue-with-google": "Continue with Google"
 }

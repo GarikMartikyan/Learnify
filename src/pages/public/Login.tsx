@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router";
 import { useAppDispatch } from "../../hooks/useAppDispatch.ts";
 import { routes } from "../../constants/routes.ts";
 import { Logo } from "../../components/shared/Logo.tsx";
+import { GoogleSignInButton } from "../../components/shared/GoogleSignInButton.tsx";
 import { setAccessToken } from "../../store/slices/config.slice.ts";
 import { authApi, useLoginMutation } from "../../api/auth.api.ts";
 import { applyFieldErrors } from "../../api/index.api.ts";
@@ -130,6 +131,8 @@ export function Login() {
             })}
           </Link>
         </Form.Item>
+
+        <GoogleSignInButton />
 
         <div style={{ textAlign: "center", marginTop: "1rem" }}>
           <Text type="secondary">
