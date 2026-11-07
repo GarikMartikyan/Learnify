@@ -4,6 +4,7 @@ import { useIntl } from "react-intl";
 import { Link } from "react-router";
 import { routes } from "../../constants/routes.ts";
 import { Logo } from "../../components/shared/Logo.tsx";
+import { useValidateAfterBlur } from "../../hooks/useValidateAfterBlur.ts";
 
 const { Text } = Typography;
 
@@ -15,6 +16,7 @@ export function ForgotPassword({ onSubmit }: ForgotPasswordPageProps) {
   const { token } = theme.useToken();
   const [form] = Form.useForm();
   const { formatMessage } = useIntl();
+  const emailValidation = useValidateAfterBlur();
 
   const handleSubmit = (values: { email: string }) => {
     if (onSubmit) {
@@ -45,6 +47,7 @@ export function ForgotPassword({ onSubmit }: ForgotPasswordPageProps) {
         <Form.Item
           name="email"
           label={formatMessage({ id: "email", defaultMessage: "Email" })}
+          {...emailValidation.itemProps}
           rules={[
             {
               required: true,
@@ -69,6 +72,7 @@ export function ForgotPassword({ onSubmit }: ForgotPasswordPageProps) {
               defaultMessage: "Enter your email",
             })}
             aria-label="Email"
+            {...emailValidation.inputProps}
           />
         </Form.Item>
 

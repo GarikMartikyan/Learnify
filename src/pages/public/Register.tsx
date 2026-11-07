@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router";
 import { useAppDispatch } from "../../hooks/useAppDispatch.ts";
 import { routes } from "../../constants/routes.ts";
 import { Logo } from "../../components/shared/Logo.tsx";
+import { useValidateAfterBlur } from "../../hooks/useValidateAfterBlur.ts";
 import { GoogleSignInButton } from "../../components/shared/GoogleSignInButton.tsx";
 import {
   selectLocale,
@@ -44,6 +45,8 @@ export function Register() {
     useGetCountriesQuery();
   const [register, { isLoading }] = useRegisterMutation();
   const [updateMe] = useUpdateMeMutation();
+  const emailValidation = useValidateAfterBlur();
+  const confirmValidation = useValidateAfterBlur();
 
   const handleRegister = async (values: RegisterFormValues) => {
     try {
@@ -149,6 +152,7 @@ export function Register() {
         <Form.Item
           name="email"
           label={formatMessage({ id: "email", defaultMessage: "Email" })}
+          {...emailValidation.itemProps}
           rules={[
             {
               required: true,
@@ -173,6 +177,7 @@ export function Register() {
               defaultMessage: "Enter your email",
             })}
             autoComplete="email"
+            {...emailValidation.inputProps}
           />
         </Form.Item>
 
@@ -205,6 +210,12 @@ export function Register() {
               defaultMessage: "Enter your password",
             })}
             autoComplete="new-password"
+            onChange={() => {
+              // Re-check "passwords match" only once the confirm field has been checked
+              if (confirmValidation.blurred) {
+                form.validateFields(["confirmPassword"]).catch(() => {});
+              }
+            }}
           />
         </Form.Item>
 
@@ -214,8 +225,9 @@ export function Register() {
             id: "confirm-password",
             defaultMessage: "Confirm Password",
           })}
-          dependencies={["password"]}
-          hasFeedback
+          {...confirmValidation.itemProps}
+          // antd shows a green check on any typed-in field; only show it once the match is really checked
+          hasFeedback={confirmValidation.blurred}
           rules={[
             {
               required: true,
@@ -248,6 +260,7 @@ export function Register() {
               defaultMessage: "Re-enter your password",
             })}
             autoComplete="new-password"
+            {...confirmValidation.inputProps}
           />
         </Form.Item>
 

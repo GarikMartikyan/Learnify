@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router";
 import { useAppDispatch } from "../../hooks/useAppDispatch.ts";
 import { routes } from "../../constants/routes.ts";
 import { Logo } from "../../components/shared/Logo.tsx";
+import { useValidateAfterBlur } from "../../hooks/useValidateAfterBlur.ts";
 import { GoogleSignInButton } from "../../components/shared/GoogleSignInButton.tsx";
 import { setAccessToken } from "../../store/slices/config.slice.ts";
 import { authApi, useLoginMutation } from "../../api/auth.api.ts";
@@ -20,6 +21,7 @@ export function Login() {
   const [form] = Form.useForm<ILoginRequest>();
   const { formatMessage } = useIntl();
   const [login, { isLoading }] = useLoginMutation();
+  const emailValidation = useValidateAfterBlur();
 
   const handleLogin = async (values: ILoginRequest) => {
     try {
@@ -56,6 +58,7 @@ export function Login() {
         <Form.Item
           name="email"
           label={formatMessage({ id: "email", defaultMessage: "Email" })}
+          {...emailValidation.itemProps}
           rules={[
             {
               required: true,
@@ -81,6 +84,7 @@ export function Login() {
             })}
             aria-label="Email"
             autoComplete="email"
+            {...emailValidation.inputProps}
           />
         </Form.Item>
 
