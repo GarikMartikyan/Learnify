@@ -20,7 +20,9 @@ import {
 } from "@ant-design/icons";
 import { useIntl } from "react-intl";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router";
 import { useCurrentUser } from "../hooks/useCurrentUser.ts";
+import { routes } from "../constants/routes.ts";
 import {
   useGetCountriesQuery,
   useRemoveAvatarMutation,
@@ -70,6 +72,7 @@ export function Settings() {
   const [form] = Form.useForm<SettingsFormValues>();
   const { formatMessage } = useIntl();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { data: countries = [], isLoading: countriesLoading } =
     useGetCountriesQuery();
@@ -102,7 +105,10 @@ export function Settings() {
       dispatch(setLocale(updated.preferredLanguage));
       dispatch(setThemeMode(updated.preferredTheme));
       message.success(formatMessage({ id: "profile-updated" }));
+      // Saved: leave the edit page and show the updated profile
+      navigate(routes.profile);
     } catch (error) {
+      // Stay on the page so the user can fix the highlighted fields
       applyFieldErrors(form, error);
     }
   };

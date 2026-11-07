@@ -52,7 +52,7 @@ export interface IRegisterRequest {
   preferredLanguage?: Locale;
 }
 
-/** PATCH /users/me — only the fields that are sent are changed. Send bio "" to clear it. */
+/** PUT /users/me — only the fields that are sent are changed. Send bio "" to clear it. */
 export interface IUpdateProfileRequest {
   firstName?: string;
   lastName?: string;
@@ -69,6 +69,47 @@ export interface IApiError {
   error: string;
   message: string;
   fieldErrors: Record<string, string> | null;
+}
+
+/** One page of a paginated list (page is 0-based). */
+export interface IPage<T> {
+  content: T[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+}
+
+export type ApplicationStatus = "pending" | "approved" | "rejected";
+
+/** Short user info embedded in other responses. */
+export interface IUserSummary {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+export interface IApplicationDocument {
+  id: string;
+  fileName: string;
+  fileSize: number;
+  mimeType: string;
+  createdAt: string;
+}
+
+export interface ITeacherApplication {
+  id: string;
+  applicant: IUserSummary;
+  motivation: string;
+  status: ApplicationStatus;
+  /** Null while pending. */
+  reviewedBy: IUserSummary | null;
+  reviewedAt: string | null;
+  adminNotes: string | null;
+  documents: IApplicationDocument[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 /** Old mock-data user shape, still used by the placeholder course/teacher data. */
