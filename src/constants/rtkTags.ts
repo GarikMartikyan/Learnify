@@ -1,1 +1,4 @@
-export const rtkTags: Record<string, string> = {} as const;
+export const rtkTags = {
+  me: "Me",
+  user: "User",
+} as const;

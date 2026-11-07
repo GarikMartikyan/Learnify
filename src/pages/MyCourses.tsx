@@ -1,9 +1,11 @@
 import { Courses } from "./Courses.tsx";
-import { isTeacher } from "../utils/index.utils.ts";
 import { TeacherMyCoursesPage } from "./teacher/TeacherMyCourses.tsx";
+import { useCurrentUser } from "../hooks/useCurrentUser.ts";
 
 export const MyCourses = () => {
-  if (isTeacher) {
+  const { role } = useCurrentUser();
+
+  if (role === "teacher") {
     return <TeacherMyCoursesPage />;
   }
   return <Courses isMyCourses={true} />;

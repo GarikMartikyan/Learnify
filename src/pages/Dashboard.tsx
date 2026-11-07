@@ -1,14 +1,16 @@
-import { userRole } from "../utils/index.utils.ts";
 import { StudentDashboardPage } from "./student/StudentDashboard.tsx";
 import { TeacherDashboard } from "./teacher/TeacherDashboard.tsx";
 import SuperUserDashboard from "./superuser/SuperuserDashboard.tsx";
+import { useCurrentUser } from "../hooks/useCurrentUser.ts";
 
 export function Dashboard() {
-  if (userRole === "student") {
+  const { role } = useCurrentUser();
+
+  if (role === "user") {
     return <StudentDashboardPage />;
-  } else if (userRole === "teacher") {
+  } else if (role === "teacher") {
     return <TeacherDashboard />;
-  } else if (userRole === "superuser") {
+  } else if (role === "admin") {
     return <SuperUserDashboard />;
   }
 

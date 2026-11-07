@@ -3,74 +3,102 @@ import {
   Card,
   Divider,
   Flex,
+  Result,
   Space,
+  Spin,
   Tabs,
   Tag,
   theme,
   Typography,
 } from "antd";
 import { EditOutlined, GlobalOutlined, MailOutlined } from "@ant-design/icons";
+import { useIntl } from "react-intl";
+import { useNavigate, useParams } from "react-router";
 import { ParagraphInfo } from "../components/shared/ParagraphInfo.tsx";
 import { ProfileInfoTab } from "../components/profile/ProfileInfoTab.tsx";
 import { CoursesTab } from "../components/profile/CoursesTab.tsx";
 import { UserAvatar } from "../components/shared/UserAvatar.tsx";
-import { user, userRole } from "../utils/index.utils.ts";
+import { RoleTag } from "../components/shared/RoleTag.tsx";
 import { courses } from "../placeholder/courses.ts";
-import { useIntl } from "react-intl";
-import { useNavigate } from "react-router";
 import { routes } from "../constants/routes.ts";
+import { useCurrentUser } from "../hooks/useCurrentUser.ts";
+import { useGetUserByIdQuery } from "../api/auth.api.ts";
 
 const { Title, Text } = Typography;
 
+/**
+ * /profile          → the logged-in user's own profile
+ * /profile/:userId  → any user's profile (admins only, loaded from /admin/users/{id})
+ */
 export function UserProfilePage() {
   const { formatMessage } = useIntl();
   const { token } = theme.useToken();
-  const navigator = useNavigate();
+  const navigate = useNavigate();
+  const { userId } = useParams();
+  const { user: currentUser } = useCurrentUser();
 
-  const handleEditClick = () => {
-    navigator(routes.settings);
-  };
+  const isOtherUser = Boolean(userId) && userId !== currentUser?.id;
+  const otherUserQuery = useGetUserByIdQuery(userId ?? "", {
+    skip: !isOtherUser,
+  });
+  const user = isOtherUser ? otherUserQuery.data : currentUser;
+
+  if (isOtherUser && otherUserQuery.isLoading) {
+    return (
+      <Flex justify="center" style={{ padding: 48 }}>
+        <Spin size="large" />
+      </Flex>
+    );
+  }
+  if (!user) {
+    return <Result status="404" title={formatMessage({ id: "not-found-subtitle" })} />;
+  }
+
   return (
     <div>
-      <div
-        style={{
-          padding: 20,
-        }}
-      >
+      <div style={{ padding: 20 }}>
         <Flex style={{ width: "100%" }} justify="space-between" align="start">
           <Flex align={"center"} gap={24} wrap={"wrap"}>
-            <UserAvatar size={100} />
+            <UserAvatar user={user} size={100} />
             <Space direction="vertical">
-              <Space>
+              <Space wrap>
                 <Title level={3} style={{ margin: 0 }}>
-                  {user.name}
+                  {user.firstName} {user.lastName}
                 </Title>
-                <Tag
-                  style={{ paddingInline: 10, paddingBlock: 2 }}
-                  color={user.role === "student" ? "green" : "blue"}
-                >
-                  {userRole}
-                </Tag>
+                <RoleTag role={user.role} />
+                {user.status === "suspended" && (
+                  <Tag color="red">{formatMessage({ id: "suspended" })}</Tag>
+                )}
               </Space>
               <ParagraphInfo icon={<MailOutlined />} text={user.email} />
-              <ParagraphInfo icon={<GlobalOutlined />} text={user.country} />
+              <ParagraphInfo
+                icon={<GlobalOutlined />}
+                text={user.country?.name ?? formatMessage({ id: "not-set" })}
+              />
             </Space>
           </Flex>
-          <Button
-            onClick={handleEditClick}
-            iconPosition="end"
-            icon={<EditOutlined />}
-          />
+          {!isOtherUser && (
+            <Button
+              onClick={() => navigate(routes.settings)}
+              iconPosition="end"
+              icon={<EditOutlined />}
+            />
+          )}
         </Flex>
         <Divider />
 
         <Text type={"secondary"} style={{ fontSize: 16, marginRight: 10 }}>
           {formatMessage({ id: "bio" })}:
         </Text>
-        <Text style={{ fontSize: 16 }}>{user.bio}</Text>
+        {user.bio ? (
+          <Text style={{ fontSize: 16 }}>{user.bio}</Text>
+        ) : (
+          <Text type="secondary" italic style={{ fontSize: 16 }}>
+            {formatMessage({ id: "no-bio" })}
+          </Text>
+        )}
       </div>
 
-      {/* Tabs Section */}
       <Card
         style={{
           marginTop: 32,
@@ -86,7 +114,8 @@ export function UserProfilePage() {
               label: formatMessage({ id: "profile-info" }),
               children: <ProfileInfoTab user={user} />,
             },
-            ...(userRole === "student"
+            // Placeholder data until the enrollment service exists
+            ...(user.role === "user"
               ? [
                   {
                     key: "courses",

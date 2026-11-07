@@ -9,11 +9,14 @@ import { routes } from "../constants/routes.ts";
 import type { ICourse } from "../constants/interfaces/course.interfaces.ts";
 import { CourseSearchFilters } from "../components/CourseSearchFilters.tsx";
 import { DeleteOutlined, EyeOutlined, PlusOutlined } from "@ant-design/icons";
-import { isSuperuser, isTeacher } from "../utils/index.utils.ts";
+import { useCurrentUser } from "../hooks/useCurrentUser.ts";
 
 export function Courses({ isMyCourses = false }) {
   const { formatMessage } = useIntl();
   const navigate = useNavigate();
+  const { role } = useCurrentUser();
+  const isTeacher = role === "teacher";
+  const isAdmin = role === "admin";
 
   let coursesList: ICourse[] = [...courses];
   if (isMyCourses) {
@@ -28,7 +31,7 @@ export function Courses({ isMyCourses = false }) {
     }
   };
 
-  if (isSuperuser) {
+  if (isAdmin) {
     const courses = [
       {
         id: 1,

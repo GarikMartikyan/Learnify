@@ -10,7 +10,7 @@ import { Link, useLocation } from "react-router";
 import { routes } from "../constants/routes.ts";
 import { PageTitle } from "../components/shared/PageTitle.tsx";
 import { useIntl } from "react-intl";
-import { isStudent } from "../utils/index.utils.ts";
+import { useCurrentUser } from "../hooks/useCurrentUser.ts";
 import { CourseLanguageSelect } from "../components/shared/CourseLanguageSelect.tsx";
 import { CourseComplexitySelect } from "../components/shared/CourseComplexitySelect.tsx";
 import { CourseLevel } from "../placeholder/courses.ts";
@@ -29,6 +29,9 @@ export default function ParticipatedCoursePage() {
   const location = useLocation();
   const isNewCourse = location.pathname.startsWith(routes.createCourse);
   const { formatMessage } = useIntl();
+  const { role } = useCurrentUser();
+  // A regular user takes the course; teachers/admins see the editing view
+  const isStudent = role === "user";
 
   // -------------------------
   // NEW LOGIC FOR NEW COURSE

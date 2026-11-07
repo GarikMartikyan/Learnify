@@ -2,23 +2,35 @@ import { Button, Card, Form, Input, theme, Typography } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useIntl } from "react-intl";
 import { Link, useNavigate } from "react-router";
+import { useAppDispatch } from "../../hooks/useAppDispatch.ts";
 import { routes } from "../../constants/routes.ts";
 import { Logo } from "../../components/shared/Logo.tsx";
-import { useDispatch } from "react-redux";
 import { setAccessToken } from "../../store/slices/config.slice.ts";
+import { authApi, useLoginMutation } from "../../api/auth.api.ts";
+import { applyFieldErrors } from "../../api/index.api.ts";
+import type { ILoginRequest } from "../../constants/interfaces/user.interfaces.ts";
 
 const { Text } = Typography;
 
 export function Login() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { token } = theme.useToken();
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<ILoginRequest>();
   const { formatMessage } = useIntl();
+  const [login, { isLoading }] = useLoginMutation();
 
-  const handleLogin = () => {
-    navigate(routes.dashboard);
-    dispatch(setAccessToken("accessToken"));
+  const handleLogin = async (values: ILoginRequest) => {
+    try {
+      const response = await login(values).unwrap();
+      dispatch(setAccessToken(response.accessToken));
+      // We already have the user, so the app does not need to fetch /users/me again
+      dispatch(authApi.util.upsertQueryData("getMe", undefined, response.user));
+      navigate(routes.dashboard);
+    } catch (error) {
+      // The error message is shown as a toast by the base query
+      applyFieldErrors(form, error);
+    }
   };
 
   return (
@@ -43,6 +55,22 @@ export function Login() {
         <Form.Item
           name="email"
           label={formatMessage({ id: "email", defaultMessage: "Email" })}
+          rules={[
+            {
+              required: true,
+              message: formatMessage({
+                id: "email-required",
+                defaultMessage: "Please enter your email",
+              }),
+            },
+            {
+              type: "email",
+              message: formatMessage({
+                id: "email-invalid",
+                defaultMessage: "Enter a valid email address",
+              }),
+            },
+          ]}
         >
           <Input
             prefix={<UserOutlined />}
@@ -51,6 +79,7 @@ export function Login() {
               defaultMessage: "Enter your email",
             })}
             aria-label="Email"
+            autoComplete="email"
           />
         </Form.Item>
 
@@ -60,6 +89,15 @@ export function Login() {
             id: "password",
             defaultMessage: "Password",
           })}
+          rules={[
+            {
+              required: true,
+              message: formatMessage({
+                id: "password-required",
+                defaultMessage: "Please enter your password",
+              }),
+            },
+          ]}
         >
           <Input.Password
             prefix={<LockOutlined />}
@@ -68,6 +106,7 @@ export function Login() {
               defaultMessage: "Enter your password",
             })}
             aria-label="Password"
+            autoComplete="current-password"
           />
         </Form.Item>
 
@@ -76,6 +115,7 @@ export function Login() {
             type="primary"
             htmlType="submit"
             block
+            loading={isLoading}
             style={{ borderRadius: 8 }}
           >
             {formatMessage({ id: "log-in", defaultMessage: "Log In" })}

@@ -9,16 +9,12 @@ import { useNavigate } from "react-router";
 import { useIntl } from "react-intl";
 import { UserAvatar } from "../shared/UserAvatar.tsx";
 import { useDispatch } from "react-redux";
-import {
-  removeAccessToken,
-  selectAccessToken,
-} from "../../store/slices/config.slice.ts";
-import { useAppSelector } from "../../hooks/useAppSelector.ts";
-import { userRole } from "../../utils/index.utils.ts";
+import { removeAccessToken } from "../../store/slices/config.slice.ts";
+import { useCurrentUser } from "../../hooks/useCurrentUser.ts";
+import { authApi } from "../../api/auth.api.ts";
 
 export function HeaderDropdown() {
-  const accessToken = useAppSelector(selectAccessToken);
-
+  const { user, isLoggedIn } = useCurrentUser();
   const dispatch = useDispatch();
   const { formatMessage } = useIntl();
   const navigate = useNavigate();
@@ -34,11 +30,16 @@ export function HeaderDropdown() {
       label: formatMessage({ id: "settings" }),
       icon: <SettingOutlined />,
     },
-    {
-      key: routes.applyToTeacher,
-      label: formatMessage({ id: "apply-to-teacher" }),
-      icon: <UserOutlined />,
-    },
+    // Only regular users can apply to become a teacher
+    ...(user?.role === "user"
+      ? [
+          {
+            key: routes.applyToTeacher,
+            label: formatMessage({ id: "apply-to-teacher" }),
+            icon: <UserOutlined />,
+          },
+        ]
+      : []),
     {
       type: "divider",
     },
@@ -49,26 +50,28 @@ export function HeaderDropdown() {
     },
   ];
 
-  const filteredMenuItems =
-    userRole === "student"
-      ? items
-      : items?.filter((items) => items?.key !== routes.applyToTeacher);
-
   const handleMenuClick: MenuProps["onClick"] = ({ key }) => {
     if (key === routes.login) {
       dispatch(removeAccessToken());
+      // Forget all data of the user who logged out
+      dispatch(authApi.util.resetApiState());
     }
     navigate(key);
   };
 
-  return accessToken ? (
+  return isLoggedIn ? (
     <Dropdown
-      menu={{ items: filteredMenuItems, onClick: handleMenuClick }}
+      menu={{ items, onClick: handleMenuClick }}
       placement="bottomRight"
       trigger={["click"]}
     >
-      <Space split={undefined} size="small" align="center">
+      <Space size="small" align="center" style={{ cursor: "pointer" }}>
         <UserAvatar />
+        {user && (
+          <Typography.Text strong style={{ whiteSpace: "nowrap" }}>
+            {user.firstName} {user.lastName}
+          </Typography.Text>
+        )}
       </Space>
     </Dropdown>
   ) : (

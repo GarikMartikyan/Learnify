@@ -6,7 +6,7 @@ import { HEADER_HEIGHT } from "./Layout.tsx";
 import { useLocation, useNavigate } from "react-router";
 import { routes } from "../../constants/routes.ts";
 import { useIntl } from "react-intl";
-import { userRole } from "../../utils/index.utils.ts";
+import { useCurrentUser } from "../../hooks/useCurrentUser.ts";
 import {
   BarChartOutlined,
   BookOutlined,
@@ -17,14 +17,13 @@ import {
   SnippetsOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import type { IUser } from "../../constants/interfaces/user.interfaces.ts";
-import { selectAccessToken } from "../../store/slices/config.slice.ts";
+import type { UserRole } from "../../constants/types/index.types.ts";
 
 const { Sider } = Layout;
 
 export function Sidebar() {
   const location = useLocation();
-  const accessToken = useAppSelector(selectAccessToken);
+  const { isLoggedIn, role } = useCurrentUser();
   const { formatMessage } = useIntl();
   const navigate = useNavigate();
   const { token } = theme.useToken();
@@ -34,8 +33,8 @@ export function Sidebar() {
     navigate(item?.key);
   };
 
-  const menuItems: Record<IUser["role"], MenuProps["items"]> = {
-    student: [
+  const menuItems: Record<UserRole, MenuProps["items"]> = {
+    user: [
       {
         key: routes.dashboard,
         label: formatMessage({ id: "dashboard" }),
@@ -79,7 +78,7 @@ export function Sidebar() {
         icon: <QuestionCircleOutlined />,
       },
     ],
-    superuser: [
+    admin: [
       {
         key: routes.teacherApplication,
         label: formatMessage({ id: "teacher-applications" }),
@@ -98,8 +97,10 @@ export function Sidebar() {
     ],
   };
 
-  const finalMenuItems = accessToken
-    ? menuItems[userRole]
+  const finalMenuItems = isLoggedIn
+    ? role
+      ? menuItems[role]
+      : []
     : [
         {
           key: routes.courses,

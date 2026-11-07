@@ -1,6 +1,7 @@
 // Import locale JSON files containing the translation strings
 import enMessages from "./locales/en.json";
 import hyMessages from "./locales/am.json";
+import ruMessages from "./locales/ru.json";
 import type { Locale } from "../constants/types/index.types.ts";
 
 // Define the type for the locale messages based on the keys in the English translation file.
@@ -11,4 +12,5 @@ type LocaleMessage = Record<keyof typeof enMessages, string>;
 export const messages: Record<Locale, LocaleMessage> = {
   en: enMessages,
   am: hyMessages,
+  ru: ruMessages,
 };

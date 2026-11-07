@@ -1,13 +1,22 @@
 import { Avatar, type AvatarProps } from "antd";
 import { UserOutlined } from "@ant-design/icons";
-import { user } from "../../utils/index.utils.ts";
+import type { IUser } from "../../constants/interfaces/user.interfaces.ts";
+import { useCurrentUser } from "../../hooks/useCurrentUser.ts";
 
-export function UserAvatar({ ...rest }: AvatarProps) {
+interface UserAvatarProps extends AvatarProps {
+  /** Whose avatar to show; defaults to the logged-in user. */
+  user?: IUser;
+}
+
+export function UserAvatar({ user, ...rest }: UserAvatarProps) {
+  const { user: currentUser } = useCurrentUser();
+  const shownUser = user ?? currentUser;
+
   return (
     <Avatar
       {...rest}
       icon={<UserOutlined />}
-      src={user.avatarUrl ? user.avatarUrl : undefined}
+      src={shownUser?.avatarUrl ?? undefined}
     />
   );
 }

@@ -1,6 +1,6 @@
-import type { IUser } from "../constants/interfaces/user.interfaces.ts";
+import type { IMockUser } from "../constants/interfaces/user.interfaces.ts";
 
-export const users: IUser[] = [
+export const users: IMockUser[] = [
   {
     id: 1,
     name: "Alice Johnson",
