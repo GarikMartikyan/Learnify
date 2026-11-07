@@ -29,18 +29,21 @@ export function TeacherMyCoursesPage() {
       title: "Users Enrolled",
       dataIndex: "users",
       key: "users",
+      width: 150,
       align: "center",
     },
     {
       title: "Rating",
       dataIndex: "rating",
       key: "rating",
+      width: 110,
       align: "center",
       render: (rating: number) => `${rating.toFixed(1)} ★`,
     },
     {
       title: "Actions",
       key: "actions",
+      width: 140,
       align: "center",
       render: (_: any, record: any) => (
         <Space>
@@ -87,6 +90,7 @@ export function TeacherMyCoursesPage() {
 
         {/* Table */}
         <Table
+          tableLayout="fixed"
           rowKey="id"
           columns={columns}
           dataSource={courses}

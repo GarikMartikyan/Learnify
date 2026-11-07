@@ -1,201 +1,368 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   Flex,
   Input,
   message,
+  Modal,
   Popconfirm,
+  Result,
   Select,
   Space,
   Table,
   Tag,
+  Typography,
+  type TableProps,
 } from "antd";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Link } from "react-router";
+import {
+  CheckCircleOutlined,
+  EyeOutlined,
+  SearchOutlined,
+  StopOutlined,
+} from "@ant-design/icons";
+import { useIntl } from "react-intl";
+import { useNavigate } from "react-router";
 import { routes } from "../../constants/routes.ts";
+import { PageTitle } from "../../components/shared/PageTitle.tsx";
+import { RoleTag } from "../../components/shared/RoleTag.tsx";
+import { UserAvatar } from "../../components/shared/UserAvatar.tsx";
+import { useCurrentUser } from "../../hooks/useCurrentUser.ts";
+import {
+  useChangeUserRoleMutation,
+  useChangeUserStatusMutation,
+  useGetUsersQuery,
+} from "../../api/auth.api.ts";
+import { getDMY } from "../../utils/date.ustils.ts";
+import type { IUser } from "../../constants/interfaces/user.interfaces.ts";
+import type {
+  AccountStatus,
+  UserRole,
+} from "../../constants/types/index.types.ts";
 
+const { Text, Paragraph } = Typography;
+
+const DEFAULT_PAGE_SIZE = 10;
+const PAGE_SIZE_OPTIONS = [10, 20, 50];
+const SEARCH_DELAY_MS = 400;
+const ROLES: UserRole[] = ["user", "teacher", "admin"];
+/** Filter option meaning "no filter" */
+const ALL = "all";
+
+/** Admin: list/search users, suspend/activate, change role. Users are never deleted. */
 export function Users() {
-  const [users, setUsers] = useState([
-    {
-      id: 1,
-      name: "Alice Smith",
-      email: "alice@example.com",
-      type: "student",
-      status: "active",
-    },
-    {
-      id: 2,
-      name: "Bob Johnson",
-      email: "bob@example.com",
-      type: "teacher",
-      status: "inactive",
-    },
-    {
-      id: 3,
-      name: "Charlie Brown",
-      email: "charlie@example.com",
-      type: "student",
-      status: "active",
-    },
-    {
-      id: 4,
-      name: "Diana Adams",
-      email: "diana@example.com",
-      type: "teacher",
-      status: "active",
-    },
-    {
-      id: 5,
-      name: "Edward Miller",
-      email: "edward@example.com",
-      type: "student",
-      status: "inactive",
-    },
-    {
-      id: 6,
-      name: "Fiona Davis",
-      email: "fiona@example.com",
-      type: "teacher",
-      status: "active",
-    },
-  ]);
+  const { formatMessage } = useIntl();
+  const navigate = useNavigate();
+  const { user: currentUser, role } = useCurrentUser();
 
-  // -----------------------
-  // Search & Filters
-  // -----------------------
+  const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
-  const [userTypeFilter, setUserTypeFilter] = useState<string | null>(null);
-  const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [roleFilter, setRoleFilter] = useState<UserRole | undefined>();
+  const [statusFilter, setStatusFilter] = useState<AccountStatus | undefined>();
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
+  const [roleChange, setRoleChange] = useState<{
+    user: IUser;
+    newRole: UserRole;
+  } | null>(null);
 
-  const filteredUsers = useMemo(() => {
-    return users.filter((u) => {
-      const matchesSearch =
-        u.name.toLowerCase().includes(search.toLowerCase()) ||
-        u.email.toLowerCase().includes(search.toLowerCase());
+  // Search after the admin stops typing, not on every key press
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearch(searchInput.trim());
+      setPage(0);
+    }, SEARCH_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
 
-      const matchesType = userTypeFilter ? u.type === userTypeFilter : true;
-      const matchesStatus = statusFilter ? u.status === statusFilter : true;
-
-      return matchesSearch && matchesType && matchesStatus;
-    });
-  }, [users, search, userTypeFilter, statusFilter]);
-
-  // -----------------------
-  // Actions
-  // -----------------------
-  const handleDelete = (id: number) => {
-    setUsers((prev) => prev.filter((u) => u.id !== id));
-    message.success("User deleted");
-  };
-
-  const handleEdit = (id: number) => {
-    message.info(`Edit user with id: ${id}`);
-    // Redirect to edit page or open drawer modal
-  };
-
-  // -----------------------
-  // Table Columns
-  // -----------------------
-  const userColumns = [
+  const { data, isFetching } = useGetUsersQuery(
     {
-      title: "Name",
-      dataIndex: "name",
+      search: search || undefined,
+      role: roleFilter,
+      status: statusFilter,
+      page,
+      size: pageSize,
+    },
+    { skip: role !== "admin" },
+  );
+  const [changeRole, { isLoading: isChangingRole }] =
+    useChangeUserRoleMutation();
+  const [changeStatus] = useChangeUserStatusMutation();
+
+  if (role !== "admin") {
+    return (
+      <Result
+        status="403"
+        title="403"
+        subTitle={formatMessage({ id: "admin-only" })}
+      />
+    );
+  }
+
+  const fullName = (user: IUser) => `${user.firstName} ${user.lastName}`;
+
+  const handleStatusChange = async (user: IUser) => {
+    const newStatus: AccountStatus =
+      user.status === "active" ? "suspended" : "active";
+    try {
+      await changeStatus({ userId: user.id, status: newStatus }).unwrap();
+      message.success(
+        formatMessage(
+          { id: newStatus === "suspended" ? "user-suspended" : "user-activated" },
+          { name: fullName(user) },
+        ),
+      );
+    } catch {
+      // The error message is shown as a toast by the base query
+    }
+  };
+
+  const confirmRoleChange = async () => {
+    if (!roleChange) return;
+    try {
+      await changeRole({
+        userId: roleChange.user.id,
+        role: roleChange.newRole,
+      }).unwrap();
+      message.success(
+        formatMessage(
+          { id: "role-changed" },
+          {
+            name: fullName(roleChange.user),
+            role: formatMessage({ id: roleChange.newRole }),
+          },
+        ),
+      );
+      setRoleChange(null);
+    } catch {
+      // The error message is shown as a toast by the base query
+      // (e.g. the Course service is unavailable when demoting a teacher)
+    }
+  };
+
+  const columns: TableProps<IUser>["columns"] = [
+    {
+      title: formatMessage({ id: "name" }),
       key: "name",
-      sorter: (a: any, b: any) => a.name.localeCompare(b.name),
+      width: 280,
+      sorter: (a, b) => fullName(a).localeCompare(fullName(b)),
+      render: (_, user) => (
+        <Flex align="center" gap={8}>
+          <UserAvatar user={user} style={{ flexShrink: 0 }} />
+          <Flex vertical style={{ minWidth: 0 }}>
+            <Space size={4}>
+              <Text strong>{fullName(user)}</Text>
+              {user.id === currentUser?.id && (
+                <Tag>{formatMessage({ id: "you" })}</Tag>
+              )}
+            </Space>
+            {/* Keep the email on one line; a very long one is cut with "…" (full text on hover) */}
+            <Text type="secondary" ellipsis={{ tooltip: user.email }}>
+              {user.email}
+            </Text>
+          </Flex>
+        </Flex>
+      ),
     },
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-      sorter: (a: any, b: any) => a.email.localeCompare(b.email),
+      title: formatMessage({ id: "role" }),
+      dataIndex: "role",
+      key: "role",
+      // Widths fit the longest header word / tag / button in en, ru and am
+      width: 150,
+      sorter: (a, b) => a.role.localeCompare(b.role),
+      render: (value: UserRole) => <RoleTag role={value} />,
     },
     {
-      title: "Type",
-      dataIndex: "type",
-      key: "type",
-      filters: [
-        { text: "Student", value: "student" },
-        { text: "Teacher", value: "teacher" },
-      ],
-      onFilter: (value: any, record: any) => record.type === value,
-      render: (type: string) => (
-        <Tag color={type === "teacher" ? "blue" : "green"}>
-          {type.toUpperCase()}
+      title: formatMessage({ id: "status" }),
+      dataIndex: "status",
+      key: "status",
+      width: 160,
+      sorter: (a, b) => a.status.localeCompare(b.status),
+      render: (value: AccountStatus) => (
+        <Tag color={value === "active" ? "green" : "red"}>
+          {formatMessage({ id: value })}
         </Tag>
       ),
     },
     {
-      title: "Actions",
+      title: formatMessage({ id: "country" }),
+      key: "country",
+      width: 150,
+      sorter: (a, b) =>
+        (a.country?.name ?? "").localeCompare(b.country?.name ?? ""),
+      render: (_, user) =>
+        user.country?.name ?? (
+          <Text type="secondary">{formatMessage({ id: "not-set" })}</Text>
+        ),
+    },
+    {
+      title: formatMessage({ id: "joined" }),
+      dataIndex: "createdAt",
+      key: "createdAt",
+      width: 150,
+      sorter: (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+      render: (date: string) => getDMY(date),
+    },
+    {
+      title: formatMessage({ id: "actions" }),
       key: "actions",
-      render: (_: any, row: any) => (
-        <Space>
-          <Link to={routes.profileView("123")}>
-            <Button type="default" icon={<EditOutlined />}>
-              Edit
+      width: 195,
+      render: (_, user) => {
+        const isSelf = user.id === currentUser?.id;
+        // Actions stacked vertically, each the full column width
+        return (
+          <Flex vertical gap={8}>
+            <Button
+              icon={<EyeOutlined />}
+              onClick={() => navigate(routes.profileView(user.id))}
+            >
+              {formatMessage({ id: "view" })}
             </Button>
-          </Link>
-
-          <Popconfirm
-            title="Are you sure delete this user?"
-            okText="Yes"
-            cancelText="No"
-            onConfirm={() => handleDelete(row.id)}
-          >
-            <Button danger icon={<DeleteOutlined />}>
-              Delete
-            </Button>
-          </Popconfirm>
-        </Space>
-      ),
+            {/* Admins cannot change their own role or status (the backend refuses it too) */}
+            {!isSelf && (
+              <>
+                <Select
+                  style={{ width: "100%" }}
+                  value={user.role}
+                  onChange={(newRole: UserRole) =>
+                    setRoleChange({ user, newRole })
+                  }
+                  options={ROLES.map((r) => ({
+                    value: r,
+                    label: formatMessage({ id: r }),
+                  }))}
+                />
+                <Popconfirm
+                  title={formatMessage(
+                    {
+                      id:
+                        user.status === "active"
+                          ? "suspend-confirm"
+                          : "activate-confirm",
+                    },
+                    { name: fullName(user) },
+                  )}
+                  okText={formatMessage({ id: "yes" })}
+                  cancelText={formatMessage({ id: "no" })}
+                  onConfirm={() => handleStatusChange(user)}
+                >
+                  {user.status === "active" ? (
+                    <Button danger icon={<StopOutlined />}>
+                      {formatMessage({ id: "suspend" })}
+                    </Button>
+                  ) : (
+                    <Button icon={<CheckCircleOutlined />}>
+                      {formatMessage({ id: "activate" })}
+                    </Button>
+                  )}
+                </Popconfirm>
+              </>
+            )}
+          </Flex>
+        );
+      },
     },
   ];
 
-  // -----------------------
-  // UI Rendering
-  // -----------------------
   return (
     <div>
-      <h1 style={{ marginBottom: 20, fontSize: 22 }}>Users Management</h1>
+      <PageTitle>{formatMessage({ id: "users-management" })}</PageTitle>
 
-      {/* Filters */}
-      <Flex gap={12} style={{ marginBottom: 16 }}>
+      <Flex gap={12} wrap style={{ marginBottom: 16 }}>
         <Input
-          placeholder="Search by name or email..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{ width: 240 }}
-        />
-
-        <Select
           allowClear
-          placeholder="Filter by type"
-          style={{ width: 180 }}
-          onChange={(v) => setUserTypeFilter(v)}
+          prefix={<SearchOutlined />}
+          placeholder={formatMessage({ id: "search-users-placeholder" })}
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          style={{ width: 310 }}
+        />
+        <Select
+          style={{ width: 230 }}
+          value={roleFilter ?? ALL}
+          onChange={(value: UserRole | typeof ALL) => {
+            setRoleFilter(value === ALL ? undefined : value);
+            setPage(0);
+          }}
           options={[
-            { value: "student", label: "Student" },
-            { value: "teacher", label: "Teacher" },
+            { value: ALL, label: formatMessage({ id: "all-roles" }) },
+            ...ROLES.map((r) => ({
+              value: r,
+              label: formatMessage({ id: r }),
+            })),
           ]}
         />
-
         <Select
-          allowClear
-          placeholder="Filter by status"
-          style={{ width: 180 }}
-          onChange={(v) => setStatusFilter(v)}
+          style={{ width: 230 }}
+          value={statusFilter ?? ALL}
+          onChange={(value: AccountStatus | typeof ALL) => {
+            setStatusFilter(value === ALL ? undefined : value);
+            setPage(0);
+          }}
           options={[
-            { value: "active", label: "Active" },
-            { value: "inactive", label: "Inactive" },
+            { value: ALL, label: formatMessage({ id: "all-statuses" }) },
+            { value: "active", label: formatMessage({ id: "active" }) },
+            { value: "suspended", label: formatMessage({ id: "suspended" }) },
           ]}
         />
       </Flex>
 
-      {/* Table */}
       <Table
-        columns={userColumns}
-        dataSource={filteredUsers}
+        tableLayout="fixed"
+        scroll={{ x: 1085 }}
+        columns={columns}
+        dataSource={data?.content ?? []}
         rowKey="id"
-        pagination={{ pageSize: 5, showSizeChanger: false }}
+        loading={isFetching}
+        locale={{ emptyText: formatMessage({ id: "no-users" }) }}
+        pagination={{
+          current: page + 1,
+          pageSize,
+          total: data?.totalElements ?? 0,
+          showSizeChanger: true,
+          pageSizeOptions: PAGE_SIZE_OPTIONS,
+          onChange: (newPage, newPageSize) => {
+            if (newPageSize !== pageSize) {
+              // A different page size: start again from the first page
+              setPageSize(newPageSize);
+              setPage(0);
+            } else {
+              setPage(newPage - 1);
+            }
+          },
+        }}
       />
+
+      {/* Role change confirmation */}
+      <Modal
+        open={Boolean(roleChange)}
+        title={formatMessage({ id: "change-role" })}
+        okText={formatMessage({ id: "change-role" })}
+        cancelText={formatMessage({ id: "cancel" })}
+        confirmLoading={isChangingRole}
+        onOk={confirmRoleChange}
+        onCancel={() => setRoleChange(null)}
+      >
+        {roleChange && (
+          <>
+            <Paragraph>
+              {formatMessage(
+                { id: "change-role-confirm" },
+                {
+                  name: fullName(roleChange.user),
+                  role: formatMessage({ id: roleChange.newRole }),
+                },
+              )}
+            </Paragraph>
+            {roleChange.user.role === "teacher" && (
+              <Paragraph type="warning">
+                {formatMessage({ id: "teacher-demotion-warning" })}
+              </Paragraph>
+            )}
+          </>
+        )}
+      </Modal>
     </div>
   );
 }

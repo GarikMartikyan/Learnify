@@ -42,6 +42,7 @@ export function ApplicationDocumentList({
   return (
     <List
       size="small"
+      bordered
       dataSource={documents}
       renderItem={(document) => (
         <List.Item

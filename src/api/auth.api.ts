@@ -13,6 +13,7 @@ import type {
   IUpdateProfileRequest,
   IUser,
 } from "../constants/interfaces/user.interfaces.ts";
+import type { AccountStatus, UserRole } from "../constants/types/index.types.ts";
 
 /** Endpoints of the Auth & User service (port 8081). */
 export const authApi = createApi({
@@ -76,6 +77,50 @@ export const authApi = createApi({
     getUserById: builder.query<IUser, string>({
       query: (userId) => `/admin/users/${userId}`,
       providesTags: (_result, _error, userId) => [
+        { type: rtkTags.user, id: userId },
+      ],
+    }),
+
+    // ------------------------------------------------ admin: users
+
+    /** All filters are optional; search matches name or email. */
+    getUsers: builder.query<
+      IPage<IUser>,
+      {
+        search?: string;
+        role?: UserRole;
+        status?: AccountStatus;
+        page: number;
+        size: number;
+      }
+    >({
+      query: (params) => ({ url: "/admin/users", params }),
+      providesTags: [{ type: rtkTags.user, id: "LIST" }],
+    }),
+
+    changeUserRole: builder.mutation<IUser, { userId: string; role: UserRole }>({
+      query: ({ userId, role }) => ({
+        url: `/admin/users/${userId}/role`,
+        method: "PUT",
+        body: { role },
+      }),
+      invalidatesTags: (_result, _error, { userId }) => [
+        { type: rtkTags.user, id: "LIST" },
+        { type: rtkTags.user, id: userId },
+      ],
+    }),
+
+    changeUserStatus: builder.mutation<
+      IUser,
+      { userId: string; status: AccountStatus }
+    >({
+      query: ({ userId, status }) => ({
+        url: `/admin/users/${userId}/status`,
+        method: "PUT",
+        body: { status },
+      }),
+      invalidatesTags: (_result, _error, { userId }) => [
+        { type: rtkTags.user, id: "LIST" },
         { type: rtkTags.user, id: userId },
       ],
     }),
@@ -160,6 +205,9 @@ export const {
   useRemoveAvatarMutation,
   useGetCountriesQuery,
   useGetUserByIdQuery,
+  useGetUsersQuery,
+  useChangeUserRoleMutation,
+  useChangeUserStatusMutation,
   useGetMyApplicationsQuery,
   useSubmitApplicationMutation,
   useLazyGetApplicationDocumentUrlQuery,

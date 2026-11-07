@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { App, ConfigProvider, Layout, theme as antTheme } from "antd";
+import enUS from "antd/locale/en_US";
 import { useAppSelector } from "./hooks/useAppSelector.ts";
 import { themes } from "./constants/themes.ts";
 import { IntlProvider } from "react-intl";
@@ -15,6 +16,11 @@ export function AppInitProvider({ children }: { children: ReactNode }) {
   const { defaultAlgorithm, darkAlgorithm } = antTheme;
   return (
     <ConfigProvider
+      // Show the page size options as "10" instead of "10 / page"
+      locale={{
+        ...enUS,
+        Pagination: { ...enUS.Pagination, items_per_page: "" },
+      }}
       theme={{
         ...finalTheme,
         algorithm: isDarkMode ? darkAlgorithm : defaultAlgorithm,

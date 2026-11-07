@@ -58,6 +58,7 @@ export default function SuperUserDashboard() {
       title: "User Type",
       dataIndex: "type",
       key: "type",
+      width: 140,
       render: (type: string) => (
         <Tag color={type === "teacher" ? "blue" : "green"}>
           {type.toUpperCase()}
@@ -67,6 +68,7 @@ export default function SuperUserDashboard() {
     {
       title: "Actions",
       key: "actions",
+      width: 220,
       render: (_: any, record: User) => (
         <Space>
           <Button
@@ -94,11 +96,13 @@ export default function SuperUserDashboard() {
       title: "Rating",
       dataIndex: "rating",
       key: "rating",
+      width: 100,
       render: (r: number) => r.toFixed(1),
     },
     {
       title: "Actions",
       key: "actions",
+      width: 220,
       render: (_: any, record: Course) => (
         <Space>
           <Button
@@ -132,6 +136,7 @@ export default function SuperUserDashboard() {
         }}
       >
         <Table
+          tableLayout="fixed"
           columns={userColumns}
           dataSource={users}
           rowKey="id"
@@ -144,6 +149,7 @@ export default function SuperUserDashboard() {
         style={{ borderRadius: 16, boxShadow: "0 4px 16px rgba(0,0,0,0.05)" }}
       >
         <Table
+          tableLayout="fixed"
           columns={courseColumns}
           dataSource={courses}
           rowKey="id"

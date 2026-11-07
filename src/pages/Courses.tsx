@@ -82,21 +82,25 @@ export function Courses({ isMyCourses = false }) {
         title: "Rating",
         dataIndex: "rating",
         key: "rating",
+        width: 100,
         render: (r: number) => r?.toFixed(1),
       },
       {
         title: "Level",
         dataIndex: "level",
         key: "level",
+        width: 140,
       },
       {
         title: "Language",
         dataIndex: "language",
         key: "language",
+        width: 140,
       },
       {
         title: "Actions",
         key: "actions",
+        width: 230,
         render: () => (
           <Space>
             <Link to={routes.myCourseById("132")}>
@@ -117,6 +121,7 @@ export function Courses({ isMyCourses = false }) {
         <PageTitle>Course Management</PageTitle>
         <CourseSearchFilters />
         <Table
+          tableLayout="fixed"
           columns={courseColumns}
           dataSource={courses}
           rowKey="id"

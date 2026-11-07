@@ -82,17 +82,20 @@ export function CourseStatistics() {
       title: "Participants",
       dataIndex: "participants",
       key: "participants",
+      width: 130,
       align: "center",
     },
     {
       title: "Passed",
       dataIndex: "passed",
       key: "passed",
+      width: 110,
       align: "center",
     },
     {
       title: "Completion Rate",
       key: "completion",
+      width: 170,
       align: "center",
       render: (_: any, record: any) => {
         const rate = Math.round((record.passed / record.participants) * 100);
@@ -110,12 +113,14 @@ export function CourseStatistics() {
       title: "Rating",
       dataIndex: "rating",
       key: "rating",
+      width: 100,
       align: "center",
       render: (rate: number) => `${rate.toFixed(1)} ★`,
     },
     {
       title: "Actions",
       key: "actions",
+      width: 230,
       align: "center",
       render: (_: any, record: any) => (
         <Space>
@@ -145,6 +150,7 @@ export function CourseStatistics() {
         </Title>
 
         <Table
+          tableLayout="fixed"
           columns={columns}
           dataSource={courses}
           rowKey="id"

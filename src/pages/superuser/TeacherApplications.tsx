@@ -1,5 +1,7 @@
 import { useState } from "react";
 import {
+  Alert,
+  Avatar,
   Button,
   Card,
   Descriptions,
@@ -12,6 +14,7 @@ import {
   Space,
   Table,
   Typography,
+  theme,
   type TableProps,
 } from "antd";
 import { CheckOutlined, CloseOutlined, EyeOutlined } from "@ant-design/icons";
@@ -31,7 +34,7 @@ import type {
   ITeacherApplication,
 } from "../../constants/interfaces/user.interfaces.ts";
 
-const { Text, Paragraph } = Typography;
+const { Text, Paragraph, Title } = Typography;
 
 const DEFAULT_PAGE_SIZE = 10;
 const PAGE_SIZE_OPTIONS = [10, 20, 50];
@@ -41,9 +44,11 @@ type Decision = "approve" | "reject";
 /** Admin: review teacher applications (list, view documents, approve / reject). */
 export function TeacherApplicationsPage() {
   const { formatMessage } = useIntl();
+  const { token } = theme.useToken();
   const { role } = useCurrentUser();
 
-  const [status, setStatus] = useState<ApplicationStatus | undefined>("pending");
+  // Show every application by default; decided ones stay visible (with only "View")
+  const [status, setStatus] = useState<ApplicationStatus | undefined>();
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const [selected, setSelected] = useState<ITeacherApplication | null>(null);
@@ -120,13 +125,21 @@ export function TeacherApplicationsPage() {
     {
       title: formatMessage({ id: "applicant" }),
       key: "applicant",
+      width: 240,
+      sorter: (a, b) =>
+        `${a.applicant.firstName} ${a.applicant.lastName}`.localeCompare(
+          `${b.applicant.firstName} ${b.applicant.lastName}`,
+        ),
       render: (_, record) => (
-        <Space direction="vertical" size={0}>
+        <Flex vertical style={{ minWidth: 0 }}>
           <Text strong>
             {record.applicant.firstName} {record.applicant.lastName}
           </Text>
-          <Text type="secondary">{record.applicant.email}</Text>
-        </Space>
+          {/* Keep the email on one line; a very long one is cut with "…" (full text on hover) */}
+          <Text type="secondary" ellipsis={{ tooltip: record.applicant.email }}>
+            {record.applicant.email}
+          </Text>
+        </Flex>
       ),
     },
     {
@@ -139,31 +152,41 @@ export function TeacherApplicationsPage() {
     {
       title: formatMessage({ id: "documents" }),
       key: "documents",
+      // Widths fit the longest header word ("Փաստաթղթեր") + sort icon in en/ru/am
+      width: 160,
       align: "center",
+      sorter: (a, b) => a.documents.length - b.documents.length,
       render: (_, record) => record.documents.length,
     },
     {
       title: formatMessage({ id: "submitted-on" }),
       dataIndex: "createdAt",
       key: "createdAt",
+      width: 140,
+      sorter: (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
       render: (date: string) => getDMY(date),
     },
     {
       title: formatMessage({ id: "status" }),
       dataIndex: "status",
       key: "status",
+      width: 160,
+      sorter: (a, b) => a.status.localeCompare(b.status),
       render: (value: ApplicationStatus) => <ApplicationStatusTag status={value} />,
     },
     {
       title: formatMessage({ id: "actions" }),
       key: "actions",
+      width: 175,
+      // Actions stacked vertically, each the full column width
       render: (_, record) => (
-        <Space wrap>
+        <Flex vertical gap={8}>
           <Button icon={<EyeOutlined />} onClick={() => setSelected(record)}>
             {formatMessage({ id: "view" })}
           </Button>
           {decisionButtons(record)}
-        </Space>
+        </Flex>
       ),
     },
   ];
@@ -173,17 +196,17 @@ export function TeacherApplicationsPage() {
       <Flex justify="space-between" align="center" wrap gap={12}>
         <PageTitle>{formatMessage({ id: "teacher-applications" })}</PageTitle>
         <Select
-          style={{ width: 200 }}
+          style={{ width: 230 }}
           value={status ?? "all"}
           onChange={(value) => {
             setStatus(value === "all" ? undefined : (value as ApplicationStatus));
             setPage(0);
           }}
           options={[
+            { value: "all", label: formatMessage({ id: "all-statuses" }) },
             { value: "pending", label: formatMessage({ id: "pending" }) },
             { value: "approved", label: formatMessage({ id: "approved" }) },
             { value: "rejected", label: formatMessage({ id: "rejected" }) },
-            { value: "all", label: formatMessage({ id: "all-statuses" }) },
           ]}
         />
       </Flex>
@@ -196,6 +219,8 @@ export function TeacherApplicationsPage() {
         }}
       >
         <Table
+          tableLayout="fixed"
+          scroll={{ x: 1050 }}
           columns={columns}
           dataSource={data?.content ?? []}
           rowKey="id"
@@ -223,12 +248,9 @@ export function TeacherApplicationsPage() {
       {/* Details */}
       <Modal
         open={Boolean(selected)}
-        title={
-          selected &&
-          `${selected.applicant.firstName} ${selected.applicant.lastName}`
-        }
+        title={formatMessage({ id: "teacher-application" })}
         onCancel={() => setSelected(null)}
-        width={650}
+        width={680}
         footer={
           selected && (
             <Space>
@@ -241,41 +263,97 @@ export function TeacherApplicationsPage() {
         }
       >
         {selected && (
-          <>
-            <Descriptions column={1} size="small">
-              <Descriptions.Item label={formatMessage({ id: "email" })}>
-                {selected.applicant.email}
-              </Descriptions.Item>
+          <Flex vertical gap={20} style={{ paddingTop: 8 }}>
+            {/* Applicant */}
+            <Flex align="center" justify="space-between" gap={12} wrap>
+              <Flex align="center" gap={12}>
+                <Avatar size={48} style={{ flexShrink: 0 }}>
+                  {selected.applicant.firstName.charAt(0).toUpperCase()}
+                  {selected.applicant.lastName.charAt(0).toUpperCase()}
+                </Avatar>
+                <Flex vertical>
+                  <Text strong style={{ fontSize: 16 }}>
+                    {selected.applicant.firstName} {selected.applicant.lastName}
+                  </Text>
+                  <Text type="secondary">{selected.applicant.email}</Text>
+                </Flex>
+              </Flex>
+              <ApplicationStatusTag status={selected.status} />
+            </Flex>
+
+            <Descriptions
+              bordered
+              size="small"
+              column={1}
+              styles={{ label: { width: 160 } }}
+            >
               <Descriptions.Item label={formatMessage({ id: "submitted-on" })}>
                 {getDMY(selected.createdAt)}
               </Descriptions.Item>
-              <Descriptions.Item label={formatMessage({ id: "status" })}>
-                <ApplicationStatusTag status={selected.status} />
+              <Descriptions.Item label={formatMessage({ id: "documents" })}>
+                {selected.documents.length}
               </Descriptions.Item>
               {selected.reviewedBy && (
                 <Descriptions.Item label={formatMessage({ id: "reviewed-by" })}>
                   {selected.reviewedBy.firstName} {selected.reviewedBy.lastName}
-                  {selected.reviewedAt && ` (${getDMY(selected.reviewedAt)})`}
                 </Descriptions.Item>
               )}
-              {selected.adminNotes && (
-                <Descriptions.Item label={formatMessage({ id: "admin-note" })}>
-                  {selected.adminNotes}
+              {selected.reviewedAt && (
+                <Descriptions.Item label={formatMessage({ id: "reviewed-on" })}>
+                  {getDMY(selected.reviewedAt)}
                 </Descriptions.Item>
               )}
             </Descriptions>
 
-            <Text strong>{formatMessage({ id: "motivation" })}:</Text>
-            <Paragraph style={{ whiteSpace: "pre-wrap", marginTop: 4 }}>
-              {selected.motivation}
-            </Paragraph>
+            {selected.adminNotes && (
+              <Alert
+                type={selected.status === "rejected" ? "error" : "info"}
+                showIcon
+                message={formatMessage({ id: "admin-note" })}
+                description={
+                  <span style={{ whiteSpace: "pre-wrap" }}>
+                    {selected.adminNotes}
+                  </span>
+                }
+              />
+            )}
 
-            <Text strong>{formatMessage({ id: "attached-documents" })}:</Text>
-            <ApplicationDocumentList
-              applicationId={selected.id}
-              documents={selected.documents}
-            />
-          </>
+            <div>
+              <Title level={5} style={{ marginTop: 0 }}>
+                {formatMessage({ id: "motivation" })}
+              </Title>
+              <div
+                style={{
+                  maxHeight: 220,
+                  overflowY: "auto",
+                  padding: "12px 16px",
+                  borderRadius: token.borderRadiusLG,
+                  background: token.colorFillQuaternary,
+                  border: `1px solid ${token.colorBorderSecondary}`,
+                }}
+              >
+                <Paragraph
+                  style={{
+                    whiteSpace: "pre-wrap",
+                    wordBreak: "break-word",
+                    margin: 0,
+                  }}
+                >
+                  {selected.motivation}
+                </Paragraph>
+              </div>
+            </div>
+
+            <div>
+              <Title level={5} style={{ marginTop: 0 }}>
+                {formatMessage({ id: "attached-documents" })}
+              </Title>
+              <ApplicationDocumentList
+                applicationId={selected.id}
+                documents={selected.documents}
+              />
+            </div>
+          </Flex>
         )}
       </Modal>
 
