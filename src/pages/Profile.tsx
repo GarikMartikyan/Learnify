@@ -11,7 +11,12 @@ import {
   theme,
   Typography,
 } from "antd";
-import { EditOutlined, GlobalOutlined, MailOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  GlobalOutlined,
+  LockOutlined,
+  MailOutlined,
+} from "@ant-design/icons";
 import { useIntl } from "react-intl";
 import { useNavigate, useParams } from "react-router";
 import { ParagraphInfo } from "../components/shared/ParagraphInfo.tsx";
@@ -78,11 +83,17 @@ export function UserProfilePage() {
             </Space>
           </Flex>
           {!isOtherUser && (
-            <Button
-              onClick={() => navigate(routes.settings)}
-              iconPosition="end"
-              icon={<EditOutlined />}
-            />
+            <Space>
+              {/* Not connected yet: the change-password form will be added later */}
+              <Button icon={<LockOutlined />}>
+                {formatMessage({ id: "change-password-button" })}
+              </Button>
+              <Button
+                onClick={() => navigate(routes.settings)}
+                iconPosition="end"
+                icon={<EditOutlined />}
+              />
+            </Space>
           )}
         </Flex>
         <Divider />

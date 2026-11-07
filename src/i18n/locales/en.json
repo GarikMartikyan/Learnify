@@ -257,5 +257,7 @@
   "audit-action.teacher_application.approved": "Application approved",
   "audit-action.teacher_application.rejected": "Application rejected",
   "audit-entity.user": "User",
-  "audit-entity.teacher_application": "Teacher application"
+  "audit-entity.teacher_application": "Teacher application",
+
+  "change-password-button": "Change password"
 }

@@ -257,5 +257,7 @@
   "audit-action.teacher_application.approved": "Դիմումը հաստատվել է",
   "audit-action.teacher_application.rejected": "Դիմումը մերժվել է",
   "audit-entity.user": "Օգտատեր",
-  "audit-entity.teacher_application": "Ուսուցչի դիմում"
+  "audit-entity.teacher_application": "Ուսուցչի դիմում",
+
+  "change-password-button": "Փոխել գաղտնաբառը"
 }

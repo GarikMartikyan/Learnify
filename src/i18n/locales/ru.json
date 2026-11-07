@@ -257,5 +257,7 @@
   "audit-action.teacher_application.approved": "Заявка одобрена",
   "audit-action.teacher_application.rejected": "Заявка отклонена",
   "audit-entity.user": "Пользователь",
-  "audit-entity.teacher_application": "Заявка преподавателя"
+  "audit-entity.teacher_application": "Заявка преподавателя",
+
+  "change-password-button": "Изменить пароль"
 }
