@@ -14,6 +14,7 @@ import { useCurrentUser } from "../../hooks/useCurrentUser.ts";
 import { authApi } from "../../api/auth.api.ts";
 import { auditApi } from "../../api/audit.api.ts";
 import { courseApi } from "../../api/course.api.ts";
+import { enrollmentApi } from "../../api/enrollment.api.ts";
 
 export function HeaderDropdown() {
   const { user, isLoggedIn } = useCurrentUser();
@@ -59,6 +60,7 @@ export function HeaderDropdown() {
       dispatch(authApi.util.resetApiState());
       dispatch(auditApi.util.resetApiState());
       dispatch(courseApi.util.resetApiState());
+      dispatch(enrollmentApi.util.resetApiState());
     }
     navigate(key);
   };

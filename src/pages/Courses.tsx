@@ -16,25 +16,12 @@ import { AdminCourses } from "./superuser/AdminCourses.tsx";
 
 const PAGE_SIZE = 12;
 
-/**
- * "/" — the public course catalog (admins get the course management table instead).
- * With isMyCourses (a student's "My Courses"): enrolled courses come with the Enrollment service.
- */
-export function Courses({ isMyCourses = false }) {
-  const { formatMessage } = useIntl();
+/** "/" — the public course catalog (admins get the course management table instead). */
+export function Courses() {
   const { role } = useCurrentUser();
 
   if (role === "admin") {
     return <AdminCourses />;
-  }
-
-  if (isMyCourses) {
-    return (
-      <>
-        <PageTitle>{formatMessage({ id: "my-courses" })}</PageTitle>
-        <Empty description={formatMessage({ id: "enrolled-courses-coming" })} />
-      </>
-    );
   }
 
   return <CourseCatalog showCreateButton={role === "teacher"} />;

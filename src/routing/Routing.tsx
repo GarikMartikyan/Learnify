@@ -11,6 +11,8 @@ import { UserProfilePage } from "../pages/Profile.tsx";
 import { Settings } from "../pages/Settings.tsx";
 import { ChapterPage } from "../pages/student/ChapterPage.tsx";
 import { ExamPage } from "../pages/student/ExamPage.tsx";
+import { LearningPage } from "../pages/student/LearningPage.tsx";
+import { LearningChapterPage } from "../pages/student/LearningChapterPage.tsx";
 import { mockExam } from "../placeholder/exam.ts";
 import { MyCourseDetail, MyCourses } from "../pages/MyCourses.tsx";
 import { Dashboard } from "../pages/Dashboard.tsx";
@@ -55,6 +57,8 @@ export function Routing() {
         <Route path={routes.settings} element={<Settings />} />
         <Route path={routes.courseStatistics} element={<CourseStatistics />} />
         <Route path={routes.chapterById()} element={<ChapterPage />} />
+        <Route path={routes.learning()} element={<LearningPage />} />
+        <Route path={routes.learningChapter()} element={<LearningChapterPage />} />
         <Route
           path={routes.examById()}
           element={<ExamPage exam={mockExam} />}

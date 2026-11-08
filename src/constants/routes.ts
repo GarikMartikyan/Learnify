@@ -9,6 +9,11 @@ export const routes = {
   examById: (examId = ":examId") => `/exams/${examId}`,
   myCourses: "/my-courses",
   myCourseById: (courseId = ":courseId") => `/my-courses/${courseId}`,
+  /** A student's learning view of an enrolled course. */
+  learning: (courseId = ":courseId") => `/learning/${courseId}`,
+  /** A chapter opened by an enrolled student. */
+  learningChapter: (courseId = ":courseId", chapterId = ":chapterId") =>
+    `/learning/${courseId}/chapters/${chapterId}`,
   profile: "/profile",
   settings: "/settings",
   userById: (userId = ":userId") => `/users/${userId}`,

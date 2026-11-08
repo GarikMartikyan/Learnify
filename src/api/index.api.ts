@@ -16,6 +16,8 @@ import type { IApiError } from "../constants/interfaces/user.interfaces.ts";
 export const apiUrls = {
   auth: import.meta.env.VITE_AUTH_API_URL || "http://localhost:8081",
   course: import.meta.env.VITE_COURSE_API_URL || "http://localhost:8082",
+  enrollment:
+    import.meta.env.VITE_ENROLLMENT_API_URL || "http://localhost:8083",
   audit: import.meta.env.VITE_AUDIT_API_URL || "http://localhost:8084",
 } as const;
 

@@ -10,7 +10,6 @@ import {
   Spin,
   Tag,
   theme,
-  Tooltip,
   Typography,
 } from "antd";
 import {
@@ -35,6 +34,7 @@ import {
   useGetPublicCourseQuery,
 } from "../api/course.api.ts";
 import type { ICourseItem } from "../constants/interfaces/courseApi.interfaces.ts";
+import { EnrollmentActions } from "../components/enrollment/EnrollmentActions.tsx";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -72,7 +72,7 @@ export function CourseDetailsPage() {
 
   const { course, items } = data;
   const isOwner = user?.id === course.teacher.id;
-  // Chapter content is open to the course's teacher and admins (students: with Enrollment)
+  // Here chapters open for the course's teacher and admins; enrolled students read them from the learning view
   const canOpenChapters = isOwner || isAdmin;
   const teacherName = [course.teacher.firstName, course.teacher.lastName]
     .filter(Boolean)
@@ -151,12 +151,9 @@ export function CourseDetailsPage() {
               {formatMessage({ id: "edit-course" })}
             </Button>
           )}
-          {role === "user" && (
-            <Tooltip title={formatMessage({ id: "enrollment-coming" })}>
-              <Button type="primary" size="large" disabled>
-                {formatMessage({ id: "join-course" })}
-              </Button>
-            </Tooltip>
+          {/* Users and other teachers can join; admins and the course's own teacher cannot */}
+          {!isAdmin && !isOwner && course.status === "published" && !course.disabled && (
+            <EnrollmentActions courseId={course.id} />
           )}
         </Flex>
       </Card>

@@ -31,7 +31,8 @@ export function ChapterPage() {
   }
 
   return (
-    <div style={{ maxWidth: 960, margin: "0 auto" }}>
+    // Full page width, like the chapter editor and the other pages
+    <div>
       <Flex justify="space-between" align="center" wrap gap={12}>
         <PageTitle showBackButton>{chapter.title}</PageTitle>
         {chapter.canEdit && (

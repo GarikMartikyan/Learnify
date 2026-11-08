@@ -4,6 +4,7 @@ interface ImportMetaEnv {
   readonly VITE_ENV: "development" | "staging" | "production";
   readonly VITE_AUTH_API_URL?: string;
   readonly VITE_COURSE_API_URL?: string;
+  readonly VITE_ENROLLMENT_API_URL?: string;
   readonly VITE_AUDIT_API_URL?: string;
 }
 

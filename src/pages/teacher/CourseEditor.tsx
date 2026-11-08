@@ -180,12 +180,15 @@ function EditorHeader({
     }
   };
 
+  /** Runs a status change; returns whether it succeeded. */
   const run = async (action: () => Promise<ICourseDetail>, successId: string) => {
     try {
       setCourse(await action());
       message.success(formatMessage({ id: successId }));
+      return true;
     } catch {
       // The error message (e.g. why publishing is not possible) is shown as a toast
+      return false;
     }
   };
 
@@ -225,7 +228,13 @@ function EditorHeader({
               type="primary"
               icon={<SendOutlined />}
               loading={isPublishing}
-              onClick={() => run(() => publish(course.id).unwrap(), "course-published")}
+              onClick={async () => {
+                if (await run(() => publish(course.id).unwrap(), "course-published")) {
+                  // Show the teacher the published course. ?preview loads their own copy,
+                  // so it opens even if an admin has disabled the course.
+                  navigate(`${routes.courseById(course.id)}?preview`);
+                }
+              }}
             >
               {formatMessage({ id: "publish" })}
             </Button>

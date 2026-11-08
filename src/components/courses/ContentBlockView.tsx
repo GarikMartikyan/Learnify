@@ -13,7 +13,7 @@ function formatSize(bytes: number | null) {
 }
 
 /** Shows one chapter content block the way a student will see it. */
-export function ContentBlockView({ block }: { block: IContentBlock }) {
+export function ContentBlockView({ block }: { block: Omit<IContentBlock, "disabled"> }) {
   const { formatMessage } = useIntl();
 
   switch (block.blockType) {
