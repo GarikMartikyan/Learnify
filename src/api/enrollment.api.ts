@@ -3,8 +3,11 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { apiUrls, createBaseQuery } from "./index.api.ts";
 import type {
   EnrollmentStatus,
+  IAttempt,
   IEnrollment,
   IEnrollmentDetail,
+  IExamOverview,
+  ISaveAnswerRequest,
   IStudentChapter,
 } from "../constants/interfaces/enrollment.interfaces.ts";
 
@@ -58,6 +61,53 @@ export const enrollmentApi = createApi({
       invalidatesTags: [ENROLLMENT_TAG],
     }),
 
+    // ------------------------------------------------ exams
+
+    getExamOverview: builder.query<
+      IExamOverview,
+      { enrollmentId: string; examId: string }
+    >({
+      query: ({ enrollmentId, examId }) =>
+        `/enrollments/${enrollmentId}/exams/${examId}`,
+      providesTags: [ENROLLMENT_TAG],
+    }),
+
+    /** Starts an attempt, or resumes the open one. */
+    startAttempt: builder.mutation<
+      IAttempt,
+      { enrollmentId: string; examId: string }
+    >({
+      query: ({ enrollmentId, examId }) => ({
+        url: `/enrollments/${enrollmentId}/exams/${examId}/attempts`,
+        method: "POST",
+      }),
+      invalidatesTags: [ENROLLMENT_TAG],
+    }),
+
+    getAttempt: builder.query<IAttempt, string>({
+      query: (attemptId) => `/attempts/${attemptId}`,
+      providesTags: [ENROLLMENT_TAG],
+    }),
+
+    /** Saves one answer. Nothing is refetched: the page keeps its own copy of the answers. */
+    saveAnswer: builder.mutation<void, ISaveAnswerRequest>({
+      query: ({ attemptId, questionId, optionIds, text }) => ({
+        url: `/attempts/${attemptId}/answers/${questionId}`,
+        method: "PUT",
+        body: { optionIds, text },
+      }),
+    }),
+
+    submitAttempt: builder.mutation<IAttempt, string>({
+      query: (attemptId) => ({
+        url: `/attempts/${attemptId}/submit`,
+        method: "POST",
+      }),
+      invalidatesTags: [ENROLLMENT_TAG],
+    }),
+
+    // ------------------------------------------------ enrollments
+
     /** Enrolls, or continues an abandoned enrollment. */
     enroll: builder.mutation<IEnrollment, string>({
       query: (courseId) => ({
@@ -91,6 +141,11 @@ export const {
   useGetEnrollmentQuery,
   useOpenChapterQuery,
   useFinishChapterMutation,
+  useGetExamOverviewQuery,
+  useStartAttemptMutation,
+  useGetAttemptQuery,
+  useSaveAnswerMutation,
+  useSubmitAttemptMutation,
   useEnrollMutation,
   useAbandonEnrollmentMutation,
   useRestoreEnrollmentMutation,

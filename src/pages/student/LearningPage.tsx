@@ -12,7 +12,6 @@ import {
   Tag,
   theme,
   Typography,
-  message,
 } from "antd";
 import {
   CheckCircleFilled,
@@ -85,8 +84,8 @@ export function LearningPage() {
     }
     if (item.itemType === "chapter" && item.chapterId) {
       navigate(routes.learningChapter(courseId, item.chapterId));
-    } else {
-      message.info(formatMessage({ id: "exams-coming" }));
+    } else if (item.itemType === "exam" && item.examId) {
+      navigate(routes.learningExam(courseId, item.examId));
     }
   };
 

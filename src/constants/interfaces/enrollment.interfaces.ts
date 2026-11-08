@@ -1,6 +1,7 @@
 import type {
   CourseItemType,
   IContentBlock,
+  QuestionType,
 } from "./courseApi.interfaces.ts";
 
 export type EnrollmentStatus = "active" | "abandoned" | "completed";
@@ -58,4 +59,78 @@ export interface IStudentChapter {
   /** The student has already marked this chapter as finished. */
   done: boolean;
   enrollment: IEnrollment;
+}
+
+/** One attempt in an exam's history. Result fields are null while the attempt is open. */
+export interface IAttemptSummary {
+  id: string;
+  startedAt: string;
+  expiresAt: string;
+  submittedAt: string | null;
+  score: number | null;
+  totalMarks: number | null;
+  /** Rounded down. */
+  percent: number | null;
+  passed: boolean | null;
+}
+
+/** The exam page before starting. */
+export interface IExamOverview {
+  examId: string;
+  enrollmentId: string;
+  courseId: string;
+  courseName: string | null;
+  title: string;
+  durationMinutes: number;
+  passingPercentage: number;
+  /** How many questions an attempt draws. */
+  questionCount: number;
+  state: ItemState;
+  /** At least one attempt passed: no retake. */
+  passed: boolean;
+  /** The attempt to resume, if any. */
+  openAttempt: IAttemptSummary | null;
+  /** Graded attempts, newest first. */
+  attempts: IAttemptSummary[];
+}
+
+/** A question of an attempt with the student's answer. Never contains the correct answer. */
+export interface IAttemptQuestion {
+  questionId: string;
+  position: number;
+  questionType: QuestionType;
+  questionText: string;
+  marks: number;
+  options: { id: string; optionText: string }[];
+  selectedOptionIds: string[];
+  answerText: string | null;
+  /** null until graded. */
+  marksAwarded: number | null;
+  correct: boolean | null;
+}
+
+/** An attempt: questions and answers while open (submittedAt null), plus the result once graded. */
+export interface IAttempt {
+  id: string;
+  enrollmentId: string;
+  courseId: string;
+  examId: string;
+  examTitle: string | null;
+  passingPercentage: number;
+  startedAt: string;
+  expiresAt: string;
+  submittedAt: string | null;
+  secondsLeft: number;
+  score: number | null;
+  totalMarks: number | null;
+  percent: number | null;
+  passed: boolean | null;
+  questions: IAttemptQuestion[];
+}
+
+export interface ISaveAnswerRequest {
+  attemptId: string;
+  questionId: string;
+  optionIds?: string[];
+  text?: string;
 }

@@ -14,6 +14,12 @@ export const routes = {
   /** A chapter opened by an enrolled student. */
   learningChapter: (courseId = ":courseId", chapterId = ":chapterId") =>
     `/learning/${courseId}/chapters/${chapterId}`,
+  /** An exam's page for an enrolled student (start / resume, attempt history). */
+  learningExam: (courseId = ":courseId", examId = ":examId") =>
+    `/learning/${courseId}/exams/${examId}`,
+  /** Taking an exam attempt, or its result once submitted. */
+  examAttempt: (courseId = ":courseId", attemptId = ":attemptId") =>
+    `/learning/${courseId}/attempts/${attemptId}`,
   profile: "/profile",
   settings: "/settings",
   userById: (userId = ":userId") => `/users/${userId}`,

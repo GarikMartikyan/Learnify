@@ -57,14 +57,13 @@ export function LearningChapterPage() {
 
   const { chapter, done, enrollment } = data;
 
-  /** Opens the next chapter, or the course's learning view for an exam / when everything is done. */
+  /** Opens the next chapter or exam, or the course's learning view when everything is done. */
   const goTo = (next: IItemProgress | null) => {
     if (next?.itemType === "chapter" && next.chapterId) {
       navigate(routes.learningChapter(courseId, next.chapterId));
+    } else if (next?.itemType === "exam" && next.examId) {
+      navigate(routes.learningExam(courseId, next.examId));
     } else {
-      if (next?.itemType === "exam") {
-        message.info(formatMessage({ id: "exams-coming" }));
-      }
       navigate(routes.learning(courseId));
     }
   };

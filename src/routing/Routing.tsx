@@ -13,6 +13,8 @@ import { ChapterPage } from "../pages/student/ChapterPage.tsx";
 import { ExamPage } from "../pages/student/ExamPage.tsx";
 import { LearningPage } from "../pages/student/LearningPage.tsx";
 import { LearningChapterPage } from "../pages/student/LearningChapterPage.tsx";
+import { LearningExamPage } from "../pages/student/LearningExamPage.tsx";
+import { ExamAttemptPage } from "../pages/student/ExamAttemptPage.tsx";
 import { mockExam } from "../placeholder/exam.ts";
 import { MyCourseDetail, MyCourses } from "../pages/MyCourses.tsx";
 import { Dashboard } from "../pages/Dashboard.tsx";
@@ -59,6 +61,8 @@ export function Routing() {
         <Route path={routes.chapterById()} element={<ChapterPage />} />
         <Route path={routes.learning()} element={<LearningPage />} />
         <Route path={routes.learningChapter()} element={<LearningChapterPage />} />
+        <Route path={routes.learningExam()} element={<LearningExamPage />} />
+        <Route path={routes.examAttempt()} element={<ExamAttemptPage />} />
         <Route
           path={routes.examById()}
           element={<ExamPage exam={mockExam} />}
