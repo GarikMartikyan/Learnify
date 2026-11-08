@@ -279,5 +279,40 @@
   "categories-to-approve": "Categories to approve",
   "categories-coming-soon": "Custom categories suggested by teachers will appear here for approval.",
   "platform-statistics": "Platform statistics",
-  "platform-stats-coming-soon": "Course statistics and enrollments by country will appear here."
+  "platform-stats-coming-soon": "Course statistics and enrollments by country will appear here.",
+
+  "help.account.title": "Account",
+  "help.account.create-account.q": "How do I create an account?",
+  "help.account.create-account.a": "On the login page, click \"Sign Up\" and fill in your name, email, password and country. Every new account starts as a student. If you would like to teach, you can apply later (see \"Teaching on Learnify\").",
+  "help.account.forgot-password.q": "I forgot my password. What should I do?",
+  "help.account.forgot-password.a": "On the login page, click \"Forgot Password?\" and enter your email. We will send you a link to set a new password.",
+  "help.account.change-password.q": "How do I change my password?",
+  "help.account.change-password.a": "Open your profile and click \"Change password\".",
+  "help.account.google.q": "Can I sign in with Google?",
+  "help.account.google.a": "Google sign-in is coming soon. Once it is available, you will be able to use \"Continue with Google\" on the login and sign-up pages.",
+
+  "help.profile.title": "Profile and preferences",
+  "help.profile.edit-profile.q": "How do I edit my profile?",
+  "help.profile.edit-profile.a": "Open the menu under your name in the top-right corner and choose \"Profile\" or \"Settings\". There you can change your name, country, bio and profile picture.",
+  "help.profile.language-theme.q": "How do I change the language or the theme?",
+  "help.profile.language-theme.a": "Use the language selector and the light/dark switch at the top of the page. Your choice is saved to your account and applied every time you sign in.",
+
+  "help.learning.title": "Learning",
+  "help.learning.enroll.q": "How do I enroll in a course?",
+  "help.learning.enroll.a": "Open \"Courses\", choose a course and click \"Join Course\". The course then appears in \"My Courses\".",
+  "help.learning.progress.q": "How do I follow my progress?",
+  "help.learning.progress.a": "Your Dashboard shows your active courses, how far you are in each one and what comes next. Chapters and exams unlock in order, so you always continue where you left off.",
+  "help.learning.exams.q": "How do exams work?",
+  "help.learning.exams.a": "Exams are timed and appear between chapters. You need to pass an exam to unlock what follows it. If you don't pass, you can try again: every attempt gets a new set of questions.",
+  "help.learning.leave-course.q": "Can I leave a course and come back later?",
+  "help.learning.leave-course.a": "Yes. Your progress is kept when you leave a course, and you continue from the same place when you return.",
+
+  "help.teaching.title": "Teaching on Learnify",
+  "help.teaching.become-teacher.q": "How do I become a teacher?",
+  "help.teaching.become-teacher.a": "Choose \"Apply to Teacher\" in the menu under your name, describe your experience and attach 1 to 3 documents (PDF, JPG or PNG, up to 5 MB each). An administrator reviews your application, and you become a teacher as soon as it is approved.",
+  "help.teaching.create-course.q": "How do I create a course?",
+  "help.teaching.create-course.a": "Go to \"My Courses\" and click \"Create Course\". A new course starts as a draft: add chapters and exams in the order students should take them, then publish it when it is ready.",
+
+  "help.support.title": "Still need help?",
+  "help.support.text": "If you can't find the answer here or something doesn't work as expected, please contact the Learnify administrators."
 }
