@@ -1,8 +1,14 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 
 import { apiUrls, createBaseQuery } from "./index.api.ts";
+import type { IPage } from "../constants/interfaces/user.interfaces.ts";
 import type {
   EnrollmentStatus,
+  IAdminReport,
+  IAdminReportsQuery,
+  ICreateReportRequest,
+  IMyRating,
+  IRatingSummary,
   IAttempt,
   IEnrollment,
   IEnrollmentDetail,
@@ -11,14 +17,16 @@ import type {
   IStudentChapter,
 } from "../constants/interfaces/enrollment.interfaces.ts";
 
-/** Everything here changes together when the student makes progress, so one tag is enough. */
+/** Everything about progress changes together when the student makes progress, so one tag is enough. */
 const ENROLLMENT_TAG = "Enrollment";
+const RATING_TAG = "Rating";
+const REPORT_TAG = "Report";
 
 /** Endpoints of the Enrollment & Grading service (port 8083). */
 export const enrollmentApi = createApi({
   reducerPath: "enrollmentApi",
   baseQuery: createBaseQuery(apiUrls.enrollment),
-  tagTypes: [ENROLLMENT_TAG],
+  tagTypes: [ENROLLMENT_TAG, RATING_TAG, REPORT_TAG],
   endpoints: (builder) => ({
     /** The user's latest enrollment in a course; null if they never enrolled. */
     getCourseEnrollment: builder.query<IEnrollment | null, string>({
@@ -106,6 +114,53 @@ export const enrollmentApi = createApi({
       invalidatesTags: [ENROLLMENT_TAG],
     }),
 
+    // ------------------------------------------------ ratings
+
+    /** Public: average and count per course (unrated courses are left out). */
+    getRatingSummaries: builder.query<IRatingSummary[], string[]>({
+      query: (courseIds) => ({ url: "/ratings", params: { courseIds: courseIds.join(",") } }),
+      providesTags: [RATING_TAG],
+    }),
+
+    getMyRating: builder.query<IMyRating, string>({
+      query: (courseId) => `/courses/${courseId}/rating`,
+      providesTags: [RATING_TAG, ENROLLMENT_TAG],
+    }),
+
+    rateCourse: builder.mutation<IMyRating, { courseId: string; rating: number }>({
+      query: ({ courseId, rating }) => ({
+        url: `/courses/${courseId}/rating`,
+        method: "PUT",
+        body: { rating },
+      }),
+      invalidatesTags: [RATING_TAG],
+    }),
+
+    // ------------------------------------------------ content reports
+
+    reportContent: builder.mutation<void, ICreateReportRequest>({
+      query: (body) => ({ url: "/reports", method: "POST", body }),
+      invalidatesTags: [REPORT_TAG],
+    }),
+
+    getAdminReports: builder.query<IPage<IAdminReport>, IAdminReportsQuery>({
+      query: (params) => ({ url: "/admin/reports", params }),
+      providesTags: [REPORT_TAG],
+    }),
+
+    /** action: resolve (hide the item), dismiss (the item is fine) or restore-content (show it again). */
+    reviewReport: builder.mutation<
+      void,
+      { reportId: string; action: "resolve" | "dismiss" | "restore-content"; notes?: string }
+    >({
+      query: ({ reportId, action, notes }) => ({
+        url: `/admin/reports/${reportId}/${action}`,
+        method: "POST",
+        body: { notes },
+      }),
+      invalidatesTags: [REPORT_TAG],
+    }),
+
     // ------------------------------------------------ enrollments
 
     /** Enrolls, or continues an abandoned enrollment. */
@@ -146,6 +201,12 @@ export const {
   useGetAttemptQuery,
   useSaveAnswerMutation,
   useSubmitAttemptMutation,
+  useGetRatingSummariesQuery,
+  useGetMyRatingQuery,
+  useRateCourseMutation,
+  useReportContentMutation,
+  useGetAdminReportsQuery,
+  useReviewReportMutation,
   useEnrollMutation,
   useAbandonEnrollmentMutation,
   useRestoreEnrollmentMutation,

@@ -28,6 +28,7 @@ export const routes = {
   teacherApplication: "/teacher-application",
   users: "/users",
   auditLog: "/audit-log",
+  contentReports: "/content-reports",
   editChapter: (chapterId: string = ":chapterId") =>
     `/edit-chapter/${chapterId}`,
   editExam: (examId: string = ":examId") => `/edit-exam/${examId}`,

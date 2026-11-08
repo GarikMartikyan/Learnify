@@ -9,6 +9,7 @@ import { useIntl } from "react-intl";
 import { useNavigate, useParams } from "react-router";
 import { PageTitle } from "../../components/shared/PageTitle.tsx";
 import { ContentBlockView } from "../../components/courses/ContentBlockView.tsx";
+import { ReportButton } from "../../components/enrollment/ReportButton.tsx";
 import { routes } from "../../constants/routes.ts";
 import {
   useFinishChapterMutation,
@@ -85,9 +86,12 @@ export function LearningChapterPage() {
       <PageTitle showBackButton backRoute={routes.learning(courseId)}>
         {chapter.title}
       </PageTitle>
-      <Flex gap={8} align="center">
-        <Text type="secondary">{chapter.courseName}</Text>
-        {done && <Tag color="success">{formatMessage({ id: "chapter-finished" })}</Tag>}
+      <Flex justify="space-between" align="center" wrap gap={8}>
+        <Flex gap={8} align="center">
+          <Text type="secondary">{chapter.courseName}</Text>
+          {done && <Tag color="success">{formatMessage({ id: "chapter-finished" })}</Tag>}
+        </Flex>
+        <ReportButton entityType="chapter" entityId={chapter.id} />
       </Flex>
       <Divider />
 
@@ -96,7 +100,13 @@ export function LearningChapterPage() {
       ) : (
         <Flex vertical gap="large">
           {chapter.blocks.map((block) => (
-            <ContentBlockView key={block.id} block={block} />
+            // A small flag next to each block reports just that block
+            <Flex key={block.id} gap={8} align="flex-start">
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <ContentBlockView block={block} />
+              </div>
+              <ReportButton entityType="content_block" entityId={block.id} iconOnly />
+            </Flex>
           ))}
         </Flex>
       )}

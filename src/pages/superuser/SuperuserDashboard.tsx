@@ -16,6 +16,7 @@ import { useDashboardCardStyle } from "../../hooks/useDashboardCardStyle.ts";
 import { routes } from "../../constants/routes.ts";
 import { useGetApplicationsQuery, useGetUsersQuery } from "../../api/auth.api.ts";
 import { useGetAuditLogQuery } from "../../api/audit.api.ts";
+import { useGetAdminReportsQuery } from "../../api/enrollment.api.ts";
 import { getDMY } from "../../utils/date.ustils.ts";
 import type { IAuditActor } from "../../constants/interfaces/audit.interfaces.ts";
 
@@ -26,7 +27,7 @@ const ACTIVITY_SIZE = 6;
 
 /**
  * Admin dashboard: an overview of what needs attention, with shortcuts to the full pages.
- * Reports, categories and platform statistics are placeholders until their services exist.
+ * Categories and platform statistics are placeholders until they are built.
  */
 export function AdminDashboard() {
   const intl = useIntl();
@@ -46,8 +47,10 @@ export function AdminDashboard() {
     size: LIST_SIZE,
   });
   const activity = useGetAuditLogQuery({ page: 0, size: ACTIVITY_SIZE });
+  const pendingReports = useGetAdminReportsQuery({ status: "pending", page: 0, size: LIST_SIZE });
 
   const pendingCount = pending.data?.totalElements ?? 0;
+  const pendingReportCount = pendingReports.data?.totalElements ?? 0;
 
   /** Translated label if one exists, otherwise the raw value (same as the Audit Log page). */
   const actionLabel = (value: string) =>
@@ -112,11 +115,13 @@ export function AdminDashboard() {
             />
           </Col>
           <Col xs={24} sm={12} xl={6}>
-            {/* Not available yet: content reports come with the Enrollment & Platform service */}
             <StatTile
-              comingSoon
               title={formatMessage({ id: "reports-to-review" })}
+              value={pendingReportCount}
+              loading={pendingReports.isLoading}
+              highlight={pendingReportCount > 0}
               icon={<FlagOutlined />}
+              onClick={() => navigate(routes.contentReports)}
             />
           </Col>
         </Row>
@@ -160,12 +165,42 @@ export function AdminDashboard() {
             </Card>
           </Col>
 
-          {/* Not available yet */}
+          {/* Content reports waiting for review */}
           <Col xs={24} lg={12}>
-            <ComingSoonCard
+            <Card
               title={formatMessage({ id: "reports-to-review" })}
-              text={formatMessage({ id: "reports-coming-soon" })}
-            />
+              extra={viewAll(routes.contentReports)}
+              loading={pendingReports.isLoading}
+              style={cardStyle}
+            >
+              <List
+                dataSource={pendingReports.data?.content ?? []}
+                locale={{ emptyText: formatMessage({ id: "no-reports" }) }}
+                renderItem={(report) => (
+                  <List.Item
+                    actions={[
+                      <Button key="review" size="small" onClick={() => navigate(routes.contentReports)}>
+                        {formatMessage({ id: "review" })}
+                      </Button>,
+                    ]}
+                  >
+                    <List.Item.Meta
+                      title={
+                        <Text ellipsis={{ tooltip: report.entityTitle }}>
+                          {report.entityTitle ?? formatMessage({ id: "item-not-found" })}
+                        </Text>
+                      }
+                      description={
+                        <Text type="secondary" ellipsis={{ tooltip: report.reason }}>
+                          {formatMessage({ id: `report-entity.${report.entityType}` })} · {report.reason}
+                        </Text>
+                      }
+                    />
+                    <Text type="secondary">{getDMY(report.createdAt)}</Text>
+                  </List.Item>
+                )}
+              />
+            </Card>
           </Col>
         </Row>
 

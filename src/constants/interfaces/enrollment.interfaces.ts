@@ -134,3 +134,68 @@ export interface ISaveAnswerRequest {
   optionIds?: string[];
   text?: string;
 }
+
+// ------------------------------------------------ ratings
+
+/** The user's own rating (null = not rated) and whether they may rate now. */
+export interface IMyRating {
+  rating: number | null;
+  canRate: boolean;
+  minProgressPercent: number;
+}
+
+/** Average (1 decimal) and number of ratings of a course. */
+export interface IRatingSummary {
+  courseId: string;
+  average: number;
+  count: number;
+}
+
+// ------------------------------------------------ content reports
+
+export type ReportEntityType = "course" | "chapter" | "content_block";
+export type ReportStatus = "pending" | "resolved" | "dismissed";
+
+export interface ICreateReportRequest {
+  entityType: ReportEntityType;
+  entityId: string;
+  /** 10-1000 characters. */
+  reason: string;
+}
+
+export interface IPersonSummary {
+  id: string;
+  firstName: string | null;
+  lastName: string | null;
+}
+
+/** A report as admins see it. */
+export interface IAdminReport {
+  id: string;
+  entityType: ReportEntityType;
+  entityId: string;
+  /** Course name / chapter title / (content block) its chapter's title; null if the item is gone. */
+  entityTitle: string | null;
+  /** Only for content blocks. */
+  blockType: string | null;
+  courseId: string | null;
+  courseName: string | null;
+  /** Whether the item is currently hidden. */
+  entityDisabled: boolean | null;
+  reason: string;
+  status: ReportStatus;
+  reporter: IPersonSummary;
+  reviewer: IPersonSummary | null;
+  reviewedAt: string | null;
+  adminNotes: string | null;
+  createdAt: string;
+  /** All reports (any status) of the same item. */
+  reportCount: number;
+}
+
+export interface IAdminReportsQuery {
+  status?: ReportStatus;
+  entityType?: ReportEntityType;
+  page: number;
+  size: number;
+}

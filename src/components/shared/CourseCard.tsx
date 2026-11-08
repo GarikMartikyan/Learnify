@@ -7,6 +7,8 @@ import {
 } from "@ant-design/icons";
 import { useIntl } from "react-intl";
 import type { ICourseSummary } from "../../constants/interfaces/courseApi.interfaces.ts";
+import type { IRatingSummary } from "../../constants/interfaces/enrollment.interfaces.ts";
+import { RatingStars } from "../enrollment/CourseRating.tsx";
 import {
   CourseLanguageTag,
   CourseLevelTag,
@@ -16,11 +18,13 @@ const { Title, Text, Paragraph } = Typography;
 
 interface CourseCardProps {
   course: ICourseSummary;
+  /** Average rating from the Enrollment service; undefined = no ratings yet. */
+  rating?: IRatingSummary;
   onClick?: () => void;
 }
 
 /** A course in the catalog grid: cover, name, teacher, description, level, language, category, counts. */
-export function CourseCard({ course, onClick }: CourseCardProps) {
+export function CourseCard({ course, rating, onClick }: CourseCardProps) {
   const { formatMessage } = useIntl();
   const { token } = theme.useToken();
   const teacherName = [course.teacher.firstName, course.teacher.lastName]
@@ -105,6 +109,7 @@ export function CourseCard({ course, onClick }: CourseCardProps) {
             {formatMessage({ id: "exam-count" }, { count: course.examCount })}
           </Text>
         </Space>
+        <RatingStars summary={rating} />
       </Flex>
     </Card>
   );

@@ -11,6 +11,7 @@ import {
   AuditOutlined,
   BarChartOutlined,
   BookOutlined,
+  FlagOutlined,
   HomeOutlined,
   PicRightOutlined,
   QuestionCircleOutlined,
@@ -99,6 +100,11 @@ export function Sidebar() {
         key: routes.courses,
         label: formatMessage({ id: "courses" }),
         icon: <SnippetsOutlined />,
+      },
+      {
+        key: routes.contentReports,
+        label: formatMessage({ id: "content-reports" }),
+        icon: <FlagOutlined />,
       },
       {
         key: routes.auditLog,

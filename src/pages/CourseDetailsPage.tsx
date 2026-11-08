@@ -35,6 +35,8 @@ import {
 } from "../api/course.api.ts";
 import type { ICourseItem } from "../constants/interfaces/courseApi.interfaces.ts";
 import { EnrollmentActions } from "../components/enrollment/EnrollmentActions.tsx";
+import { CourseRatingSummary } from "../components/enrollment/CourseRating.tsx";
+import { ReportButton } from "../components/enrollment/ReportButton.tsx";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -126,11 +128,14 @@ export function CourseDetailsPage() {
         <Title level={2} style={{ marginTop: 12 }}>
           {course.name}
         </Title>
-        {teacherName && (
-          <Text type="secondary">
-            <UserOutlined /> {teacherName}
-          </Text>
-        )}
+        <Flex vertical gap={4}>
+          {teacherName && (
+            <Text type="secondary">
+              <UserOutlined /> {teacherName}
+            </Text>
+          )}
+          <CourseRatingSummary courseId={course.id} />
+        </Flex>
 
         <Divider />
 
@@ -142,7 +147,11 @@ export function CourseDetailsPage() {
           )}
         </Paragraph>
 
-        <Flex justify="end" gap={8}>
+        <Flex justify="end" align="center" gap={8} wrap>
+          {/* Logged-in users (not admins, not the teacher) can report the course */}
+          {user && !isAdmin && !isOwner && (
+            <ReportButton entityType="course" entityId={course.id} />
+          )}
           {isOwner && (
             <Button
               icon={<EditOutlined />}

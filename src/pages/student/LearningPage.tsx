@@ -23,6 +23,7 @@ import { useIntl } from "react-intl";
 import { useNavigate, useParams } from "react-router";
 import { PageTitle } from "../../components/shared/PageTitle.tsx";
 import { EnrollmentStatusTag } from "../../components/enrollment/EnrollmentTags.tsx";
+import { MyRatingCard } from "../../components/enrollment/CourseRating.tsx";
 import { routes } from "../../constants/routes.ts";
 import {
   useAbandonEnrollmentMutation,
@@ -173,6 +174,8 @@ export function LearningPage() {
                  message={formatMessage({ id: "course-completed-message" })} />
         )}
       </Card>
+
+      <MyRatingCard courseId={courseId} />
 
       <Card
         variant="borderless"

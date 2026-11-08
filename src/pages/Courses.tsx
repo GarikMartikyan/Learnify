@@ -12,6 +12,7 @@ import {
 } from "../components/CourseSearchFilters.tsx";
 import { useCurrentUser } from "../hooks/useCurrentUser.ts";
 import { useGetCatalogQuery } from "../api/course.api.ts";
+import { useGetRatingSummariesQuery } from "../api/enrollment.api.ts";
 import { AdminCourses } from "./superuser/AdminCourses.tsx";
 
 const PAGE_SIZE = 12;
@@ -37,6 +38,12 @@ function CourseCatalog({ showCreateButton }: { showCreateButton: boolean }) {
     ...filters,
     page,
     size: PAGE_SIZE,
+  });
+
+  // Ratings live in the Enrollment service: one request for the whole page
+  const courseIds = (data?.content ?? []).map((course) => course.id);
+  const { data: ratings = [] } = useGetRatingSummariesQuery(courseIds, {
+    skip: courseIds.length === 0,
   });
 
   const handleFiltersChange = (newFilters: CourseFilters) => {
@@ -69,6 +76,7 @@ function CourseCatalog({ showCreateButton }: { showCreateButton: boolean }) {
               <Col xs={24} sm={12} lg={8} xxl={6} key={course.id}>
                 <CourseCard
                   course={course}
+                  rating={ratings.find((r) => r.courseId === course.id)}
                   onClick={() => navigate(routes.courseById(course.id))}
                 />
               </Col>
