@@ -81,6 +81,11 @@ export function Sidebar() {
     ],
     admin: [
       {
+        key: routes.dashboard,
+        label: formatMessage({ id: "dashboard" }),
+        icon: <HomeOutlined />,
+      },
+      {
         key: routes.teacherApplication,
         label: formatMessage({ id: "teacher-applications" }),
         icon: <QuestionCircleOutlined />,

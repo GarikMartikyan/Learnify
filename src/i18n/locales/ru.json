@@ -259,5 +259,25 @@
   "audit-entity.user": "Пользователь",
   "audit-entity.teacher_application": "Заявка преподавателя",
 
-  "change-password-button": "Изменить пароль"
+  "change-password-button": "Изменить пароль",
+
+  "pending-applications": "Заявки на рассмотрении",
+  "total-users": "Всего пользователей",
+  "suspended-users": "Заблокированные пользователи",
+  "reports-to-review": "Жалобы на рассмотрение",
+  "students": "Студенты",
+  "teachers": "Преподаватели",
+  "admins": "Администраторы",
+  "applications-waiting": "Заявки, ожидающие рассмотрения",
+  "no-pending-applications": "Нет заявок, ожидающих рассмотрения",
+  "view-all": "Показать все",
+  "recent-activity": "Последние действия",
+  "no-activity": "Действий пока нет",
+  "new-users": "Новые пользователи",
+  "coming-soon": "Скоро",
+  "reports-coming-soon": "Здесь появятся жалобы пользователей на контент.",
+  "categories-to-approve": "Категории на утверждение",
+  "categories-coming-soon": "Здесь появятся категории, предложенные преподавателями.",
+  "platform-statistics": "Статистика платформы",
+  "platform-stats-coming-soon": "Здесь появятся статистика курсов и записи по странам."
 }

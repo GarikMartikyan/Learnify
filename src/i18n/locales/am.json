@@ -259,5 +259,25 @@
   "audit-entity.user": "Օգտատեր",
   "audit-entity.teacher_application": "Ուսուցչի դիմում",
 
-  "change-password-button": "Փոխել գաղտնաբառը"
+  "change-password-button": "Փոխել գաղտնաբառը",
+
+  "pending-applications": "Սպասող դիմումներ",
+  "total-users": "Ընդհանուր օգտատերեր",
+  "suspended-users": "Կասեցված օգտատերեր",
+  "reports-to-review": "Դիտարկման բողոքներ",
+  "students": "Ուսանողներ",
+  "teachers": "Ուսուցիչներ",
+  "admins": "Ադմիններ",
+  "applications-waiting": "Դիտարկման սպասող դիմումներ",
+  "no-pending-applications": "Դիտարկման սպասող դիմումներ չկան",
+  "view-all": "Տեսնել բոլորը",
+  "recent-activity": "Վերջին գործողություններ",
+  "no-activity": "Գործողություններ դեռ չկան",
+  "new-users": "Նոր օգտատերեր",
+  "coming-soon": "Շուտով",
+  "reports-coming-soon": "Այստեղ կհայտնվեն օգտատերերի բողոքները բովանդակության վերաբերյալ։",
+  "categories-to-approve": "Հաստատման սպասող կատեգորիաներ",
+  "categories-coming-soon": "Այստեղ կհայտնվեն ուսուցիչների առաջարկած կատեգորիաները։",
+  "platform-statistics": "Հարթակի վիճակագրություն",
+  "platform-stats-coming-soon": "Այստեղ կհայտնվեն դասընթացների վիճակագրությունը և գրանցումներն ըստ երկրների։"
 }

@@ -21,7 +21,7 @@ import {
   StopOutlined,
 } from "@ant-design/icons";
 import { useIntl } from "react-intl";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { routes } from "../../constants/routes.ts";
 import { PageTitle } from "../../components/shared/PageTitle.tsx";
 import { RoleTag } from "../../components/shared/RoleTag.tsx";
@@ -57,7 +57,14 @@ export function Users() {
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<UserRole | undefined>();
-  const [statusFilter, setStatusFilter] = useState<AccountStatus | undefined>();
+  // A link can open the page pre-filtered, e.g. /users?status=suspended from the dashboard
+  const [searchParams] = useSearchParams();
+  const initialStatus = searchParams.get("status");
+  const [statusFilter, setStatusFilter] = useState<AccountStatus | undefined>(
+    initialStatus === "active" || initialStatus === "suspended"
+      ? initialStatus
+      : undefined,
+  );
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const [roleChange, setRoleChange] = useState<{

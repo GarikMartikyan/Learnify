@@ -259,5 +259,25 @@
   "audit-entity.user": "User",
   "audit-entity.teacher_application": "Teacher application",
 
-  "change-password-button": "Change password"
+  "change-password-button": "Change password",
+
+  "pending-applications": "Pending applications",
+  "total-users": "Total users",
+  "suspended-users": "Suspended users",
+  "reports-to-review": "Reports to review",
+  "students": "Students",
+  "teachers": "Teachers",
+  "admins": "Admins",
+  "applications-waiting": "Applications waiting for review",
+  "no-pending-applications": "No applications waiting for review",
+  "view-all": "View all",
+  "recent-activity": "Recent activity",
+  "no-activity": "No activity yet",
+  "new-users": "New users",
+  "coming-soon": "Coming soon",
+  "reports-coming-soon": "Content reported by users will appear here for review.",
+  "categories-to-approve": "Categories to approve",
+  "categories-coming-soon": "Custom categories suggested by teachers will appear here for approval.",
+  "platform-statistics": "Platform statistics",
+  "platform-stats-coming-soon": "Course statistics and enrollments by country will appear here."
 }
