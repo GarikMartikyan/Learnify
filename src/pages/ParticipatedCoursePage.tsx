@@ -4,7 +4,6 @@ import {
   EditOutlined,
   FileDoneOutlined,
   LockOutlined,
-  PlusOutlined,
 } from "@ant-design/icons";
 import { Link, useLocation } from "react-router";
 import { routes } from "../constants/routes.ts";
@@ -214,30 +213,6 @@ export default function ParticipatedCoursePage() {
         />
       </div>
 
-      {!isStudent && (
-        <Flex justify="end">
-          <Space style={{ marginTop: 40 }}>
-            <Link to={routes.createChapter}>
-              <Button
-                icon={<PlusOutlined />}
-                type="primary"
-                style={{ width: "100%" }}
-              >
-                {formatMessage({ id: "add-chapter" })}
-              </Button>
-            </Link>
-            <Link to={routes.createExam}>
-              <Button
-                icon={<PlusOutlined />}
-                type="primary"
-                style={{ width: "100%" }}
-              >
-                {formatMessage({ id: "add-exam" })}
-              </Button>
-            </Link>
-          </Space>
-        </Flex>
-      )}
     </div>
   );
 }

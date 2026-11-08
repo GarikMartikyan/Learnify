@@ -2,150 +2,188 @@ import {
   Button,
   Card,
   Divider,
+  Flex,
   List,
-  Tabs,
+  Result,
+  Space,
+  Spin,
   Tag,
   theme,
+  Tooltip,
   Typography,
 } from "antd";
 import {
   BookOutlined,
-  CalendarOutlined,
-  GlobalOutlined,
+  EditOutlined,
+  FileDoneOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { PageTitle } from "../components/shared/PageTitle.tsx";
-import { courseDetails } from "../placeholder/courses.ts";
-import { useNavigate } from "react-router";
-import { routes } from "../constants/routes.ts";
 import { useIntl } from "react-intl";
-
-import learn_js from "../assets/learn_js.jpg";
+import { useNavigate, useParams } from "react-router";
+import { PageTitle } from "../components/shared/PageTitle.tsx";
+import {
+  CourseLanguageTag,
+  CourseLevelTag,
+  CourseStatusTag,
+} from "../components/courses/CourseTags.tsx";
+import { routes } from "../constants/routes.ts";
+import { useCurrentUser } from "../hooks/useCurrentUser.ts";
+import {
+  useGetAdminCourseQuery,
+  useGetPublicCourseQuery,
+} from "../api/course.api.ts";
+import type { ICourseItem } from "../constants/interfaces/courseApi.interfaces.ts";
 
 const { Title, Text, Paragraph } = Typography;
 
+/**
+ * /courses/:courseId — a course's overview and its chapters / exams.
+ * Admins see any course (also drafts and disabled ones); everyone else sees published courses.
+ */
 export function CourseDetailsPage() {
   const { token } = theme.useToken();
   const { formatMessage } = useIntl();
   const navigate = useNavigate();
+  const { courseId = "" } = useParams();
+  const { user, role } = useCurrentUser();
+  const isAdmin = role === "admin";
 
-  const handleChapterClick = (chapterId) => {
-    navigate(routes.chapterById(chapterId));
+  const publicQuery = useGetPublicCourseQuery(courseId, { skip: isAdmin });
+  const adminQuery = useGetAdminCourseQuery(courseId, { skip: !isAdmin });
+  const { data, isLoading } = isAdmin ? adminQuery : publicQuery;
+
+  if (isLoading) {
+    return (
+      <Flex justify="center" style={{ padding: 48 }}>
+        <Spin size="large" />
+      </Flex>
+    );
+  }
+  if (!data) {
+    return <Result status="404" title={formatMessage({ id: "course-not-found" })} />;
+  }
+
+  const { course, items } = data;
+  const isOwner = user?.id === course.teacher.id;
+  // Chapter content is open to the course's teacher and admins (students: with Enrollment)
+  const canOpenChapters = isOwner || isAdmin;
+  const teacherName = [course.teacher.firstName, course.teacher.lastName]
+    .filter(Boolean)
+    .join(" ");
+
+  const openItem = (item: ICourseItem) => {
+    if (item.itemType === "chapter" && item.chapterId && canOpenChapters) {
+      navigate(routes.chapterById(item.chapterId));
+    }
   };
 
   return (
     <div>
-      <PageTitle showBackButton>{courseDetails.title}</PageTitle>
+      <PageTitle showBackButton>{course.name}</PageTitle>
 
       <Card
         variant="borderless"
-        style={{
-          overflow: "hidden",
-          width: "100%",
-        }}
+        style={{ overflow: "hidden" }}
         cover={
-          <img
-            alt={courseDetails.title}
-            src={learn_js}
-            style={{
-              width: "100%",
-              aspectRatio: "5/2",
-              objectFit: "cover",
-              borderRadius: token.borderRadiusLG,
-            }}
-          />
+          course.coverImageUrl && (
+            <img
+              alt={course.name}
+              src={course.coverImageUrl}
+              style={{
+                width: "100%",
+                aspectRatio: "5/2",
+                objectFit: "cover",
+                borderRadius: token.borderRadiusLG,
+              }}
+            />
+          )
         }
       >
-        <Tag color="blue">{courseDetails.category}</Tag>
+        <Space wrap>
+          {course.category && <Tag>{course.category.name}</Tag>}
+          <CourseLevelTag level={course.level} />
+          <CourseLanguageTag language={course.language} />
+          {(isAdmin || isOwner) && (
+            <CourseStatusTag status={course.status} disabled={course.disabled} />
+          )}
+        </Space>
 
-        <Title level={2} style={{ marginTop: 8 }}>
-          {courseDetails.title}
+        <Title level={2} style={{ marginTop: 12 }}>
+          {course.name}
         </Title>
-
-        <Text type="secondary">
-          <UserOutlined /> {courseDetails.teacher} &nbsp; | &nbsp;
-          <GlobalOutlined /> {courseDetails.language} &nbsp; | &nbsp;
-          <CalendarOutlined /> {formatMessage({ id: "starts" })}{" "}
-          {courseDetails.startingDate}
-        </Text>
+        {teacherName && (
+          <Text type="secondary">
+            <UserOutlined /> {teacherName}
+          </Text>
+        )}
 
         <Divider />
 
-        <Paragraph style={{ fontSize: 16 }}>
-          {courseDetails.description}
+        <Paragraph style={{ fontSize: 16, whiteSpace: "pre-wrap" }}>
+          {course.description || (
+            <Text type="secondary" italic>
+              {formatMessage({ id: "no-description" })}
+            </Text>
+          )}
         </Paragraph>
 
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginTop: 16,
-          }}
-        >
-          <div style={{ fontSize: 18, fontWeight: 600 }}></div>
-
-          <Button type="primary" size="large">
-            {formatMessage({ id: "join-course" })}
-          </Button>
-        </div>
+        <Flex justify="end" gap={8}>
+          {isOwner && (
+            <Button
+              icon={<EditOutlined />}
+              onClick={() => navigate(routes.myCourseById(course.id))}
+            >
+              {formatMessage({ id: "edit-course" })}
+            </Button>
+          )}
+          {role === "user" && (
+            <Tooltip title={formatMessage({ id: "enrollment-coming" })}>
+              <Button type="primary" size="large" disabled>
+                {formatMessage({ id: "join-course" })}
+              </Button>
+            </Tooltip>
+          )}
+        </Flex>
       </Card>
 
-      {/* Tabs Section */}
       <Card
         variant="borderless"
-        style={{
-          marginTop: 32,
-          borderRadius: 16,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-        }}
+        title={formatMessage({ id: "course-content" })}
+        style={{ marginTop: 24, borderRadius: 16 }}
       >
-        <Tabs
-          defaultActiveKey="overview"
-          items={[
-            {
-              key: "overview",
-              label: formatMessage({ id: "overview" }),
-              children: (
-                <Paragraph style={{ fontSize: 16, lineHeight: 1.7 }}>
-                  {formatMessage({ id: "course-overview-text" })}
-                </Paragraph>
-              ),
-            },
-            {
-              key: "chapters",
-              label: formatMessage({ id: "chapters" }),
-              children: (
-                <List
-                  dataSource={courseDetails.chapters}
-                  renderItem={(chapter) => (
-                    <List.Item
-                      style={{ cursor: "pointer" }}
-                      onClick={() => handleChapterClick(chapter.id)}
-                    >
-                      <BookOutlined style={{ marginRight: 8 }} />
-                      {chapter.title}
-                    </List.Item>
-                  )}
+        <List
+          dataSource={items}
+          locale={{ emptyText: formatMessage({ id: "no-course-items" }) }}
+          renderItem={(item, index) => {
+            const clickable = item.itemType === "chapter" && canOpenChapters;
+            return (
+              <List.Item
+                style={{ cursor: clickable ? "pointer" : "default" }}
+                onClick={() => openItem(item)}
+              >
+                <List.Item.Meta
+                  avatar={
+                    item.itemType === "chapter" ? (
+                      <BookOutlined style={{ fontSize: 20, color: token.colorPrimary }} />
+                    ) : (
+                      <FileDoneOutlined style={{ fontSize: 20, color: token.colorWarning }} />
+                    )
+                  }
+                  title={`${index + 1}. ${item.title}`}
+                  description={
+                    <Space size={4}>
+                      <Tag color={item.itemType === "chapter" ? "blue" : "orange"}>
+                        {formatMessage({ id: item.itemType })}
+                      </Tag>
+                      {item.disabled && (
+                        <Tag color="red">{formatMessage({ id: "disabled" })}</Tag>
+                      )}
+                    </Space>
+                  }
                 />
-              ),
-            },
-            {
-              key: "exams",
-              label: formatMessage({ id: "exams" }),
-              children: (
-                <List
-                  dataSource={courseDetails.exams}
-                  renderItem={(exam) => (
-                    <List.Item>
-                      <BookOutlined style={{ marginRight: 8 }} />
-                      {exam.title}
-                    </List.Item>
-                  )}
-                />
-              ),
-            },
-          ]}
+              </List.Item>
+            );
+          }}
         />
       </Card>
     </div>

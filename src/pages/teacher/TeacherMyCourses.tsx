@@ -1,61 +1,85 @@
-import { useState } from "react";
-import { Button, message, Space, Table, Typography } from "antd";
-import { EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { Link } from "react-router";
+import { Avatar, Button, Flex, Space, Table, Typography, type TableProps } from "antd";
+import { EditOutlined, EyeOutlined, PictureOutlined, PlusOutlined } from "@ant-design/icons";
+import { useIntl } from "react-intl";
+import { Link, useNavigate } from "react-router";
 import { routes } from "../../constants/routes.ts";
+import { PageTitle } from "../../components/shared/PageTitle.tsx";
+import { CourseStatusTag } from "../../components/courses/CourseTags.tsx";
+import { useGetMyCoursesQuery } from "../../api/course.api.ts";
+import { getDMY } from "../../utils/date.ustils.ts";
+import type { ICourseSummary } from "../../constants/interfaces/courseApi.interfaces.ts";
 
-const { Title } = Typography;
+const { Text } = Typography;
 
+/** The teacher's own courses (every status except deleted). */
 export function TeacherMyCoursesPage() {
-  const [courses, setCourses] = useState([
-    { id: 1, name: "JavaScript Basics", users: 140, rating: 4.7 },
-    { id: 2, name: "React Fundamentals", users: 95, rating: 4.5 },
-    { id: 3, name: "Node.js for Beginners", users: 73, rating: 4.2 },
-  ]);
+  const { formatMessage } = useIntl();
+  const navigate = useNavigate();
+  const { data: courses = [], isFetching } = useGetMyCoursesQuery();
 
-  const handleDelete = (id: number) => {
-    setCourses((prev) => prev.filter((c) => c.id !== id));
-    message.success("Course deleted.");
-  };
-
-  const columns = [
+  const columns: TableProps<ICourseSummary>["columns"] = [
     {
-      title: "Course Name",
-      dataIndex: "name",
+      title: formatMessage({ id: "course" }),
       key: "name",
-      render: (text: string) => <strong>{text}</strong>,
-    },
-    {
-      title: "Users Enrolled",
-      dataIndex: "users",
-      key: "users",
-      width: 150,
-      align: "center",
-    },
-    {
-      title: "Rating",
-      dataIndex: "rating",
-      key: "rating",
-      width: 110,
-      align: "center",
-      render: (rating: number) => `${rating.toFixed(1)} ★`,
-    },
-    {
-      title: "Actions",
-      key: "actions",
-      width: 140,
-      align: "center",
-      render: (_: any, record: any) => (
+      render: (_, course) => (
         <Space>
-          <Link to={routes.myCourseById("123")}>
+          <Avatar
+            shape="square"
+            size={48}
+            src={course.coverImageUrl ?? undefined}
+            icon={<PictureOutlined />}
+          />
+          <Space direction="vertical" size={0}>
+            <Text strong>{course.name}</Text>
+            <Text type="secondary">{course.category?.name}</Text>
+          </Space>
+        </Space>
+      ),
+    },
+    {
+      title: formatMessage({ id: "status" }),
+      key: "status",
+      render: (_, course) => (
+        <CourseStatusTag status={course.status} disabled={course.disabled} />
+      ),
+    },
+    {
+      title: formatMessage({ id: "content" }),
+      key: "content",
+      render: (_, course) => (
+        <Text type="secondary">
+          {formatMessage({ id: "chapter-count" }, { count: course.chapterCount })}
+          {" · "}
+          {formatMessage({ id: "exam-count" }, { count: course.examCount })}
+        </Text>
+      ),
+    },
+    {
+      title: formatMessage({ id: "updated" }),
+      dataIndex: "updatedAt",
+      key: "updatedAt",
+      render: (date: string) => getDMY(date),
+    },
+    {
+      title: formatMessage({ id: "actions" }),
+      key: "actions",
+      render: (_, course) => (
+        <Space wrap>
+          <Button
+            type="primary"
+            icon={<EditOutlined />}
+            onClick={() => navigate(routes.myCourseById(course.id))}
+          >
+            {formatMessage({ id: "edit" })}
+          </Button>
+          {course.status === "published" && !course.disabled && (
             <Button
-              type="default"
-              icon={<EditOutlined />}
-              onClick={() => console.log("Edit", record.id)}
+              icon={<EyeOutlined />}
+              onClick={() => navigate(routes.courseById(course.id))}
             >
-              Edit
+              {formatMessage({ id: "view" })}
             </Button>
-          </Link>
+          )}
         </Space>
       ),
     },
@@ -63,40 +87,23 @@ export function TeacherMyCoursesPage() {
 
   return (
     <div>
-      <div style={{ borderRadius: 12 }}>
-        {/* Header with button */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: 24,
-          }}
-        >
-          <Title level={3} style={{ margin: 0 }}>
-            My Courses
-          </Title>
-
-          <Link to={routes.createCourse}>
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => console.log("Create new course")}
-            >
-              Create Course
-            </Button>
-          </Link>
-        </div>
-
-        {/* Table */}
-        <Table
-          tableLayout="fixed"
-          rowKey="id"
-          columns={columns}
-          dataSource={courses}
-          pagination={{ pageSize: 5 }}
-        />
-      </div>
+      <Flex justify="space-between" align="center" wrap gap={12}>
+        <PageTitle>{formatMessage({ id: "my-courses" })}</PageTitle>
+        <Link to={routes.createCourse}>
+          <Button type="primary" icon={<PlusOutlined />}>
+            {formatMessage({ id: "create-course" })}
+          </Button>
+        </Link>
+      </Flex>
+      <Table
+        rowKey="id"
+        columns={columns}
+        dataSource={courses}
+        loading={isFetching}
+        locale={{ emptyText: formatMessage({ id: "no-own-courses" }) }}
+        scroll={{ x: true }}
+        pagination={{ pageSize: 10, hideOnSinglePage: true }}
+      />
     </div>
   );
 }

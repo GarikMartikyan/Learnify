@@ -10,18 +10,17 @@ import { CourseDetailsPage } from "../pages/CourseDetailsPage.tsx";
 import { UserProfilePage } from "../pages/Profile.tsx";
 import { Settings } from "../pages/Settings.tsx";
 import { ChapterPage } from "../pages/student/ChapterPage.tsx";
-import { mockChapter } from "../placeholder/chapter.ts";
 import { ExamPage } from "../pages/student/ExamPage.tsx";
 import { mockExam } from "../placeholder/exam.ts";
-import { MyCourses } from "../pages/MyCourses.tsx";
+import { MyCourseDetail, MyCourses } from "../pages/MyCourses.tsx";
 import { Dashboard } from "../pages/Dashboard.tsx";
 import { TeacherApplicationsPage } from "../pages/superuser/TeacherApplications.tsx";
 import { ForgotPassword } from "../pages/public/ForgotPassword.tsx";
 import { Layout } from "../components/common/Layout.tsx";
 import { Help } from "../pages/Help.tsx";
-import ParticipatedCoursePage from "../pages/ParticipatedCoursePage.tsx";
-import { CreateExamPage } from "../pages/teacher/CreateExam.tsx";
-import { CreateChapter } from "../pages/teacher/CreateChapter.tsx";
+import { CourseEditor } from "../pages/teacher/CourseEditor.tsx";
+import { ChapterEditor } from "../pages/teacher/ChapterEditor.tsx";
+import { ExamEditor } from "../pages/teacher/ExamEditor.tsx";
 import { ApplyToTeacher } from "../pages/student/ApplyToTeacher.tsx";
 import { CourseStatistics } from "../pages/teacher/CourseStatistics.tsx";
 import { Users } from "../pages/superuser/Users.tsx";
@@ -30,8 +29,10 @@ import { AuditLog } from "../pages/superuser/AuditLog.tsx";
 export function Routing() {
   return (
     <Routes>
+      {/* Open to everyone, also when logged out */}
       <Route element={<Layout />}>
         <Route path={routes.courses} element={<Courses />} />
+        <Route path={routes.courseById()} element={<CourseDetailsPage />} />
         <Route path={routes.help} element={<Help />} />
       </Route>
       <Route element={<PublicRoutes />}>
@@ -43,29 +44,17 @@ export function Routing() {
       <Route element={<PrivateRoutes />}>
         <Route path={routes.dashboard} element={<Dashboard />} />
         <Route path={routes.myCourses} element={<MyCourses />} />
-        <Route path={routes.editExam()} element={<CreateExamPage />} />
-        <Route path={routes.createExam} element={<CreateExamPage />} />
-        <Route path={routes.editChapter()} element={<CreateChapter />} />
-        <Route path={routes.createChapter} element={<CreateChapter />} />
-        <Route
-          path={routes.myCourseById()}
-          element={<ParticipatedCoursePage />}
-        />
-        <Route
-          path={routes.createCourse}
-          element={<ParticipatedCoursePage />}
-        />
+        <Route path={routes.myCourseById()} element={<MyCourseDetail />} />
+        <Route path={routes.createCourse} element={<CourseEditor />} />
+        <Route path={routes.editChapter()} element={<ChapterEditor />} />
+        <Route path={routes.editExam()} element={<ExamEditor />} />
         <Route path={routes.profileView()} element={<UserProfilePage />} />
-        <Route path={routes.courseById()} element={<CourseDetailsPage />} />
         <Route path={routes.profile} element={<UserProfilePage />} />
         <Route path={routes.users} element={<Users />} />
         <Route path={routes.auditLog} element={<AuditLog />} />
         <Route path={routes.settings} element={<Settings />} />
         <Route path={routes.courseStatistics} element={<CourseStatistics />} />
-        <Route
-          path={routes.chapterById()}
-          element={<ChapterPage chapter={mockChapter} />}
-        />
+        <Route path={routes.chapterById()} element={<ChapterPage />} />
         <Route
           path={routes.examById()}
           element={<ExamPage exam={mockExam} />}

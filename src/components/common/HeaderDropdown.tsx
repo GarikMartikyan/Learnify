@@ -13,6 +13,7 @@ import { removeAccessToken } from "../../store/slices/config.slice.ts";
 import { useCurrentUser } from "../../hooks/useCurrentUser.ts";
 import { authApi } from "../../api/auth.api.ts";
 import { auditApi } from "../../api/audit.api.ts";
+import { courseApi } from "../../api/course.api.ts";
 
 export function HeaderDropdown() {
   const { user, isLoggedIn } = useCurrentUser();
@@ -57,6 +58,7 @@ export function HeaderDropdown() {
       // Forget all data of the user who logged out
       dispatch(authApi.util.resetApiState());
       dispatch(auditApi.util.resetApiState());
+      dispatch(courseApi.util.resetApiState());
     }
     navigate(key);
   };

@@ -1,171 +1,106 @@
-import { Button, Col, Flex, Row, Space, Table } from "antd";
-import { CourseLevel, courses } from "../placeholder/courses.ts";
-import { CourseCard } from "../components/shared/CourseCard.tsx";
-import { PageTitle } from "../components/shared/PageTitle.tsx";
-import { users } from "../placeholder/user.ts";
+import { useState } from "react";
+import { Button, Col, Empty, Flex, Pagination, Row, Spin } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import { useIntl } from "react-intl";
 import { Link, useNavigate } from "react-router";
+import { CourseCard } from "../components/shared/CourseCard.tsx";
+import { PageTitle } from "../components/shared/PageTitle.tsx";
 import { routes } from "../constants/routes.ts";
-import type { ICourse } from "../constants/interfaces/course.interfaces.ts";
-import { CourseSearchFilters } from "../components/CourseSearchFilters.tsx";
-import { DeleteOutlined, EyeOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  CourseSearchFilters,
+  type CourseFilters,
+} from "../components/CourseSearchFilters.tsx";
 import { useCurrentUser } from "../hooks/useCurrentUser.ts";
+import { useGetCatalogQuery } from "../api/course.api.ts";
+import { AdminCourses } from "./superuser/AdminCourses.tsx";
 
+const PAGE_SIZE = 12;
+
+/**
+ * "/" — the public course catalog (admins get the course management table instead).
+ * With isMyCourses (a student's "My Courses"): enrolled courses come with the Enrollment service.
+ */
 export function Courses({ isMyCourses = false }) {
   const { formatMessage } = useIntl();
-  const navigate = useNavigate();
   const { role } = useCurrentUser();
-  const isTeacher = role === "teacher";
-  const isAdmin = role === "admin";
 
-  let coursesList: ICourse[] = [...courses];
-  if (isMyCourses) {
-    coursesList = coursesList.slice(1, 4);
+  if (role === "admin") {
+    return <AdminCourses />;
   }
 
-  const handleCardClick = (id) => {
-    if (isMyCourses) {
-      navigate(routes.myCourseById(id));
-    } else {
-      navigate(routes.courseById(id));
-    }
-  };
-
-  if (isAdmin) {
-    const courses = [
-      {
-        id: 1,
-        title: "Intro to JavaScript",
-        author: "Bob Johnson",
-        rating: 4.5,
-        level: "intermediate",
-        language: "English",
-      },
-      {
-        id: 2,
-        title: "React Basics",
-        author: "Bob Johnson",
-        rating: 4.7,
-        level: "advanced",
-        language: "English",
-      },
-      {
-        id: 3,
-        title: "Node.js Fundamentals",
-        author: "Alice Smith",
-        rating: 4.3,
-        level: "beginner",
-        language: "English",
-      },
-      {
-        id: 4,
-        title: "HTML & CSS Basics",
-        author: "Charlie Brown",
-        rating: 4.8,
-        level: CourseLevel.intermediate,
-        language: "English",
-      },
-      {
-        id: 5,
-        title: "Advanced TypeScript",
-        author: "David Hakobyan",
-        rating: 4.6,
-        level: CourseLevel.intermediate,
-        language: "English",
-      },
-    ];
-
-    const courseColumns = [
-      { title: "Course Title", dataIndex: "title", key: "title" },
-      { title: "Author", dataIndex: "author", key: "author" },
-      {
-        title: "Rating",
-        dataIndex: "rating",
-        key: "rating",
-        width: 100,
-        render: (r: number) => r?.toFixed(1),
-      },
-      {
-        title: "Level",
-        dataIndex: "level",
-        key: "level",
-        width: 140,
-      },
-      {
-        title: "Language",
-        dataIndex: "language",
-        key: "language",
-        width: 140,
-      },
-      {
-        title: "Actions",
-        key: "actions",
-        width: 230,
-        render: () => (
-          <Space>
-            <Link to={routes.myCourseById("132")}>
-              <Button type="primary" icon={<EyeOutlined />}>
-                View
-              </Button>
-            </Link>
-            <Button danger icon={<DeleteOutlined />}>
-              Delete
-            </Button>
-          </Space>
-        ),
-      },
-    ];
-
+  if (isMyCourses) {
     return (
-      <Flex vertical gap="middle">
-        <PageTitle>Course Management</PageTitle>
-        <CourseSearchFilters />
-        <Table
-          tableLayout="fixed"
-          columns={courseColumns}
-          dataSource={courses}
-          rowKey="id"
-          pagination={{ pageSize: 5 }}
-        />
-      </Flex>
+      <>
+        <PageTitle>{formatMessage({ id: "my-courses" })}</PageTitle>
+        <Empty description={formatMessage({ id: "enrolled-courses-coming" })} />
+      </>
     );
   }
 
+  return <CourseCatalog showCreateButton={role === "teacher"} />;
+}
+
+function CourseCatalog({ showCreateButton }: { showCreateButton: boolean }) {
+  const { formatMessage } = useIntl();
+  const navigate = useNavigate();
+  const [filters, setFilters] = useState<CourseFilters>({});
+  const [page, setPage] = useState(0);
+
+  const { data, isFetching } = useGetCatalogQuery({
+    ...filters,
+    page,
+    size: PAGE_SIZE,
+  });
+
+  const handleFiltersChange = (newFilters: CourseFilters) => {
+    setFilters(newFilters);
+    setPage(0);
+  };
+
   return (
     <>
-      <Flex justify={"space-between"}>
-        <PageTitle>
-          {formatMessage({ id: isMyCourses ? "my-courses" : "courses" })}
-        </PageTitle>
-        {isTeacher && (
-          <Link to={routes.myCourseById("123")}>
+      <Flex justify="space-between" align="center" wrap gap={12}>
+        <PageTitle>{formatMessage({ id: "courses" })}</PageTitle>
+        {showCreateButton && (
+          <Link to={routes.createCourse}>
             <Button type="primary" icon={<PlusOutlined />}>
               {formatMessage({ id: "create-course" })}
             </Button>
           </Link>
         )}
       </Flex>
-      <div style={{ marginBlock: 10 }}>
-        <CourseSearchFilters />
+      <div style={{ marginBottom: 16 }}>
+        <CourseSearchFilters value={filters} onChange={handleFiltersChange} />
       </div>
 
-      <Row align={"stretch"} gutter={[16, 16]}>
-        {coursesList.map((course) => (
-          <Col xs={24} sm={12} md={8} key={course.id}>
-            <CourseCard
-              {...course}
-              onCLick={() => handleCardClick(course.id)}
-              teacherName={
-                users.find((user) => user.id === course.teacherId)?.name || ""
-              }
-              teacherImage={
-                users.find((user) => user.id === course.teacherId)?.avatarUrl ||
-                ""
-              }
-            />
-          </Col>
-        ))}
-      </Row>
+      <Spin spinning={isFetching}>
+        {data && data.content.length === 0 ? (
+          <Empty description={formatMessage({ id: "no-courses-found" })} />
+        ) : (
+          <Row align="stretch" gutter={[16, 16]}>
+            {(data?.content ?? []).map((course) => (
+              <Col xs={24} sm={12} lg={8} xxl={6} key={course.id}>
+                <CourseCard
+                  course={course}
+                  onClick={() => navigate(routes.courseById(course.id))}
+                />
+              </Col>
+            ))}
+          </Row>
+        )}
+      </Spin>
+
+      {data && data.totalElements > PAGE_SIZE && (
+        <Flex justify="center" style={{ marginTop: 24 }}>
+          <Pagination
+            current={page + 1}
+            pageSize={PAGE_SIZE}
+            total={data.totalElements}
+            showSizeChanger={false}
+            onChange={(newPage) => setPage(newPage - 1)}
+          />
+        </Flex>
+      )}
     </>
   );
 }

@@ -1,148 +1,92 @@
-import {
-  Button,
-  Dropdown,
-  Form,
-  Input,
-  type MenuProps,
-  Space,
-  Tooltip,
-} from "antd";
-import { SearchOutlined, SortAscendingOutlined } from "@ant-design/icons";
+import { useEffect, useState } from "react";
+import { Button, Flex, Input, Select } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
 import { useIntl } from "react-intl";
 import { CourseComplexitySelect } from "./shared/CourseComplexitySelect.tsx";
 import { CourseLanguageSelect } from "./shared/CourseLanguageSelect.tsx";
+import { useGetCategoriesQuery } from "../api/course.api.ts";
+import type {
+  CourseLanguage,
+  CourseLevel,
+} from "../constants/interfaces/courseApi.interfaces.ts";
 
-export type Complexity = "beginner" | "intermediate" | "advanced" | "all";
-export type SortBy = "date" | "popularity";
-
-export interface InlineFilterBarProps {
-  languages?: { value: string; label: string }[];
-  initialLanguage?: string | null;
-  initialComplexity?: Complexity | null;
-  initialKeyword?: string;
-  initialSort?: SortBy;
-  onChange?: (filters: {
-    language?: string | null;
-    complexity?: Complexity | null;
-    keyword?: string;
-    sortBy?: SortBy;
-  }) => void;
+export interface CourseFilters {
+  search?: string;
+  categoryId?: string;
+  level?: CourseLevel;
+  language?: CourseLanguage;
 }
 
-export function CourseSearchFilters({
-  languages = [
-    { value: "all", label: "All Languages" },
-    { value: "English", label: "English" },
-    { value: "Armenian", label: "Armenian" },
-  ],
-  initialLanguage = null,
-  initialComplexity = null,
-  initialKeyword = "",
-  initialSort = "date",
-  onChange,
-}: InlineFilterBarProps) {
+interface CourseSearchFiltersProps {
+  value: CourseFilters;
+  onChange: (filters: CourseFilters) => void;
+}
+
+const SEARCH_DELAY_MS = 400;
+
+/** Catalog filters: language, level, category and a search box (searches after typing stops). */
+export function CourseSearchFilters({ value, onChange }: CourseSearchFiltersProps) {
   const { formatMessage } = useIntl();
+  const { data: categories = [] } = useGetCategoriesQuery();
+  const [searchInput, setSearchInput] = useState(value.search ?? "");
 
-  const [form] = Form.useForm<{
-    language: string;
-    complexity: Complexity;
-    keyword: string;
-    sortBy: SortBy;
-  }>();
-
-  const handleValuesChange = (
-    changedValues: Partial<{
-      language: string;
-      complexity: Complexity;
-      keyword: string;
-      sortBy: SortBy;
-    }>,
-  ) => {
-    if (Object.keys(changedValues).some((key) => key !== "sortBy")) {
-      onChange?.(form.getFieldsValue());
-    }
-  };
-
-  const handleSortClick: MenuProps["onClick"] = (info) => {
-    const newSortBy = info.key as SortBy;
-    form.setFieldsValue({ sortBy: newSortBy });
-    onChange?.(form.getFieldsValue());
-  };
-
-  const sortMenu: MenuProps = {
-    selectable: true,
-    selectedKeys: [form.getFieldValue("sortBy") || initialSort],
-    onClick: handleSortClick,
-    items: [
-      {
-        key: "date",
-        label: formatMessage({ id: "sort-by-date" }),
-      },
-      {
-        key: "popularity",
-        label: formatMessage({ id: "sort-by-popularity" }),
-      },
-    ],
-  };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const search = searchInput.trim() || undefined;
+      if (search !== value.search) {
+        onChange({ ...value, search });
+      }
+    }, SEARCH_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [searchInput, value, onChange]);
 
   return (
-    <Form
-      form={form}
-      layout="inline"
-      initialValues={{
-        language: initialLanguage,
-        complexity: initialComplexity,
-        keyword: initialKeyword,
-        sortBy: initialSort,
-      }}
-      onValuesChange={handleValuesChange}
-      style={{ width: "100%", display: "flex", alignItems: "center", gap: 8 }}
-    >
-      <Form.Item name="language" style={{ minWidth: 150 }}>
-        <CourseLanguageSelect showAllOptions />
-      </Form.Item>
-
-      <Form.Item name="complexity" style={{ minWidth: 150 }}>
-        <CourseComplexitySelect showAllOption />
-      </Form.Item>
-
-      <Form.Item name="keyword" style={{ flex: 1, minWidth: 200 }}>
-        <Input
-          prefix={<SearchOutlined />}
-          placeholder={formatMessage({ id: "search-keywords" })}
-          allowClear
-        />
-      </Form.Item>
-
-      <Dropdown menu={sortMenu} trigger={["click"]} placement="bottomRight">
-        <Tooltip title={formatMessage({ id: "sort" })}>
-          <Button icon={<SortAscendingOutlined />}>
-            {formatMessage({ id: "sort" })}
-          </Button>
-        </Tooltip>
-      </Dropdown>
-
-      <Space>
-        <Button
-          type="primary"
-          onClick={() => onChange?.(form.getFieldsValue())}
-        >
-          {formatMessage({ id: "apply" })}
-        </Button>
-        <Button
-          onClick={() => {
-            form.resetFields();
-            onChange?.({
-              language: initialLanguage,
-              complexity: initialComplexity,
-              keyword: initialKeyword,
-              sortBy: initialSort,
-            });
-          }}
-        >
-          {formatMessage({ id: "reset" })}
-        </Button>
-      </Space>
-    </Form>
+    <Flex gap={8} wrap align="center" style={{ width: "100%" }}>
+      <CourseLanguageSelect
+        showAllOptions
+        style={{ minWidth: 150 }}
+        value={value.language ?? null}
+        onChange={(language: CourseLanguage | null) =>
+          onChange({ ...value, language: language ?? undefined })
+        }
+      />
+      <CourseComplexitySelect
+        showAllOption
+        style={{ minWidth: 150 }}
+        value={value.level ?? null}
+        onChange={(level: CourseLevel | null) =>
+          onChange({ ...value, level: level ?? undefined })
+        }
+      />
+      <Select
+        allowClear
+        showSearch
+        optionFilterProp="label"
+        style={{ minWidth: 200 }}
+        placeholder={formatMessage({ id: "all-categories" })}
+        value={value.categoryId}
+        onChange={(categoryId?: string) => onChange({ ...value, categoryId })}
+        options={categories.map((category) => ({
+          value: category.id,
+          label: category.name,
+        }))}
+      />
+      <Input
+        allowClear
+        prefix={<SearchOutlined />}
+        placeholder={formatMessage({ id: "search-keywords" })}
+        value={searchInput}
+        onChange={(e) => setSearchInput(e.target.value)}
+        style={{ flex: 1, minWidth: 200 }}
+      />
+      <Button
+        onClick={() => {
+          setSearchInput("");
+          onChange({});
+        }}
+      >
+        {formatMessage({ id: "reset" })}
+      </Button>
+    </Flex>
   );
 }

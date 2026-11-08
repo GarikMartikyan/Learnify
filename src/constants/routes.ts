@@ -19,9 +19,7 @@ export const routes = {
   auditLog: "/audit-log",
   editChapter: (chapterId: string = ":chapterId") =>
     `/edit-chapter/${chapterId}`,
-  createChapter: "/create-chapter",
   editExam: (examId: string = ":examId") => `/edit-exam/${examId}`,
-  createExam: "/create-exam",
   courseStatistics: "/course-statistics",
   createCourse: "/create-course",
   profileView: (userId: string = ":userId") => `/profile/${userId}`,
