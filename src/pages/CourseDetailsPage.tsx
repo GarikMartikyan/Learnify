@@ -1,4 +1,5 @@
 import {
+  Alert,
   Button,
   Card,
   Divider,
@@ -19,7 +20,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { useIntl } from "react-intl";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams, useSearchParams } from "react-router";
 import { PageTitle } from "../components/shared/PageTitle.tsx";
 import {
   CourseLanguageTag,
@@ -30,6 +31,7 @@ import { routes } from "../constants/routes.ts";
 import { useCurrentUser } from "../hooks/useCurrentUser.ts";
 import {
   useGetAdminCourseQuery,
+  useGetMyCourseQuery,
   useGetPublicCourseQuery,
 } from "../api/course.api.ts";
 import type { ICourseItem } from "../constants/interfaces/courseApi.interfaces.ts";
@@ -48,9 +50,14 @@ export function CourseDetailsPage() {
   const { user, role } = useCurrentUser();
   const isAdmin = role === "admin";
 
-  const publicQuery = useGetPublicCourseQuery(courseId, { skip: isAdmin });
+  // ?preview: a teacher previews their own course, also when it is not published (draft, archived, disabled)
+  const [searchParams] = useSearchParams();
+  const isPreview = role === "teacher" && searchParams.has("preview");
+
+  const publicQuery = useGetPublicCourseQuery(courseId, { skip: isAdmin || isPreview });
   const adminQuery = useGetAdminCourseQuery(courseId, { skip: !isAdmin });
-  const { data, isLoading } = isAdmin ? adminQuery : publicQuery;
+  const previewQuery = useGetMyCourseQuery(courseId, { skip: !isPreview });
+  const { data, isLoading } = isAdmin ? adminQuery : isPreview ? previewQuery : publicQuery;
 
   if (isLoading) {
     return (
@@ -80,6 +87,14 @@ export function CourseDetailsPage() {
   return (
     <div>
       <PageTitle showBackButton>{course.name}</PageTitle>
+      {isPreview && (course.status !== "published" || course.disabled) && (
+        <Alert
+          type="info"
+          showIcon
+          message={formatMessage({ id: "course-preview-notice" })}
+          style={{ marginBottom: 16 }}
+        />
+      )}
 
       <Card
         variant="borderless"
