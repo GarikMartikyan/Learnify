@@ -3,7 +3,6 @@ import {
   Alert,
   Avatar,
   Button,
-  Card,
   Descriptions,
   Flex,
   Input,
@@ -192,9 +191,11 @@ export function TeacherApplicationsPage() {
   ];
 
   return (
-    <div style={{ maxWidth: 1100, margin: "auto" }}>
-      <Flex justify="space-between" align="center" wrap gap={12}>
-        <PageTitle>{formatMessage({ id: "teacher-applications" })}</PageTitle>
+    <div>
+      <PageTitle>{formatMessage({ id: "teacher-applications" })}</PageTitle>
+
+      {/* Same layout as the Users and Audit Log pages: filters under the title, then the table */}
+      <Flex gap={12} wrap style={{ margin: "16px 0" }}>
         <Select
           style={{ width: 230 }}
           value={status ?? "all"}
@@ -211,39 +212,31 @@ export function TeacherApplicationsPage() {
         />
       </Flex>
 
-      <Card
-        style={{
-          marginTop: 16,
-          borderRadius: 16,
-          boxShadow: "0 4px 16px rgba(0,0,0,0.05)",
+      <Table
+        tableLayout="fixed"
+        scroll={{ x: 1050 }}
+        columns={columns}
+        dataSource={data?.content ?? []}
+        rowKey="id"
+        loading={isFetching}
+        locale={{ emptyText: formatMessage({ id: "no-applications" }) }}
+        pagination={{
+          current: page + 1,
+          pageSize,
+          total: data?.totalElements ?? 0,
+          showSizeChanger: true,
+          pageSizeOptions: PAGE_SIZE_OPTIONS,
+          onChange: (newPage, newPageSize) => {
+            if (newPageSize !== pageSize) {
+              // A different page size: start again from the first page
+              setPageSize(newPageSize);
+              setPage(0);
+            } else {
+              setPage(newPage - 1);
+            }
+          },
         }}
-      >
-        <Table
-          tableLayout="fixed"
-          scroll={{ x: 1050 }}
-          columns={columns}
-          dataSource={data?.content ?? []}
-          rowKey="id"
-          loading={isFetching}
-          locale={{ emptyText: formatMessage({ id: "no-applications" }) }}
-          pagination={{
-            current: page + 1,
-            pageSize,
-            total: data?.totalElements ?? 0,
-            showSizeChanger: true,
-            pageSizeOptions: PAGE_SIZE_OPTIONS,
-            onChange: (newPage, newPageSize) => {
-              if (newPageSize !== pageSize) {
-                // A different page size: start again from the first page
-                setPageSize(newPageSize);
-                setPage(0);
-              } else {
-                setPage(newPage - 1);
-              }
-            },
-          }}
-        />
-      </Card>
+      />
 
       {/* Details */}
       <Modal
