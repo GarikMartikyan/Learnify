@@ -23,6 +23,7 @@ import {
   Tooltip,
   Typography,
   Upload,
+  type FormInstance,
 } from "antd";
 import {
   ArrowDownOutlined,
@@ -86,6 +87,19 @@ interface CourseFormValues {
   level: CourseLevel;
 }
 
+/** Request body for creating / updating a course from the details form. */
+function toCourseBody(values: CourseFormValues) {
+  const isOther = values.categoryId === OTHER_CATEGORY;
+  return {
+    name: values.name,
+    description: values.description ?? "",
+    categoryId: isOther ? undefined : values.categoryId,
+    newCategoryName: isOther ? values.newCategoryName : undefined,
+    language: values.language,
+    level: values.level,
+  };
+}
+
 /**
  * /create-course → empty form; after saving, continues on /my-courses/:courseId.
  * /my-courses/:courseId (teacher) → details, cover image, status and the course structure.
@@ -96,6 +110,8 @@ export function CourseEditor() {
   const { data, isLoading, isError } = useGetMyCourseQuery(courseId ?? "", {
     skip: !courseId,
   });
+  // Shared by the details card and the header's "Save draft" button
+  const [form] = Form.useForm<CourseFormValues>();
 
   if (courseId && isLoading) {
     return (
@@ -110,10 +126,10 @@ export function CourseEditor() {
 
   return (
     <div>
-      <EditorHeader detail={data} />
+      <EditorHeader detail={data} form={form} />
       <Row gutter={[24, 24]}>
         <Col xs={24} xl={14}>
-          <DetailsCard detail={data} />
+          <DetailsCard detail={data} form={form} />
         </Col>
         <Col xs={24} xl={10}>
           {data && <CoverCard detail={data} />}
@@ -130,14 +146,39 @@ export function CourseEditor() {
 
 // ------------------------------------------------------------------ header: title, status, actions
 
-function EditorHeader({ detail }: { detail?: ICourseDetail }) {
+function EditorHeader({
+  detail,
+  form,
+}: {
+  detail?: ICourseDetail;
+  form: FormInstance<CourseFormValues>;
+}) {
   const { formatMessage } = useIntl();
   const navigate = useNavigate();
   const { setCourse } = useCourseCacheUpdaters();
   const [publish, { isLoading: isPublishing }] = usePublishCourseMutation();
   const [archive, { isLoading: isArchiving }] = useArchiveCourseMutation();
   const [deleteCourse] = useDeleteCourseMutation();
+  const [updateCourse, { isLoading: isSavingDraft }] = useUpdateCourseMutation();
   const course = detail?.course;
+
+  /** Saves the details form (the structure is saved as it is edited) and goes back to My Courses. */
+  const handleSaveDraft = async () => {
+    if (!course) return;
+    let values: CourseFormValues;
+    try {
+      values = await form.validateFields();
+    } catch {
+      return; // The form shows what is missing
+    }
+    try {
+      setCourse(await updateCourse({ courseId: course.id, body: toCourseBody(values) }).unwrap());
+      message.success(formatMessage({ id: "draft-saved" }));
+      navigate(routes.myCourses);
+    } catch (error) {
+      applyFieldErrors(form, error);
+    }
+  };
 
   const run = async (action: () => Promise<ICourseDetail>, successId: string) => {
     try {
@@ -172,6 +213,11 @@ function EditorHeader({ detail }: { detail?: ICourseDetail }) {
           {course.status === "published" && !course.disabled && (
             <Button icon={<EyeOutlined />} onClick={() => navigate(routes.courseById(course.id))}>
               {formatMessage({ id: "view" })}
+            </Button>
+          )}
+          {course.status === "draft" && (
+            <Button icon={<SaveOutlined />} loading={isSavingDraft} onClick={handleSaveDraft}>
+              {formatMessage({ id: "save-draft" })}
             </Button>
           )}
           {course.status !== "published" && (
@@ -216,10 +262,15 @@ function EditorHeader({ detail }: { detail?: ICourseDetail }) {
 
 // ------------------------------------------------------------------ details form
 
-function DetailsCard({ detail }: { detail?: ICourseDetail }) {
+function DetailsCard({
+  detail,
+  form,
+}: {
+  detail?: ICourseDetail;
+  form: FormInstance<CourseFormValues>;
+}) {
   const { formatMessage } = useIntl();
   const navigate = useNavigate();
-  const [form] = Form.useForm<CourseFormValues>();
   const { setCourse } = useCourseCacheUpdaters();
   const { data: categories = [] } = useGetCategoriesQuery();
   const [createCourse, { isLoading: isCreating }] = useCreateCourseMutation();
@@ -255,15 +306,7 @@ function DetailsCard({ detail }: { detail?: ICourseDetail }) {
   ];
 
   const handleSave = async (values: CourseFormValues) => {
-    const isOther = values.categoryId === OTHER_CATEGORY;
-    const body = {
-      name: values.name,
-      description: values.description ?? "",
-      categoryId: isOther ? undefined : values.categoryId,
-      newCategoryName: isOther ? values.newCategoryName : undefined,
-      language: values.language,
-      level: values.level,
-    };
+    const body = toCourseBody(values);
     try {
       if (course) {
         setCourse(await updateCourse({ courseId: course.id, body }).unwrap());

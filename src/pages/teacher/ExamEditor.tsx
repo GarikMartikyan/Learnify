@@ -32,7 +32,7 @@ import {
   SaveOutlined,
 } from "@ant-design/icons";
 import { useIntl } from "react-intl";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { PageTitle } from "../../components/shared/PageTitle.tsx";
 import { routes } from "../../constants/routes.ts";
 import {
@@ -105,6 +105,7 @@ function SettingsCard({ exam }: { exam: IExamEditor }) {
   const [form] = Form.useForm<IExamSettings>();
   const { setExam } = useCourseCacheUpdaters();
   const [updateSettings, { isLoading }] = useUpdateExamSettingsMutation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     form.setFieldsValue({
@@ -123,6 +124,8 @@ function SettingsCard({ exam }: { exam: IExamEditor }) {
           try {
             setExam(await updateSettings({ examId: exam.id, body: values }).unwrap());
             message.success(formatMessage({ id: "exam-saved" }));
+            // Back to the course editor (same place as the back button)
+            navigate(routes.myCourseById(exam.courseId));
           } catch {
             // The error message is shown as a toast by the base query
           }
@@ -163,6 +166,7 @@ function ConfigurationCard({ exam }: { exam: IExamEditor }) {
   const { formatMessage } = useIntl();
   const { setExam } = useCourseCacheUpdaters();
   const [updateConfiguration, { isLoading }] = useUpdateExamConfigurationMutation();
+  const navigate = useNavigate();
   const [counts, setCounts] = useState<IDifficultyCounts>(exam.configuration);
 
   useEffect(() => {
@@ -202,6 +206,8 @@ function ConfigurationCard({ exam }: { exam: IExamEditor }) {
               try {
                 setExam(await updateConfiguration({ examId: exam.id, body: counts }).unwrap());
                 message.success(formatMessage({ id: "configuration-saved" }));
+                // Back to the course editor (same place as the back button)
+                navigate(routes.myCourseById(exam.courseId));
               } catch {
                 // The error message is shown as a toast by the base query
               }

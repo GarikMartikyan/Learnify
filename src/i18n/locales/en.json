@@ -369,6 +369,8 @@
   "pending-approval": "pending approval",
   "course-created": "Course created",
   "course-saved": "Course saved",
+  "save-draft": "Save draft",
+  "draft-saved": "Draft saved",
   "course-published": "Course published",
   "course-archived": "Course archived",
   "course-deleted": "Course deleted",

@@ -113,6 +113,7 @@ function TitleCard({ chapter }: { chapter: IChapter }) {
   const [form] = Form.useForm<{ title: string }>();
   const { setChapter } = useCourseCacheUpdaters();
   const [rename, { isLoading }] = useRenameChapterMutation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     form.setFieldsValue({ title: chapter.title });
@@ -127,6 +128,8 @@ function TitleCard({ chapter }: { chapter: IChapter }) {
           try {
             setChapter(await rename({ chapterId: chapter.id, title }).unwrap());
             message.success(formatMessage({ id: "chapter-saved" }));
+            // Back to the course editor (same place as the back button)
+            navigate(routes.myCourseById(chapter.courseId));
           } catch {
             // The error message is shown as a toast by the base query
           }
