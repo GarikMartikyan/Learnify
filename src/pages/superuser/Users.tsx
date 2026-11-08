@@ -269,7 +269,8 @@ export function Users() {
     <div>
       <PageTitle>{formatMessage({ id: "users-management" })}</PageTitle>
 
-      <Flex gap={12} wrap style={{ marginBottom: 16 }}>
+      {/* Same spacing under the title as the Courses and Audit Log pages */}
+      <Flex gap={12} wrap style={{ margin: "16px 0" }}>
         <Input
           allowClear
           prefix={<SearchOutlined />}
