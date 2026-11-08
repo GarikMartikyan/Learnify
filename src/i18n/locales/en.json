@@ -353,6 +353,7 @@
   "course-management": "Course Management",
   "search-courses-placeholder": "Search by course name…",
   "filter-by-visibility": "Filter by visibility",
+  "all-visibility": "Any visibility",
   "disable-course-confirm": "Disable \"{name}\"? It will be hidden from everyone.",
   "enable-course-confirm": "Enable \"{name}\" again?",
   "course-disabled": "\"{name}\" has been disabled",

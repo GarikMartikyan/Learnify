@@ -353,6 +353,7 @@
   "course-management": "Управление курсами",
   "search-courses-placeholder": "Поиск по названию курса…",
   "filter-by-visibility": "Фильтр по видимости",
+  "all-visibility": "Любая видимость",
   "disable-course-confirm": "Отключить курс «{name}»? Он будет скрыт от всех.",
   "enable-course-confirm": "Снова включить курс «{name}»?",
   "course-disabled": "Курс «{name}» отключён",

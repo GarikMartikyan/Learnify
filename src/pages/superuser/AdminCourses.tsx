@@ -6,7 +6,6 @@ import {
   message,
   Popconfirm,
   Select,
-  Space,
   Table,
   Typography,
   type TableProps,
@@ -24,6 +23,7 @@ import {
   CourseLevelTag,
   CourseStatusTag,
 } from "../../components/courses/CourseTags.tsx";
+import { compareCourseStatus, LEVEL_ORDER } from "../../utils/course.utils.ts";
 import {
   useGetAdminCoursesQuery,
   useSetCourseDisabledMutation,
@@ -41,6 +41,8 @@ const DEFAULT_PAGE_SIZE = 10;
 const PAGE_SIZE_OPTIONS = [10, 20, 50];
 const SEARCH_DELAY_MS = 400;
 const STATUSES: CourseStatus[] = ["draft", "published", "archived"];
+/** Filter option meaning "no filter" */
+const ALL = "all";
 
 /** Admin: every course (any status) with search / status / disabled filters, and disable / enable. */
 export function AdminCourses() {
@@ -88,24 +90,29 @@ export function AdminCourses() {
     }
   };
 
+  const teacherName = (course: ICourseSummary) =>
+    [course.teacher.firstName, course.teacher.lastName].filter(Boolean).join(" ");
+
+  // Widths fit the longest header word / tag / button in en, ru and am
   const columns: TableProps<ICourseSummary>["columns"] = [
     {
       title: formatMessage({ id: "course" }),
       key: "name",
+      sorter: (a, b) => a.name.localeCompare(b.name),
       render: (_, course) => (
-        <Space direction="vertical" size={0}>
+        <Flex vertical style={{ minWidth: 0 }}>
           <Text strong>{course.name}</Text>
           <Text type="secondary">{course.category?.name}</Text>
-        </Space>
+        </Flex>
       ),
     },
     {
       title: formatMessage({ id: "teacher" }),
       key: "teacher",
+      width: 180,
+      sorter: (a, b) => teacherName(a).localeCompare(teacherName(b)),
       render: (_, course) =>
-        [course.teacher.firstName, course.teacher.lastName]
-          .filter(Boolean)
-          .join(" ") || (
+        teacherName(course) || (
           <Text type="secondary">{formatMessage({ id: "unknown-user" })}</Text>
         ),
     },
@@ -113,11 +120,15 @@ export function AdminCourses() {
       title: formatMessage({ id: "level" }),
       dataIndex: "level",
       key: "level",
+      width: 140,
+      sorter: (a, b) => LEVEL_ORDER[a.level] - LEVEL_ORDER[b.level],
       render: (level) => <CourseLevelTag level={level} />,
     },
     {
       title: formatMessage({ id: "status" }),
       key: "status",
+      width: 160,
+      sorter: compareCourseStatus,
       render: (_, course) => (
         <CourseStatusTag status={course.status} disabled={course.disabled} />
       ),
@@ -126,13 +137,18 @@ export function AdminCourses() {
       title: formatMessage({ id: "updated" }),
       dataIndex: "updatedAt",
       key: "updatedAt",
+      width: 150,
+      sorter: (a, b) =>
+        new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
       render: (date: string) => getDMY(date),
     },
     {
       title: formatMessage({ id: "actions" }),
       key: "actions",
+      width: 175,
+      // Actions stacked vertically, each the full column width
       render: (_, course) => (
-        <Space wrap>
+        <Flex vertical gap={8}>
           <Button
             icon={<EyeOutlined />}
             onClick={() => navigate(routes.courseById(course.id))}
@@ -158,7 +174,7 @@ export function AdminCourses() {
               </Button>
             )}
           </Popconfirm>
-        </Space>
+        </Flex>
       ),
     },
   ];
@@ -173,32 +189,33 @@ export function AdminCourses() {
           placeholder={formatMessage({ id: "search-courses-placeholder" })}
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-          style={{ width: 260 }}
+          style={{ width: 300 }}
         />
+        {/* Same "All" filters as the Users page */}
         <Select
-          allowClear
-          style={{ width: 180 }}
-          placeholder={formatMessage({ id: "filter-by-status" })}
-          value={status}
-          onChange={(value?: CourseStatus) => {
-            setStatus(value);
-            setPage(0);
-          }}
-          options={STATUSES.map((s) => ({
-            value: s,
-            label: formatMessage({ id: `course-status-${s}` }),
-          }))}
-        />
-        <Select
-          allowClear
-          style={{ width: 180 }}
-          placeholder={formatMessage({ id: "filter-by-visibility" })}
-          value={disabled === undefined ? undefined : String(disabled)}
-          onChange={(value?: string) => {
-            setDisabled(value === undefined ? undefined : value === "true");
+          style={{ width: 230 }}
+          value={status ?? ALL}
+          onChange={(value: CourseStatus | typeof ALL) => {
+            setStatus(value === ALL ? undefined : value);
             setPage(0);
           }}
           options={[
+            { value: ALL, label: formatMessage({ id: "all-statuses" }) },
+            ...STATUSES.map((s) => ({
+              value: s,
+              label: formatMessage({ id: `course-status-${s}` }),
+            })),
+          ]}
+        />
+        <Select
+          style={{ width: 250 }}
+          value={disabled === undefined ? ALL : String(disabled)}
+          onChange={(value: string) => {
+            setDisabled(value === ALL ? undefined : value === "true");
+            setPage(0);
+          }}
+          options={[
+            { value: ALL, label: formatMessage({ id: "all-visibility" }) },
             { value: "false", label: formatMessage({ id: "enabled" }) },
             { value: "true", label: formatMessage({ id: "disabled" }) },
           ]}
@@ -210,7 +227,8 @@ export function AdminCourses() {
         rowKey="id"
         loading={isFetching}
         locale={{ emptyText: formatMessage({ id: "no-courses-found" }) }}
-        scroll={{ x: true }}
+        tableLayout="fixed"
+        scroll={{ x: 1050 }}
         pagination={{
           current: page + 1,
           pageSize,

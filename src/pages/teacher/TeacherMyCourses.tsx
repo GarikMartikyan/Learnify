@@ -1,10 +1,11 @@
-import { Avatar, Button, Flex, Space, Table, Typography, type TableProps } from "antd";
+import { Avatar, Button, Flex, Table, Typography, type TableProps } from "antd";
 import { EditOutlined, EyeOutlined, PictureOutlined, PlusOutlined } from "@ant-design/icons";
 import { useIntl } from "react-intl";
 import { Link, useNavigate } from "react-router";
 import { routes } from "../../constants/routes.ts";
 import { PageTitle } from "../../components/shared/PageTitle.tsx";
 import { CourseStatusTag } from "../../components/courses/CourseTags.tsx";
+import { compareCourseStatus } from "../../utils/course.utils.ts";
 import { useGetMyCoursesQuery } from "../../api/course.api.ts";
 import { getDMY } from "../../utils/date.ustils.ts";
 import type { ICourseSummary } from "../../constants/interfaces/courseApi.interfaces.ts";
@@ -17,28 +18,33 @@ export function TeacherMyCoursesPage() {
   const navigate = useNavigate();
   const { data: courses = [], isFetching } = useGetMyCoursesQuery();
 
+  // Widths fit the longest header word / tag / button in en, ru and am
   const columns: TableProps<ICourseSummary>["columns"] = [
     {
       title: formatMessage({ id: "course" }),
       key: "name",
+      sorter: (a, b) => a.name.localeCompare(b.name),
       render: (_, course) => (
-        <Space>
+        <Flex align="center" gap={12}>
           <Avatar
             shape="square"
             size={48}
             src={course.coverImageUrl ?? undefined}
             icon={<PictureOutlined />}
+            style={{ flexShrink: 0 }}
           />
-          <Space direction="vertical" size={0}>
+          <Flex vertical style={{ minWidth: 0 }}>
             <Text strong>{course.name}</Text>
             <Text type="secondary">{course.category?.name}</Text>
-          </Space>
-        </Space>
+          </Flex>
+        </Flex>
       ),
     },
     {
       title: formatMessage({ id: "status" }),
       key: "status",
+      width: 160,
+      sorter: compareCourseStatus,
       render: (_, course) => (
         <CourseStatusTag status={course.status} disabled={course.disabled} />
       ),
@@ -46,6 +52,10 @@ export function TeacherMyCoursesPage() {
     {
       title: formatMessage({ id: "content" }),
       key: "content",
+      width: 200,
+      // By number of chapters, then exams
+      sorter: (a, b) =>
+        a.chapterCount - b.chapterCount || a.examCount - b.examCount,
       render: (_, course) => (
         <Text type="secondary">
           {formatMessage({ id: "chapter-count" }, { count: course.chapterCount })}
@@ -58,13 +68,18 @@ export function TeacherMyCoursesPage() {
       title: formatMessage({ id: "updated" }),
       dataIndex: "updatedAt",
       key: "updatedAt",
+      width: 150,
+      sorter: (a, b) =>
+        new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
       render: (date: string) => getDMY(date),
     },
     {
       title: formatMessage({ id: "actions" }),
       key: "actions",
+      width: 190,
+      // Actions stacked vertically, each the full column width
       render: (_, course) => (
-        <Space wrap>
+        <Flex vertical gap={8}>
           <Button
             type="primary"
             icon={<EditOutlined />}
@@ -80,7 +95,7 @@ export function TeacherMyCoursesPage() {
               {formatMessage({ id: "view" })}
             </Button>
           )}
-        </Space>
+        </Flex>
       ),
     },
   ];
@@ -101,7 +116,8 @@ export function TeacherMyCoursesPage() {
         dataSource={courses}
         loading={isFetching}
         locale={{ emptyText: formatMessage({ id: "no-own-courses" }) }}
-        scroll={{ x: true }}
+        tableLayout="fixed"
+        scroll={{ x: 1000 }}
         pagination={{ pageSize: 10, hideOnSinglePage: true }}
       />
     </div>

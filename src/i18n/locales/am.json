@@ -353,6 +353,7 @@
   "course-management": "Դասընթացների Կառավարում",
   "search-courses-placeholder": "Որոնել ըստ դասընթացի անվան…",
   "filter-by-visibility": "Զտել ըստ տեսանելիության",
+  "all-visibility": "Ցանկացած տեսանելիություն",
   "disable-course-confirm": "Անջատե՞լ «{name}» դասընթացը։ Այն կթաքցվի բոլորից։",
   "enable-course-confirm": "Կրկին միացնե՞լ «{name}» դասընթացը։",
   "course-disabled": "«{name}» դասընթացն անջատվել է",
