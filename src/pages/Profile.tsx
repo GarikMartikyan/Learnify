@@ -24,7 +24,6 @@ import { ProfileInfoTab } from "../components/profile/ProfileInfoTab.tsx";
 import { CoursesTab } from "../components/profile/CoursesTab.tsx";
 import { UserAvatar } from "../components/shared/UserAvatar.tsx";
 import { RoleTag } from "../components/shared/RoleTag.tsx";
-import { courses } from "../placeholder/courses.ts";
 import { routes } from "../constants/routes.ts";
 import { useCurrentUser } from "../hooks/useCurrentUser.ts";
 import { useGetUserByIdQuery } from "../api/auth.api.ts";
@@ -125,13 +124,12 @@ export function UserProfilePage() {
               label: formatMessage({ id: "profile-info" }),
               children: <ProfileInfoTab user={user} />,
             },
-            // Placeholder data until the enrollment service exists
             ...(user.role === "user"
               ? [
                   {
                     key: "courses",
                     label: formatMessage({ id: "passed-courses" }),
-                    children: <CoursesTab courses={courses} />,
+                    children: <CoursesTab isOwnProfile={!isOtherUser} />,
                   },
                 ]
               : []),

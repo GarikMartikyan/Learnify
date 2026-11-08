@@ -284,6 +284,9 @@
   "chapters-created": "Ստեղծված Գլուխներ",
   "recently-updated-courses": "Վերջերս փոփոխված դասընթացներ",
   "course-stats-coming-soon": "Այստեղ կհայտնվեն յուրաքանչյուր դասընթացի հանձնման տոկոսը և ուսանողների առաջընթացը։",
+  "completed-on": "Ավարտվել է {date}",
+  "no-passed-courses": "Դեռ ավարտված դասընթացներ չկան",
+  "passed-courses-unavailable": "Այլ օգտատերերի ավարտած դասընթացները դեռ հնարավոր չէ ցուցադրել։",
 
   "help.account.title": "Հաշիվ",
   "help.account.create-account.q": "Ինչպե՞ս ստեղծել հաշիվ։",

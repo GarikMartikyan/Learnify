@@ -284,6 +284,9 @@
   "chapters-created": "Chapters Created",
   "recently-updated-courses": "Recently updated courses",
   "course-stats-coming-soon": "Pass rates and student progress for each course will appear here.",
+  "completed-on": "Completed on {date}",
+  "no-passed-courses": "No completed courses yet",
+  "passed-courses-unavailable": "Other users' completed courses can't be shown yet.",
 
   "help.account.title": "Account",
   "help.account.create-account.q": "How do I create an account?",
