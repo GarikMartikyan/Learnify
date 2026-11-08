@@ -1,17 +1,4 @@
-import type { ReactNode } from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Empty,
-  Flex,
-  List,
-  Row,
-  Statistic,
-  Tag,
-  theme,
-  Typography,
-} from "antd";
+import { Button, Card, Col, Flex, List, Row, Tag, Typography } from "antd";
 import {
   ClockCircleOutlined,
   FlagOutlined,
@@ -24,6 +11,8 @@ import dayjs from "dayjs";
 import { PageTitle } from "../../components/shared/PageTitle.tsx";
 import { UserAvatar } from "../../components/shared/UserAvatar.tsx";
 import { RoleTag } from "../../components/shared/RoleTag.tsx";
+import { ComingSoonCard, StatTile } from "../../components/shared/DashboardCards.tsx";
+import { useDashboardCardStyle } from "../../hooks/useDashboardCardStyle.ts";
 import { routes } from "../../constants/routes.ts";
 import { useGetApplicationsQuery, useGetUsersQuery } from "../../api/auth.api.ts";
 import { useGetAuditLogQuery } from "../../api/audit.api.ts";
@@ -35,77 +24,6 @@ const { Text } = Typography;
 const LIST_SIZE = 5;
 const ACTIVITY_SIZE = 6;
 
-interface StatTileProps {
-  title: string;
-  value?: number;
-  icon: ReactNode;
-  loading?: boolean;
-  /** Highlight the number (something needs the admin's attention). */
-  highlight?: boolean;
-  footer?: ReactNode;
-  onClick?: () => void;
-  /** Not available yet: shows "Coming soon" instead of a number. */
-  comingSoon?: boolean;
-}
-
-function StatTile({
-  title,
-  value,
-  icon,
-  loading,
-  highlight,
-  footer,
-  onClick,
-  comingSoon,
-}: StatTileProps) {
-  const { token } = theme.useToken();
-  const { formatMessage } = useIntl();
-
-  return (
-    <Card
-      hoverable={Boolean(onClick)}
-      onClick={onClick}
-      style={{ height: "100%", borderRadius: 16, boxShadow: token.boxShadowTertiary }}
-    >
-      <Flex justify="space-between" align="start" gap={12}>
-        {comingSoon ? (
-          <Flex vertical gap={8}>
-            <Text type="secondary">{title}</Text>
-            <Tag style={{ width: "fit-content" }}>
-              {formatMessage({ id: "coming-soon" })}
-            </Tag>
-          </Flex>
-        ) : (
-          <Statistic
-            title={title}
-            value={value ?? 0}
-            loading={loading}
-            valueStyle={highlight ? { color: token.colorWarning } : undefined}
-          />
-        )}
-        <span style={{ fontSize: 24, color: token.colorTextTertiary }}>{icon}</span>
-      </Flex>
-      {footer && <div style={{ marginTop: 8 }}>{footer}</div>}
-    </Card>
-  );
-}
-
-/** Card for a feature whose backend is not available yet. */
-function ComingSoonCard({ title, text }: { title: string; text: string }) {
-  const { token } = theme.useToken();
-  const { formatMessage } = useIntl();
-
-  return (
-    <Card
-      title={title}
-      extra={<Tag>{formatMessage({ id: "coming-soon" })}</Tag>}
-      style={{ height: "100%", borderRadius: 16, boxShadow: token.boxShadowTertiary }}
-    >
-      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={text} />
-    </Card>
-  );
-}
-
 /**
  * Admin dashboard: an overview of what needs attention, with shortcuts to the full pages.
  * Reports, categories and platform statistics are placeholders until their services exist.
@@ -113,7 +31,7 @@ function ComingSoonCard({ title, text }: { title: string; text: string }) {
 export function AdminDashboard() {
   const intl = useIntl();
   const { formatMessage } = intl;
-  const { token } = theme.useToken();
+  const cardStyle = useDashboardCardStyle();
   const navigate = useNavigate();
 
   // Counts come from the totals of the existing list endpoints
@@ -143,7 +61,6 @@ export function AdminDashboard() {
     return name || formatMessage({ id: "unknown-user" });
   };
 
-  const cardStyle = { height: "100%", borderRadius: 16, boxShadow: token.boxShadowTertiary };
   const viewAll = (route: string) => (
     <Button type="link" style={{ padding: 0 }} onClick={() => navigate(route)}>
       {formatMessage({ id: "view-all" })}

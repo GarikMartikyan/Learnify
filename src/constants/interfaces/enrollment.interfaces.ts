@@ -55,6 +55,7 @@ export interface IStudentChapter {
     title: string;
     blocks: Omit<IContentBlock, "disabled">[];
   };
-  /** Progress after this chapter was marked as viewed. */
+  /** The student has already marked this chapter as finished. */
+  done: boolean;
   enrollment: IEnrollment;
 }

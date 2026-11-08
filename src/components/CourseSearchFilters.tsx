@@ -23,6 +23,8 @@ interface CourseSearchFiltersProps {
 }
 
 const SEARCH_DELAY_MS = 400;
+/** Category option meaning "no filter" (shown as a real option, like on the other pages). */
+const ALL = "all";
 
 /** Catalog filters: language, level, category and a search box (searches after typing stops). */
 export function CourseSearchFilters({ value, onChange }: CourseSearchFiltersProps) {
@@ -40,11 +42,21 @@ export function CourseSearchFilters({ value, onChange }: CourseSearchFiltersProp
     return () => clearTimeout(timer);
   }, [searchInput, value, onChange]);
 
+  // Same order as the other pages' filter rows (search first). Widths fit the longest "All …"
+  // label in en/ru/am, and the whole row incl. Reset fits on one line in every language
   return (
-    <Flex gap={8} wrap align="center" style={{ width: "100%" }}>
+    <Flex gap={12} wrap align="center">
+      <Input
+        allowClear
+        prefix={<SearchOutlined />}
+        placeholder={formatMessage({ id: "search-keywords" })}
+        value={searchInput}
+        onChange={(e) => setSearchInput(e.target.value)}
+        style={{ width: 260 }}
+      />
       <CourseLanguageSelect
         showAllOptions
-        style={{ minWidth: 150 }}
+        style={{ width: 200 }}
         value={value.language ?? null}
         onChange={(language: CourseLanguage | null) =>
           onChange({ ...value, language: language ?? undefined })
@@ -52,32 +64,27 @@ export function CourseSearchFilters({ value, onChange }: CourseSearchFiltersProp
       />
       <CourseComplexitySelect
         showAllOption
-        style={{ minWidth: 150 }}
+        style={{ width: 200 }}
         value={value.level ?? null}
         onChange={(level: CourseLevel | null) =>
           onChange({ ...value, level: level ?? undefined })
         }
       />
       <Select
-        allowClear
         showSearch
         optionFilterProp="label"
-        style={{ minWidth: 200 }}
-        placeholder={formatMessage({ id: "all-categories" })}
-        value={value.categoryId}
-        onChange={(categoryId?: string) => onChange({ ...value, categoryId })}
-        options={categories.map((category) => ({
-          value: category.id,
-          label: category.name,
-        }))}
-      />
-      <Input
-        allowClear
-        prefix={<SearchOutlined />}
-        placeholder={formatMessage({ id: "search-keywords" })}
-        value={searchInput}
-        onChange={(e) => setSearchInput(e.target.value)}
-        style={{ flex: 1, minWidth: 200 }}
+        style={{ width: 210 }}
+        value={value.categoryId ?? ALL}
+        onChange={(categoryId: string) =>
+          onChange({ ...value, categoryId: categoryId === ALL ? undefined : categoryId })
+        }
+        options={[
+          { value: ALL, label: formatMessage({ id: "all-categories" }) },
+          ...categories.map((category) => ({
+            value: category.id,
+            label: category.name,
+          })),
+        ]}
       />
       <Button
         onClick={() => {

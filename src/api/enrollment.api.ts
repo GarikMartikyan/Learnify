@@ -36,22 +36,26 @@ export const enrollmentApi = createApi({
       providesTags: [ENROLLMENT_TAG],
     }),
 
-    /** Opening a chapter also marks it as viewed, so the progress queries are refreshed afterwards. */
+    /** Reads an unlocked chapter (does not complete it). */
     openChapter: builder.query<
       IStudentChapter,
       { enrollmentId: string; chapterId: string }
     >({
       query: ({ enrollmentId, chapterId }) =>
         `/enrollments/${enrollmentId}/chapters/${chapterId}`,
-      keepUnusedDataFor: 0,
-      async onQueryStarted(_args, { dispatch, queryFulfilled }) {
-        try {
-          await queryFulfilled;
-          dispatch(enrollmentApi.util.invalidateTags([ENROLLMENT_TAG]));
-        } catch {
-          // the error toast is shown by the base query
-        }
-      },
+      providesTags: [ENROLLMENT_TAG],
+    }),
+
+    /** The student clicks "Mark as finished" at the end of a chapter. Returns the updated progress. */
+    finishChapter: builder.mutation<
+      IEnrollment,
+      { enrollmentId: string; chapterId: string }
+    >({
+      query: ({ enrollmentId, chapterId }) => ({
+        url: `/enrollments/${enrollmentId}/chapters/${chapterId}/finish`,
+        method: "POST",
+      }),
+      invalidatesTags: [ENROLLMENT_TAG],
     }),
 
     /** Enrolls, or continues an abandoned enrollment. */
@@ -86,6 +90,7 @@ export const {
   useGetMyEnrollmentsQuery,
   useGetEnrollmentQuery,
   useOpenChapterQuery,
+  useFinishChapterMutation,
   useEnrollMutation,
   useAbandonEnrollmentMutation,
   useRestoreEnrollmentMutation,

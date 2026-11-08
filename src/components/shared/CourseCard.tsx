@@ -30,15 +30,16 @@ export function CourseCard({ course, onClick }: CourseCardProps) {
   return (
     <Card
       variant="borderless"
+      hoverable
       onClick={onClick}
       style={{
         background: token.colorBgElevated,
-        boxShadow: token.boxShadowSecondary,
+        boxShadow: token.boxShadowTertiary,
+        borderRadius: 16,
         overflow: "hidden",
-        cursor: "pointer",
         height: "100%",
       }}
-      styles={{ body: { padding: 16 } }}
+      styles={{ body: { padding: 20 } }}
       cover={
         course.coverImageUrl ? (
           <img
@@ -63,7 +64,7 @@ export function CourseCard({ course, onClick }: CourseCardProps) {
       }
     >
       <Flex vertical gap="small">
-        <Title level={4} ellipsis={{ rows: 1 }} style={{ margin: 0 }}>
+        <Title level={5} ellipsis={{ rows: 1, tooltip: course.name }} style={{ margin: 0 }}>
           {course.name}
         </Title>
         {teacherName && (
@@ -85,11 +86,12 @@ export function CourseCard({ course, onClick }: CourseCardProps) {
         >
           {course.description}
         </Paragraph>
-        <Space size={4} wrap>
+        {/* Tags carry their own right margin, so the row only adds the gap between lines */}
+        <Flex wrap style={{ rowGap: 6 }}>
           <CourseLevelTag level={course.level} />
           <CourseLanguageTag language={course.language} />
           {course.category && <Tag>{course.category.name}</Tag>}
-        </Space>
+        </Flex>
         <Space size="middle">
           <Text type="secondary">
             <BookOutlined />{" "}

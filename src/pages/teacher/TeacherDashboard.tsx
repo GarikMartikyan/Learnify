@@ -1,108 +1,158 @@
-"use client";
-
-import { Card, Col, List, Progress, Row, Space, Typography } from "antd";
+import { Avatar, Button, Card, Col, Flex, List, Row, Typography } from "antd";
 import {
   BookOutlined,
-  CheckCircleOutlined,
-  ExperimentOutlined,
+  FileDoneOutlined,
+  PictureOutlined,
+  PlusOutlined,
+  ReadOutlined,
+  TeamOutlined,
 } from "@ant-design/icons";
 import { useIntl } from "react-intl";
+import { useNavigate } from "react-router";
+import { routes } from "../../constants/routes.ts";
+import { useGetMyCoursesQuery } from "../../api/course.api.ts";
+import { PageTitle } from "../../components/shared/PageTitle.tsx";
+import { CourseStatusTag } from "../../components/courses/CourseTags.tsx";
+import { ComingSoonCard, StatTile } from "../../components/shared/DashboardCards.tsx";
+import { useDashboardCardStyle } from "../../hooks/useDashboardCardStyle.ts";
+import { getDMY } from "../../utils/date.ustils.ts";
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
+const RECENT_COUNT = 5;
+
+/**
+ * Teacher dashboard: numbers about the teacher's own courses and the recently edited ones.
+ * Student numbers and course statistics are placeholders until the Enrollment service provides them.
+ */
 export function TeacherDashboard() {
   const { formatMessage } = useIntl();
+  const navigate = useNavigate();
+  const cardStyle = useDashboardCardStyle();
+  const { data: courses = [], isLoading } = useGetMyCoursesQuery();
 
-  const stats = {
-    courses: 7,
-    exams: 14,
-    students: 126,
-  };
-
-  const recentCourses = [
-    { id: 1, title: "Introduction to JavaScript", progress: 85 },
-    { id: 2, title: "Advanced TypeScript", progress: 60 },
-    { id: 3, title: "Data Structures & Algorithms", progress: 40 },
-  ];
-
-  const recentExams = [
-    { id: 1, title: "JS Midterm Exam", status: "Published" },
-    { id: 2, title: "TS Final Exam", status: "Draft" },
-    { id: 3, title: "Algorithms Quiz", status: "Published" },
-  ];
+  const publishedCount = courses.filter((c) => c.status === "published").length;
+  const draftCount = courses.filter((c) => c.status === "draft").length;
+  const chapterCount = courses.reduce((sum, c) => sum + c.chapterCount, 0);
+  const examCount = courses.reduce((sum, c) => sum + c.examCount, 0);
+  const recentCourses = [...courses]
+    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+    .slice(0, RECENT_COUNT);
 
   return (
-    <div style={{ padding: "24px" }}>
-      {/* Header */}
-      <Row justify="space-between" style={{ marginBottom: 32 }}>
-        <Title level={2}>{formatMessage({ id: "teacher-dashboard" })}</Title>
-      </Row>
+    <div>
+      <Flex justify="space-between" align="center" wrap gap={12}>
+        <PageTitle>{formatMessage({ id: "dashboard" })}</PageTitle>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          style={{ marginBottom: 16 }}
+          onClick={() => navigate(routes.createCourse)}
+        >
+          {formatMessage({ id: "create-course" })}
+        </Button>
+      </Flex>
 
-      {/* Stats Cards */}
-      <Row gutter={24} style={{ marginBottom: 32 }}>
-        <Col xs={24} md={8}>
-          <Card>
-            <Space direction="vertical" size={0}>
-              <Space>
-                <BookOutlined style={{ fontSize: 26 }} />
-                <Title level={4}>{stats.courses}</Title>
-              </Space>
-              <Text type="secondary">
-                {formatMessage({ id: "courses-created" })}
-              </Text>
-            </Space>
-          </Card>
-        </Col>
-
-        <Col xs={24} md={8}>
-          <Card>
-            <Space direction="vertical" size={0}>
-              <Space>
-                <ExperimentOutlined style={{ fontSize: 26 }} />
-                <Title level={4}>{stats.exams}</Title>
-              </Space>
-              <Text type="secondary">
-                {formatMessage({ id: "exams-created" })}
-              </Text>
-            </Space>
-          </Card>
-        </Col>
-
-        <Col xs={24} md={8}>
-          <Card>
-            <Space direction="vertical" size={0}>
-              <Space>
-                <CheckCircleOutlined style={{ fontSize: 26 }} />
-                <Title level={4}>{stats.students}</Title>
-              </Space>
-              <Text type="secondary">
-                {formatMessage({ id: "students-enrolled" })}
-              </Text>
-            </Space>
-          </Card>
-        </Col>
-      </Row>
-
-      <Row gutter={24}>
-        <Col xs={24}>
-          <Card title={formatMessage({ id: "course-passing-percentage" })}>
-            <List
-              itemLayout="horizontal"
-              dataSource={recentCourses}
-              renderItem={(course) => (
-                <List.Item>
-                  <List.Item.Meta
-                    title={course.title}
-                    description={
-                      <Progress percent={course.progress} size="small" />
-                    }
-                  />
-                </List.Item>
-              )}
+      <Flex vertical gap={16}>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} xl={6}>
+            <StatTile
+              title={formatMessage({ id: "courses-created" })}
+              value={courses.length}
+              loading={isLoading}
+              icon={<ReadOutlined />}
+              onClick={() => navigate(routes.myCourses)}
+              footer={
+                <Text type="secondary">
+                  {formatMessage({ id: "course-status-published" })}: {publishedCount}
+                  {" · "}
+                  {formatMessage({ id: "course-status-draft" })}: {draftCount}
+                </Text>
+              }
             />
-          </Card>
-        </Col>
-      </Row>
+          </Col>
+          <Col xs={24} sm={12} xl={6}>
+            <StatTile
+              title={formatMessage({ id: "chapters-created" })}
+              value={chapterCount}
+              loading={isLoading}
+              icon={<BookOutlined />}
+            />
+          </Col>
+          <Col xs={24} sm={12} xl={6}>
+            <StatTile
+              title={formatMessage({ id: "exams-created" })}
+              value={examCount}
+              loading={isLoading}
+              icon={<FileDoneOutlined />}
+            />
+          </Col>
+          <Col xs={24} sm={12} xl={6}>
+            {/* Not available yet: needs enrollment counts per teacher */}
+            <StatTile
+              comingSoon
+              title={formatMessage({ id: "students-enrolled" })}
+              icon={<TeamOutlined />}
+            />
+          </Col>
+        </Row>
+
+        <Row gutter={[16, 16]}>
+          <Col xs={24} lg={12}>
+            <Card
+              title={formatMessage({ id: "recently-updated-courses" })}
+              extra={
+                <Button
+                  type="link"
+                  style={{ padding: 0 }}
+                  onClick={() => navigate(routes.myCourses)}
+                >
+                  {formatMessage({ id: "view-all" })}
+                </Button>
+              }
+              loading={isLoading}
+              style={cardStyle}
+            >
+              <List
+                dataSource={recentCourses}
+                locale={{ emptyText: formatMessage({ id: "no-own-courses" }) }}
+                renderItem={(course) => (
+                  <List.Item
+                    style={{ cursor: "pointer" }}
+                    onClick={() => navigate(routes.myCourseById(course.id))}
+                  >
+                    <List.Item.Meta
+                      avatar={
+                        <Avatar
+                          shape="square"
+                          size={40}
+                          src={course.coverImageUrl ?? undefined}
+                          icon={<PictureOutlined />}
+                        />
+                      }
+                      title={
+                        <Text strong ellipsis={{ tooltip: course.name }}>
+                          {course.name}
+                        </Text>
+                      }
+                      description={getDMY(course.updatedAt)}
+                    />
+                    <CourseStatusTag status={course.status} disabled={course.disabled} />
+                  </List.Item>
+                )}
+              />
+            </Card>
+          </Col>
+
+          {/* Not available yet: pass rates come with the Enrollment & Grading service */}
+          <Col xs={24} lg={12}>
+            <ComingSoonCard
+              title={formatMessage({ id: "course-passing-percentage" })}
+              text={formatMessage({ id: "course-stats-coming-soon" })}
+            />
+          </Col>
+        </Row>
+      </Flex>
     </div>
   );
 }

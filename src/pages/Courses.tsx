@@ -56,7 +56,7 @@ function CourseCatalog({ showCreateButton }: { showCreateButton: boolean }) {
           </Link>
         )}
       </Flex>
-      <div style={{ marginBottom: 16 }}>
+      <div style={{ margin: "16px 0" }}>
         <CourseSearchFilters value={filters} onChange={handleFiltersChange} />
       </div>
 

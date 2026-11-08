@@ -1,5 +1,9 @@
-import { Button, Divider, Flex, Result, Spin, Typography, message } from "antd";
-import { ArrowRightOutlined, UnorderedListOutlined } from "@ant-design/icons";
+import { Button, Divider, Flex, Result, Spin, Tag, Typography, message } from "antd";
+import {
+  ArrowRightOutlined,
+  CheckOutlined,
+  UnorderedListOutlined,
+} from "@ant-design/icons";
 import { skipToken } from "@reduxjs/toolkit/query";
 import { useIntl } from "react-intl";
 import { useNavigate, useParams } from "react-router";
@@ -7,15 +11,17 @@ import { PageTitle } from "../../components/shared/PageTitle.tsx";
 import { ContentBlockView } from "../../components/courses/ContentBlockView.tsx";
 import { routes } from "../../constants/routes.ts";
 import {
+  useFinishChapterMutation,
   useGetCourseEnrollmentQuery,
   useOpenChapterQuery,
 } from "../../api/enrollment.api.ts";
+import type { IItemProgress } from "../../constants/interfaces/enrollment.interfaces.ts";
 
 const { Text } = Typography;
 
 /**
  * /learning/:courseId/chapters/:chapterId — an enrolled student reads a chapter.
- * Opening it marks it as viewed; "Next" leads to the next item to do.
+ * The chapter is done only when the student clicks "Mark as finished" at the end.
  */
 export function LearningChapterPage() {
   const { courseId = "", chapterId = "" } = useParams();
@@ -26,6 +32,7 @@ export function LearningChapterPage() {
   const { data, isLoading, isError } = useOpenChapterQuery(
     current ? { enrollmentId: current.id, chapterId } : skipToken,
   );
+  const [finishChapter, { isLoading: isFinishing }] = useFinishChapterMutation();
 
   if (isLoadingCurrent || isLoading) {
     return (
@@ -48,10 +55,10 @@ export function LearningChapterPage() {
     );
   }
 
-  const { chapter, enrollment } = data;
-  const next = enrollment.nextItem;
+  const { chapter, done, enrollment } = data;
 
-  const goNext = () => {
+  /** Opens the next chapter, or the course's learning view for an exam / when everything is done. */
+  const goTo = (next: IItemProgress | null) => {
     if (next?.itemType === "chapter" && next.chapterId) {
       navigate(routes.learningChapter(courseId, next.chapterId));
     } else {
@@ -62,14 +69,27 @@ export function LearningChapterPage() {
     }
   };
 
+  const handleFinish = async () => {
+    const result = await finishChapter({ enrollmentId: current.id, chapterId });
+    if (result.data) {
+      if (result.data.status === "completed") {
+        message.success(formatMessage({ id: "course-completed-message" }));
+      }
+      goTo(result.data.nextItem);
+    }
+  };
+
+  const next = enrollment.nextItem;
+
   return (
     <div>
       <PageTitle showBackButton backRoute={routes.learning(courseId)}>
         {chapter.title}
       </PageTitle>
-      <div>
+      <Flex gap={8} align="center">
         <Text type="secondary">{chapter.courseName}</Text>
-      </div>
+        {done && <Tag color="success">{formatMessage({ id: "chapter-finished" })}</Tag>}
+      </Flex>
       <Divider />
 
       {chapter.blocks.length === 0 ? (
@@ -87,15 +107,16 @@ export function LearningChapterPage() {
         <Button icon={<UnorderedListOutlined />} onClick={() => navigate(routes.learning(courseId))}>
           {formatMessage({ id: "back-to-course" })}
         </Button>
-        {next && next.chapterId !== chapter.id ? (
-          <Button type="primary" icon={<ArrowRightOutlined />} iconPosition="end" onClick={goNext}>
-            {formatMessage({ id: "next-item" }, { title: next.title })}
+        {!done ? (
+          <Button type="primary" size="large" icon={<CheckOutlined />} loading={isFinishing}
+                  onClick={handleFinish}>
+            {formatMessage({ id: "mark-chapter-finished" })}
           </Button>
         ) : (
-          !next && (
-            <Text type="success" strong>
-              {formatMessage({ id: "course-completed-message" })}
-            </Text>
+          next && (
+            <Button type="primary" icon={<ArrowRightOutlined />} iconPosition="end" onClick={() => goTo(next)}>
+              {formatMessage({ id: "next-item" }, { title: next.title })}
+            </Button>
           )
         )}
       </Flex>
