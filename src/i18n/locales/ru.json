@@ -302,6 +302,7 @@
   "item-not-found": "Элемент больше не существует",
   "more": "ещё",
   "reports-of-item": "Жалоб на этот элемент: {count}",
+  "reported-on": "Дата жалобы",
   "reported-by": "Автор жалобы",
   "report-resolve": "Скрыть",
   "report-dismiss": "Отклонить",

@@ -10,14 +10,17 @@ import {
   Row,
   Segmented,
   Spin,
+  Tag,
   Typography,
   theme,
 } from "antd";
-import { CaretRightOutlined, ReadOutlined } from "@ant-design/icons";
+import { CaretRightOutlined, PictureOutlined, UserOutlined } from "@ant-design/icons";
 import { useIntl } from "react-intl";
 import { useNavigate } from "react-router";
 import { routes } from "../../constants/routes.ts";
 import { useGetMyEnrollmentsQuery } from "../../api/enrollment.api.ts";
+import { useGetCourseOverviewQuery } from "../../api/course.api.ts";
+import { CourseLanguageTag, CourseLevelTag } from "../courses/CourseTags.tsx";
 import type {
   EnrollmentStatus,
   IEnrollment,
@@ -84,13 +87,25 @@ export function EnrolledCourses() {
   );
 }
 
-/** One enrolled course: name, status, progress, what comes next and a continue / review button. */
+/**
+ * One enrolled course: cover, name, teacher, level / language / category, status, progress,
+ * what comes next and a continue / review button.
+ */
 export function EnrollmentCard({ enrollment }: { enrollment: IEnrollment }) {
   const { formatMessage } = useIntl();
   const navigate = useNavigate();
   const openNext = useOpenNextItem();
   const { token } = theme.useToken();
   const courseName = enrollment.courseName ?? formatMessage({ id: "course" });
+
+  // The enrollment only has the course name; the rest comes from the course service.
+  // Archived / disabled / deleted courses are not public (404), so their cards show just the basics.
+  const { data: course } = useGetCourseOverviewQuery(enrollment.courseId, {
+    skip: !enrollment.courseName,
+  });
+  const teacherName = course
+    ? [course.teacher.firstName, course.teacher.lastName].filter(Boolean).join(" ")
+    : "";
 
   const summary = enrollment.courseDisabled
     ? formatMessage({ id: "course-unavailable" })
@@ -132,32 +147,66 @@ export function EnrollmentCard({ enrollment }: { enrollment: IEnrollment }) {
       style={{
         height: "100%",
         borderRadius: 16,
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
         background: token.colorBgElevated,
         boxShadow: token.boxShadowTertiary,
       }}
-      styles={{ body: { height: "100%", padding: 20 } }}
+      styles={{ body: { flex: 1, padding: 20 } }}
+      cover={
+        <div style={{ position: "relative" }}>
+          {course?.coverImageUrl ? (
+            <img
+              alt={courseName}
+              src={course.coverImageUrl}
+              style={{ display: "block", width: "100%", aspectRatio: "16/9", objectFit: "cover" }}
+            />
+          ) : (
+            <Flex
+              align="center"
+              justify="center"
+              style={{
+                aspectRatio: "16/9",
+                background: token.colorFillTertiary,
+                fontSize: 40,
+                color: token.colorTextQuaternary,
+              }}
+            >
+              <PictureOutlined />
+            </Flex>
+          )}
+          {/* Status on the cover, like a badge */}
+          <div style={{ position: "absolute", top: 12, left: 12 }}>
+            <EnrollmentStatusTag status={enrollment.status} />
+          </div>
+        </div>
+      }
     >
-      <Flex vertical gap={12} style={{ height: "100%" }}>
-        <Flex align="center" gap={12}>
-          <Avatar
-            shape="square"
-            size={40}
-            icon={<ReadOutlined />}
-            style={{
-              flexShrink: 0,
-              background: token.colorPrimaryBg,
-              color: token.colorPrimary,
-            }}
-          />
-          <Flex vertical gap={4} style={{ minWidth: 0 }}>
-            <Title level={5} ellipsis={{ tooltip: courseName }} style={{ margin: 0 }}>
-              {courseName}
-            </Title>
-            <div>
-              <EnrollmentStatusTag status={enrollment.status} />
-            </div>
+      <Flex vertical gap={10} style={{ height: "100%" }}>
+        <Title level={5} ellipsis={{ tooltip: courseName }} style={{ margin: 0 }}>
+          {courseName}
+        </Title>
+        {teacherName && (
+          <Flex align="center" gap={8} style={{ minWidth: 0 }}>
+            <Avatar
+              size="small"
+              icon={<UserOutlined />}
+              src={course?.teacher.avatarUrl ?? undefined}
+              style={{ flexShrink: 0 }}
+            />
+            <Text type="secondary" ellipsis={{ tooltip: teacherName }}>
+              {formatMessage({ id: "course-by" }, { name: teacherName })}
+            </Text>
           </Flex>
-        </Flex>
+        )}
+        {course && (
+          <Flex wrap style={{ rowGap: 6 }}>
+            <CourseLevelTag level={course.level} />
+            <CourseLanguageTag language={course.language} />
+            {course.category && <Tag>{course.category.name}</Tag>}
+          </Flex>
+        )}
         <Progress
           percent={enrollment.progressPercent}
           status={enrollment.status === "completed" ? "success" : "normal"}

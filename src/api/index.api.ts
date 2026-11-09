@@ -26,10 +26,11 @@ export const apiUrls = {
  * - sends the access token as "Authorization: Bearer ...";
  * - shows the backend's error message as a toast;
  * - on 401 for a logged-in user (expired/invalid token) logs out, which sends the user to the login page.
+ * An endpoint can set `extraOptions: { silent: true }` to skip the error toast (the 401 handling stays).
  */
 export const createBaseQuery = (
   baseUrl: string,
-): BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> => {
+): BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError, { silent?: boolean }> => {
   const rawBaseQuery = fetchBaseQuery({
     baseUrl,
     prepareHeaders: (headers) => {
@@ -49,7 +50,7 @@ export const createBaseQuery = (
       if (result.error.status === 401 && isLoggedIn) {
         api.dispatch(removeAccessToken());
         message.warning("Your session has expired, please log in again");
-      } else {
+      } else if (!extraOptions?.silent) {
         message.error(getErrorMessage(result.error));
       }
     }

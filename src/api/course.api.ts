@@ -51,6 +51,17 @@ export const courseApi = createApi({
       providesTags: (_r, _e, id) => [{ type: tags.course, id }],
     }),
 
+    /**
+     * Same as getPublicCourse, but without an error toast: used for extra details (cover, teacher,
+     * level...) on enrolled course cards, where a 404 (archived / disabled course) is expected.
+     */
+    getCourseOverview: builder.query<ICourseSummary, string>({
+      query: (courseId) => `/courses/${courseId}`,
+      extraOptions: { silent: true },
+      transformResponse: (detail: ICourseDetail) => detail.course,
+      keepUnusedDataFor: 10 * 60,
+    }),
+
     getChapter: builder.query<IChapter, string>({
       query: (chapterId) => `/chapters/${chapterId}`,
       providesTags: (_r, _e, id) => [{ type: tags.chapter, id }],
@@ -361,6 +372,7 @@ export const {
   useGetCategoriesQuery,
   useGetCatalogQuery,
   useGetPublicCourseQuery,
+  useGetCourseOverviewQuery,
   useGetChapterQuery,
   useGetMyCoursesQuery,
   useGetMyCourseQuery,

@@ -302,6 +302,7 @@
   "item-not-found": "Item no longer exists",
   "more": "more",
   "reports-of-item": "{count} reports about this item",
+  "reported-on": "Reported on",
   "reported-by": "Reported by",
   "report-resolve": "Hide item",
   "report-dismiss": "Dismiss",

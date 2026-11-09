@@ -6,7 +6,6 @@ import {
   Modal,
   Result,
   Select,
-  Space,
   Table,
   Tag,
   Typography,
@@ -35,6 +34,8 @@ const { Text, Paragraph } = Typography;
 
 const DEFAULT_PAGE_SIZE = 10;
 const PAGE_SIZE_OPTIONS = [10, 20, 50];
+/** Filter option meaning "no filter" */
+const ALL = "all";
 const STATUSES: ReportStatus[] = ["pending", "resolved", "dismissed"];
 const ENTITY_TYPES: ReportEntityType[] = ["course", "chapter", "content_block"];
 
@@ -96,17 +97,23 @@ export function ContentReports() {
     }
   };
 
+  // Sorting is in the browser, within the loaded page (like the other admin tables).
+  // Widths fit the longest header (+ sorter), tag and button in en, ru and am; the reason column takes the rest.
   const columns: TableProps<IAdminReport>["columns"] = [
     {
       title: formatMessage({ id: "reported-item" }),
       key: "item",
-      width: 260,
+      width: 240,
+      // By title; reports whose item no longer exists go last
+      sorter: (a, b) =>
+        (a.entityTitle === null ? 1 : 0) - (b.entityTitle === null ? 1 : 0) ||
+        (a.entityTitle ?? "").localeCompare(b.entityTitle ?? ""),
       render: (_, report) => (
-        <Space direction="vertical" size={2}>
-          <Space size={4} wrap>
+        <Flex vertical gap={4} style={{ minWidth: 0 }}>
+          <Flex wrap style={{ rowGap: 4 }}>
             <Tag>{formatMessage({ id: `report-entity.${report.entityType}` })}</Tag>
             {report.entityDisabled && <Tag color="red">{formatMessage({ id: "hidden" })}</Tag>}
-          </Space>
+          </Flex>
           {report.entityTitle === null ? (
             <Text type="secondary">{formatMessage({ id: "item-not-found" })}</Text>
           ) : (
@@ -117,23 +124,26 @@ export function ContentReports() {
               )}
             </Text>
           )}
-          {report.courseId && report.entityType !== "course" && (
-            <Link to={routes.courseById(report.courseId)}>{report.courseName}</Link>
+          {report.courseId && (
+            <Link to={routes.courseById(report.courseId)}>
+              {report.entityType === "course"
+                ? formatMessage({ id: "view-course" })
+                : report.courseName}
+            </Link>
           )}
-          {report.courseId && report.entityType === "course" && (
-            <Link to={routes.courseById(report.courseId)}>{formatMessage({ id: "view-course" })}</Link>
-          )}
-        </Space>
+        </Flex>
       ),
     },
     {
       title: formatMessage({ id: "report-reason" }),
       dataIndex: "reason",
       key: "reason",
-      width: 280,
       render: (reason: string, report) => (
-        <Space direction="vertical" size={2}>
-          <Paragraph style={{ margin: 0 }} ellipsis={{ rows: 3, expandable: true, symbol: formatMessage({ id: "more" }) }}>
+        <Flex vertical gap={4}>
+          <Paragraph
+            style={{ margin: 0 }}
+            ellipsis={{ rows: 3, expandable: true, symbol: formatMessage({ id: "more" }) }}
+          >
             {reason}
           </Paragraph>
           {report.reportCount > 1 && (
@@ -141,63 +151,74 @@ export function ContentReports() {
               {formatMessage({ id: "reports-of-item" }, { count: report.reportCount })}
             </Text>
           )}
-        </Space>
+        </Flex>
       ),
     },
     {
       title: formatMessage({ id: "reported-by" }),
       key: "reporter",
       width: 160,
+      sorter: (a, b) => personName(a.reporter).localeCompare(personName(b.reporter)),
       render: (_, report) => (
-        <Space direction="vertical" size={0}>
-          <Link to={routes.profileView(report.reporter.id)}>{personName(report.reporter)}</Link>
-          <Text type="secondary">{dayjs(report.createdAt).format("DD/MM/YYYY HH:mm")}</Text>
-        </Space>
+        <Link to={routes.profileView(report.reporter.id)}>{personName(report.reporter)}</Link>
       ),
+    },
+    {
+      title: formatMessage({ id: "reported-on" }),
+      dataIndex: "createdAt",
+      key: "createdAt",
+      width: 160,
+      sorter: (a, b) => dayjs(a.createdAt).valueOf() - dayjs(b.createdAt).valueOf(),
+      render: (date: string) => dayjs(date).format("DD/MM/YYYY HH:mm"),
     },
     {
       title: formatMessage({ id: "status" }),
       key: "status",
-      width: 200,
+      width: 160,
+      // Pending first, then resolved, then dismissed
+      sorter: (a, b) => STATUSES.indexOf(a.status) - STATUSES.indexOf(b.status),
       render: (_, report) => (
-        <Space direction="vertical" size={2}>
-          <div>
-            <Tag color={statusColors[report.status]}>
-              {formatMessage({ id: `report-status.${report.status}` })}
-            </Tag>
-          </div>
+        <Flex vertical gap={4} align="start" style={{ minWidth: 0, maxWidth: "100%" }}>
+          <Tag color={statusColors[report.status]}>
+            {formatMessage({ id: `report-status.${report.status}` })}
+          </Tag>
           {report.reviewer && (
             <Text type="secondary">
               {personName(report.reviewer)}
               {report.reviewedAt && ` · ${dayjs(report.reviewedAt).format("DD/MM/YYYY")}`}
             </Text>
           )}
-          {report.adminNotes && <Text italic>{report.adminNotes}</Text>}
-        </Space>
+          {report.adminNotes && (
+            <Text italic ellipsis={{ tooltip: report.adminNotes }} style={{ maxWidth: "100%" }}>
+              {report.adminNotes}
+            </Text>
+          )}
+        </Flex>
       ),
     },
     {
+      title: formatMessage({ id: "actions" }),
       key: "actions",
-      align: "right",
-      width: 220,
+      width: 185,
+      // Actions stacked vertically, each the full column width
       render: (_, report) => (
-        <Space wrap style={{ justifyContent: "flex-end" }}>
+        <Flex vertical gap={8}>
           {report.status === "pending" && (
             <>
-              <Button danger size="small" onClick={() => openReview(report, "resolve")}>
+              <Button danger onClick={() => openReview(report, "resolve")}>
                 {formatMessage({ id: "report-resolve" })}
               </Button>
-              <Button size="small" onClick={() => openReview(report, "dismiss")}>
+              <Button onClick={() => openReview(report, "dismiss")}>
                 {formatMessage({ id: "report-dismiss" })}
               </Button>
             </>
           )}
           {report.status === "resolved" && report.entityDisabled && (
-            <Button size="small" onClick={() => openReview(report, "restore-content")}>
+            <Button onClick={() => openReview(report, "restore-content")}>
               {formatMessage({ id: "report-restore-content" })}
             </Button>
           )}
-        </Space>
+        </Flex>
       ),
     },
   ];
@@ -206,39 +227,42 @@ export function ContentReports() {
     <div>
       <Flex justify="space-between" align="center" wrap gap={12}>
         <PageTitle>{formatMessage({ id: "content-reports" })}</PageTitle>
-        <Button icon={<ReloadOutlined />} onClick={() => refetch()}>
+        <Button icon={<ReloadOutlined />} style={{ marginBottom: 16 }} onClick={() => refetch()}>
           {formatMessage({ id: "refresh" })}
         </Button>
       </Flex>
 
-      <Flex wrap gap={12} style={{ marginBottom: 16 }}>
-        <Select<ReportStatus>
-          allowClear
-          placeholder={formatMessage({ id: "all-statuses" })}
-          value={status}
-          style={{ minWidth: 180 }}
+      {/* Same filter row as the Users, Courses and Audit Log pages */}
+      <Flex wrap gap={12} style={{ margin: "16px 0" }}>
+        <Select<ReportStatus | typeof ALL>
+          value={status ?? ALL}
+          style={{ width: 230 }}
           onChange={(value) => {
-            setStatus(value);
+            setStatus(value === ALL ? undefined : value);
             setPage(0);
           }}
-          options={STATUSES.map((value) => ({
-            value,
-            label: formatMessage({ id: `report-status.${value}` }),
-          }))}
+          options={[
+            { value: ALL, label: formatMessage({ id: "all-statuses" }) },
+            ...STATUSES.map((value) => ({
+              value,
+              label: formatMessage({ id: `report-status.${value}` }),
+            })),
+          ]}
         />
-        <Select<ReportEntityType>
-          allowClear
-          placeholder={formatMessage({ id: "all-item-types" })}
-          value={entityType}
-          style={{ minWidth: 180 }}
+        <Select<ReportEntityType | typeof ALL>
+          value={entityType ?? ALL}
+          style={{ width: 230 }}
           onChange={(value) => {
-            setEntityType(value);
+            setEntityType(value === ALL ? undefined : value);
             setPage(0);
           }}
-          options={ENTITY_TYPES.map((value) => ({
-            value,
-            label: formatMessage({ id: `report-entity.${value}` }),
-          }))}
+          options={[
+            { value: ALL, label: formatMessage({ id: "all-item-types" }) },
+            ...ENTITY_TYPES.map((value) => ({
+              value,
+              label: formatMessage({ id: `report-entity.${value}` }),
+            })),
+          ]}
         />
       </Flex>
 
@@ -247,7 +271,8 @@ export function ContentReports() {
         columns={columns}
         dataSource={data?.content ?? []}
         loading={isFetching}
-        scroll={{ x: "max-content" }}
+        tableLayout="fixed"
+        scroll={{ x: 1100 }}
         locale={{ emptyText: formatMessage({ id: "no-reports" }) }}
         pagination={{
           current: page + 1,
